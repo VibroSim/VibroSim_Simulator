@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dc:experiment xmlns:dc="http://limatix.org/datacollect" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
+  <dc:measurement>
+    <dc:measnum>1</dc:measnum>
+  </dc:measurement>
+</dc:experiment>  

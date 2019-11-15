@@ -132,4 +132,4 @@ BuildVibroModel(M,...
 %RunAllStudies(model);
 %mphsave(M.node,savefilename);
 
-ret = { 'generatedmph', { savefilename } };
+ret = { { 'generatedmph', { savefilename } } };
