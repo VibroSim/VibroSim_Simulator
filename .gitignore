@@ -3,3 +3,6 @@
 *~
 *.bak
 *_output
+*.xlp
+*.pro
+*.swp
