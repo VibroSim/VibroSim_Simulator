@@ -16,11 +16,45 @@
   </prx:inputfiles>
 
   <prx:elementmatch>dc:measurement</prx:elementmatch>
-  
+
+
+  <!-- First step is to build the COMSOL model -->
   <prx:step name="buildmodel" descr="Construct COMSOL model">
     <prx:script xlink:href="vibrosim_demo3_comsol.m"/>
     <prx:param name="output_mph_name" xlink:type="simple" xlink:href="workflow_example_output/vibrosim_demo3.mph"/>
-    
+  </prx:step>
+
+
+  <!-- Second step is to run the modal analysis -->
+  <prx:step name="runmodal">
+    <prx:script>
+      <prx:comsolmatlabcode>
+	<![CDATA[ 
+% function [ ret ] = runmodal(dc_generatedmph_href)
+
+modelfile = dc_generatedmph_href{1}
+model=mphload(modelfile);
+M = WrapComsolNode([], model);
+
+% Run the modal study
+model.study('solidmech_modal_study').runAll();
+
+% Determine filename for modal results
+
+[modelpath,modelname,modelext] = fileparts(modelfile);
+modal_export_name=fullfile(modelpath,[ modelname '_modalfreq.txt' ]);
+
+model.result.export('solidmech_modal_export'.set('filename',modal_export_name);
+model.result.export('solidmech_modal_export'.run();
+
+ret={ 
+  { 'dc:modalfreqs', modal_export_name },
+};
+
+
+	]]>
+      </prx:comsolmatlabcode>
+    </prx:script>
   </prx:step>
 </prx:processinginstructions>
 
