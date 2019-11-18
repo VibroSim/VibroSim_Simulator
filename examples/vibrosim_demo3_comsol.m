@@ -1,4 +1,4 @@
-% function ret = vibrosim_demo3(output_mph_name_href)
+% function ret = vibrosim_demo3(dc_dest_href,dc_heatingdata_href)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
 %> figure out the parameters to pass. 
@@ -32,6 +32,18 @@ isolator_coords=[.13,     .0254/2,     0,   0.0,  % top-left
  
 % Call a function that sets various parameters to be used by the model. 
 default_params(M);
+
+
+
+% Because we are modeling linear single-frequency excitation, we need to 
+% select a transducer calibration file. 
+
+AddParamToParamdb(M,'xducercalib',fullfile(fileparts(which('BuildVibroModel')),'..','transducer_data','constant_10micronpervolt_displacementampl.dat'));
+%AddParamToParamdb(M,'xducercalib',fullfile(fileparts(which('BuildVibroModel')),'..','transducer_data','constant_10micronpervolt_displacementampl.dat'));
+
+% Load in xducercalib file to xducercalib function, set up xducerdisplacement as variable (WARNING: This step can be slow!)
+CreateTransducerDisplacementVariable(M);
+
 
 % Extract parameters that will be needed below
 ObtainDCParameter(M,'staticload_mount');
@@ -99,8 +111,9 @@ bldcrack = @(M,geom,specimen) CreateCrack(M,geom,'crack',specimen, ...
 					  ObtainDCParameter(M,'cracksemiminoraxislen'), ...
 					  [0,1,0], ...
 					  [0,0,-1], ...
-					  [ .001, -30 ; .002, 0 ; .003, 60], ...
-                                          {'solidmech_harmonicsweep','solidmech_harmonicburst'});
+					  [ .001, .002, .003 ], ...
+                                          {'solidmech_harmonicsweep','solidmech_harmonicburst'}, ...
+					  dc_heatingdata_href{1}); % Text file to hold crack heating energies. 
 
 % Define a procedure for creating the various physics definitions. Steps can be 
 % sequenced by using the pipe (vertical bar | ) character. 
@@ -115,7 +128,7 @@ genresults = @(M) VibroResults(M);
 % BuildVibroModel() will create the model's directory if necessary
 %savefilename = fullfile(tempdir,sprintf('vibrosim_%s',char(java.lang.System.getProperty('user.name'))),'vibrosim_demo3.mph');
 
-savefilename = output_mph_name_href{1}
+savefilename = fullfile(dc_dest_href{1},'vibrosim_demo3.mph');
 
 
 % Given the model wrapper, the procedures for building the geometry, the crack, the physics,
@@ -131,4 +144,4 @@ BuildVibroModel(M,...
 %RunAllStudies(model);
 %mphsave(M.node,savefilename);
 
-ret = { { 'generatedmph', { savefilename } } };
+ret = { { 'dc:model_comsol', { savefilename } } };
