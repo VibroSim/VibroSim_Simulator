@@ -1,15 +1,17 @@
 import sys
 import subprocess
+import posixpath
 import numpy as np
+from matplotlib import pyplot as pl
 
+from limatix.dc_value import hrefvalue as hrefv
 from limatix.dc_value import numericunitsvalue as numericunitsv
-from VibroSim_Simulator import format_modes
-from VibroSim_Simulator import enter_frequency
+from VibroSim_Simulator import read_comsol_probe_txt
 
 
 def run(_xmldoc,_element, dc_modalfreqs_href):
 
-    (metadata,fieldheaderdata,fieldrowdata) = read_comsol_probe_txt.read(dc_modalfreqs_href)
+    (metadata,fieldheaderdata,fieldrowdata) = read_comsol_probe_txt.read(dc_modalfreqs_href.getpath())
     complex_freqs_raw=fieldrowdata[0]['freq (1/s)'][1]
 
 
@@ -31,21 +33,36 @@ def run(_xmldoc,_element, dc_modalfreqs_href):
         # imag(a) = -2*pi*freqval.real
         # or a = real(a)+i*imag(a) = 2*pi*freqval.imag - 2*pi*freqval.real*i
         #      = (2*pi)*(freqval.imag -freqval.real*i)
-        #      = -(2*pi)*i*freqval 
-        synresp += 1.0/(-2.0*np.pi*(0+1j)*freqval + 2.0*np.pi*(0+1j)+frange)
+        #      = -(2*pi)*i*freqval
+        thisresp = 1.0/(-2.0*np.pi*(0+1j)*freqval + 2.0*np.pi*(0+1j)*frange)
+        synresp += thisresp
+
+
+        #pl.figure()
+        #pl.clf()
+        #pl.loglog(frange/1e3,np.abs(thisresp))
+        #pl.xlabel('Frequency (kHz)')
+        #pl.ylabel('Normalized response')
+        #pl.grid()
+        #pl.title('Synthetic spectrum for mode @ %f kHz' % (freqval.real/1e3))
+
         pass
 
     pl.figure()
     pl.clf()
-    pl.loglog(frange/1e3,synresp)
-    pl.xlabel('Frequency (kHz)')
+    pl.loglog(frange,np.abs(synresp))
+    maxabsresp = np.max(np.abs(synresp))
+    pl.axis((10.0,100e3,maxabsresp/100.0,maxabsresp))
+    pl.xlabel('Frequency (Hz)')
     pl.ylabel('Normalized response')
     pl.grid()
     pl.title('Synthetic spectrum from modal analysis')
-    fig_href = hrefv(posixpath.split(dc_modalfreqs_href.get_bare_unquoted_filename)[0]+"_synthetic_spectrum.png",dc_modalfreqs_href.leafless())
+    fig_href = hrefv(posixpath.split(dc_modalfreqs_href.get_bare_unquoted_filename())[0]+"_synthetic_spectrum.png",dc_modalfreqs_href.leafless())
     pl.savefig(fig_href.getpath(),dpi=300)
     
-    
-    return {
+    ret = {
         "dc:modal_synthetic_spectrum": fig_href,
     }
+
+    
+    return ret
