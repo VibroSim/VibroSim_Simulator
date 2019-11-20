@@ -137,7 +137,7 @@ def run(_xmldoc,_element,
     
     crack_initial_opening_side2 = crackopening_from_tensile_closure(xrange,x_bnd,closure_stress_side2,xstep,aside2,sigma_yield,crack_model_normal)
     
-    # Plot the evaluated closure state
+    # Plot the evaluated closure state (side1)
     pl.figure()
     pl.plot(xrange[xrange < aside1]*1e3,closure_stress_side1[xrange < aside1]/1e6,'-',
             reff_side1*1e3,seff_side1/1e6,'x')
@@ -149,10 +149,27 @@ def run(_xmldoc,_element,
     pl.legend(('Closure stress field','Observed crack tip posn','Recon. crack tip posn'),loc="best")
     pl.xlabel('Radius from crack center (mm)')
     pl.ylabel('Stress (MPa)')
-    pl.title('Crack closure state')
+    pl.title('Crack closure state (side1)')
     
-    closure_state_href = hrefv(quote(dc_measident_str+"_closurestate.png"),dc_dest_href)
-    pl.savefig(closure_state_href.getpath(),dpi=300)
+    closure_state_side1_href = hrefv(quote(dc_measident_str+"_closurestate_side1.png"),dc_dest_href)
+    pl.savefig(closure_state_side1_href.getpath(),dpi=300)
+
+    # Plot the evaluated closure state (side2)
+    pl.figure()
+    pl.plot(xrange[xrange < aside2]*1e3,closure_stress_side2[xrange < aside2]/1e6,'-',
+            reff_side2*1e3,seff_side2/1e6,'x')
+    for observcnt in range(len(reff_side2)):        
+        (effective_length, sigma, tensile_displ, dsigmaext_dxt) = solve_normalstress(xrange,x_bnd,closure_stress_side2,xstep,seff_side2[observcnt],aside2,sigma_yield,crack_model_normal)
+	pl.plot(effective_length*1e3,seff_side2[observcnt]/1e6,'.')
+	pass
+    pl.grid(True)
+    pl.legend(('Closure stress field','Observed crack tip posn','Recon. crack tip posn'),loc="best")
+    pl.xlabel('Radius from crack center (mm)')
+    pl.ylabel('Stress (MPa)')
+    pl.title('Crack closure state (side 2)')
+    
+    closure_state_side2_href = hrefv(quote(dc_measident_str+"_closurestate_side2.png"),dc_dest_href)
+    pl.savefig(closure_state_side2_href.getpath(),dpi=300)
 
 
 
@@ -233,7 +250,8 @@ def run(_xmldoc,_element,
     
 
     return { 
-        "dc:closureplot": closure_state_href,
+        "dc:closureplot_side1": closure_state_side1_href,
+        "dc:closureplot_side2": closure_state_side2_href,
         "dc:heatpower": heatpower_href,
         "dc:heatingdata": dc_heatingdata_href,
         "dc:heatingtotalpower": numericunitsv(totalpower,"W"),
