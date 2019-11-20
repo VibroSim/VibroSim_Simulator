@@ -32,7 +32,10 @@
     <prx:script name="vibrocomsol_runmodal_comsol.m"/>
   </prx:step>
 
-
+  <prx:step name="synthetic_spectrum">
+    <prx:script name="vibrosim_synthetic_spectrum.py"/>
+  </prx:step>
+  
   <prx:step name="entersweepfreqs">
     <prx:script name="vibrocomsol_entersweepfreqs.py"/>
   </prx:step>
