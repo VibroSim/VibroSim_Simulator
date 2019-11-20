@@ -1,7 +1,16 @@
-% function ret = vibrosim_demo3(dc_dest_href,dc_heatingdata_href)
+% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_heatingdata_href)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
-%> figure out the parameters to pass. 
+%> figure out the parameters to pass.
+
+% NOTE: The first line (commented out function definition)
+%       is important because it tells processtrak which parameters
+%       to pass
+%
+% NOTE: The name of this script should end with "_comsol.m" as that
+%       makes processtrak run it with COMSOL MATLAB rather than
+%       bare MATLAB>
+
 
 % This is identical to the second example, except static mount boundary conditions are added
 % using 'Seq' and it automatically runs as well as builds
