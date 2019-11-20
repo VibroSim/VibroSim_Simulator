@@ -220,10 +220,10 @@ def run(_xmldoc,_element,
 						   verbose,
 						   doplots)
 
-    (totalpower_left, totalpower_stddev_left) = integrate_power(xrange,power_per_m2_left,power_per_m2_left_stddev)
-    (totalpower_right, totalpower_stddev_right) = integrate_power(xrange,power_per_m2_right,power_per_m2_right_stddev)
+    (totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,power_per_m2_side1,power_per_m2_stddev_side1)
+    (totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,power_per_m2_side2,power_per_m2_stddev_side2)
 
-    totalpower=totalpower_left + totalpower_right
+    totalpower=totalpower_side1 + totalpower_side2
      
     pl.figure()
     pl.clf()

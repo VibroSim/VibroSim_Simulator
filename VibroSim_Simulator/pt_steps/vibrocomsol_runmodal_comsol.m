@@ -26,7 +26,7 @@ savefilename = fullfile(modelpath,[ modelname '_modalcalc.mph' ]);
 mphsave(model,savefilename); 
 
 ret={ 
-  { 'dc:modalcalc_comsol, {savefilename} },
+  { 'dc:modalcalc_comsol', {savefilename} },
   { 'dc:modalfreqs', {modal_export_name} },
 };
 

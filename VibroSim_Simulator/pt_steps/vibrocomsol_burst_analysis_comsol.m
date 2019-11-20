@@ -29,7 +29,7 @@ savefilename = fullfile(modelpath,[ modelname '_burstcalc.mph' ]);
 mphsave(model,savefilename); 
 
 ret={ 
-  { 'dc:burstcalc_comsol, {savefilename} },
+  { 'dc:burstcalc_comsol', {savefilename} },
   { 'dc:harmonicburst_normalstrain', normalstrain },
   { 'dc:harmonicburst_shearstrain', shearstrain },
 };
