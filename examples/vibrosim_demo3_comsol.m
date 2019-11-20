@@ -1,4 +1,4 @@
-% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_heatingdata_href)
+% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_heatingdata_href,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
 %> figure out the parameters to pass.
@@ -43,6 +43,17 @@ isolator_coords=[.13,     .0254/2,     0,   0.0,  % top-left
 default_params(M);
 
 
+% Set COMSOL parameters from experiment log, passed as parameters
+AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
+AddParamToParamdb(M,'spcYoungsModulus',dc_YoungsModulus_float,'Pa');
+AddParamToParamdb(M,'spcPoissonsRatio',dc_PoissonsRatio_float,'');
+AddParamToParamdb(M,'spcDensity',dc_Density_float,'kg');
+
+AddParamToParamdb(M,'spcmaterialdampingtype','RayleighDamping');
+AddParamToParamdb(M,'spcrayleighdamping_alpha',dc_spcrayleighdamping_alpha_float,'');
+AddParamToParamdb(M,'spcrayleighdamping_beta',dc_spcrayleighdamping_beta_float,'');
+
+  
 
 % Because we are modeling linear single-frequency excitation, we need to 
 % select a transducer calibration file. 
