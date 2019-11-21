@@ -40,18 +40,18 @@ isolator_coords=[.13,     .0254/2,     0,   0.0,  % top-left
 
  
 % Call a function that sets various parameters to be used by the model. 
-default_params(M);
+VibroSim_default_params(M);
 
 
 % Set COMSOL parameters from experiment log, passed as parameters
 AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
 AddParamToParamdb(M,'spcYoungsModulus',dc_YoungsModulus_float,'Pa');
 AddParamToParamdb(M,'spcPoissonsRatio',dc_PoissonsRatio_float,'');
-AddParamToParamdb(M,'spcDensity',dc_Density_float,'kg');
+AddParamToParamdb(M,'spcDensity',dc_Density_float,'kg/m^3');
 
 AddParamToParamdb(M,'spcmaterialdampingtype','RayleighDamping');
-AddParamToParamdb(M,'spcrayleighdamping_alpha',dc_spcrayleighdamping_alpha_float,'');
-AddParamToParamdb(M,'spcrayleighdamping_beta',dc_spcrayleighdamping_beta_float,'');
+AddParamToParamdb(M,'spcrayleighdamping_alpha',dc_spcrayleighdamping_alpha_float,'s^-1');
+AddParamToParamdb(M,'spcrayleighdamping_beta',dc_spcrayleighdamping_beta_float,'s');
 
   
 

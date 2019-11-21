@@ -1,17 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <prx:processinginstructions xmlns="http://limatix.org/processtrak/processinginstructions" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://limatix.org/datacollect"  xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
-  <!-- Idea: Address inability to deal with multiple coupled experiment logs
-       by being able to put inputfiles into different classes (class 
-       attribute). Then in the elementmatch you can select which experiment 
-       log to operate on with a class attribute there. -->
+  <!-- This file specifies the multi-step processing instructions
+  for a VibroSim simulation. In this case we are simulating broadband 
+  coupled linear excitation. -->
        
   <prx:inputfiles>
-    <!-- The <inputfiles> element is where you specify the input
-	 experiment logs. These can be XML, or they can be .xls
-	 or .xlsx spreadsheets (detected by filename extension).
-	 In this case, any <dc:> tags you place within the
-	 <inputfile> element will be placed in a <dc:summary>
-	 tag of the outputfile -->
+    <!-- The <inputfile> tag is where you refer to the "experiment log"
+    with one or more sets of simulation parameters -->
     <prx:inputfile xlink:href="vibrosim_demo3.xlg"/>
   </prx:inputfiles>
 
@@ -21,13 +16,13 @@
     <prx:script name="vibrocomsol_createdummyoutput.py"/>
   </prx:step>
 
-  <!-- First step is to build the COMSOL model -->
+  <!-- Build the COMSOL model -->
   <prx:step name="buildmodel" descr="Construct COMSOL model">
     <prx:script xlink:href="vibrosim_demo3_comsol.m"/>
   </prx:step>
 
 
-  <!-- Second step is to run the modal analysis -->
+  <!-- Run the modal analysis -->
   <prx:step name="runmodal">
     <prx:script name="vibrocomsol_runmodal_comsol.m"/>
   </prx:step>
@@ -35,6 +30,17 @@
   <prx:step name="synthetic_spectrum">
     <prx:script name="vibrosim_synthetic_spectrum.py"/>
   </prx:step>
+
+  <!-- Typically you will run the above steps, looking at the output of
+       synthetic_spectrum (either as an image in the output directory or
+       by running the last step with the -i (interactive) option. 
+       Compare the synthetic spectrum to a known impulse response
+       spectrum and adjust the dc:spcrayleighdamping_alpha and 
+       dc:spcrayleighdamping_beta parameters in the experiment log so 
+       that the damping (resonant pulse widths) matches the physical 
+       system. Increasing dc:spcrayleighdamping_alpha will increase
+       damping at low frequencies. Increasing dc:spcrayleighdamping_beta
+       will increase damping at high frequencies -->
   
   <prx:step name="entersweepfreqs">
     <prx:script name="vibrocomsol_entersweepfreqs.py"/>
