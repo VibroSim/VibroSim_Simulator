@@ -48,24 +48,24 @@ def run(_xmldoc,_element,
         dc_dest_href,
         dc_measident_str,
         dc_friction_coefficient_float,
-	dc_msqrtR_numericunits,
-	dc_staticload_numericunits,
+        dc_msqrtR_numericunits,
+        dc_staticload_numericunits,
         dc_exclength_numericunits,
-	dc_tortuosity_numericunits,
-	dc_numdraws_int,
-	dc_YoungsModulus_numericunits,
-	dc_PoissonsRatio_float,
-	dc_YieldStrength_numericunits,
-	dc_Density_numericunits,
-	dc_reff_side1_array, # NOTE: arrayvalue class is not unit-aware!
-	dc_seff_side1_array, 
-	dc_reff_side2_array,
-	dc_seff_side2_array,
-	dc_exc_t0_numericunits,
-	dc_exc_t1_numericunits,
-	dc_exc_t2_numericunits,
-	dc_exc_t3_numericunits,
-	dc_excitation_frequency_numericunits,
+        dc_tortuosity_numericunits,
+        dc_numdraws_int,
+        dc_YoungsModulus_numericunits,
+        dc_PoissonsRatio_float,
+        dc_YieldStrength_numericunits,
+        dc_Density_numericunits,
+        dc_reff_side1_array, # NOTE: arrayvalue class is not unit-aware!
+        dc_seff_side1_array, 
+        dc_reff_side2_array,
+        dc_seff_side2_array,
+        dc_exc_t0_numericunits,
+        dc_exc_t1_numericunits,
+        dc_exc_t2_numericunits,
+        dc_exc_t3_numericunits,
+        dc_excitation_frequency_numericunits,
         dc_harmonicburst_normalstrain_complex, 
         dc_harmonicburst_shearstrain_complex):
 
@@ -143,8 +143,8 @@ def run(_xmldoc,_element,
             reff_side1*1e3,seff_side1/1e6,'x')
     for observcnt in range(len(reff_side1)):        
         (effective_length, sigma, tensile_displ, dsigmaext_dxt) = solve_normalstress(xrange,x_bnd,closure_stress_side1,xstep,seff_side1[observcnt],aside1,sigma_yield,crack_model_normal)
-	pl.plot(effective_length*1e3,seff_side1[observcnt]/1e6,'.')
-	pass
+        pl.plot(effective_length*1e3,seff_side1[observcnt]/1e6,'.')
+        pass
     pl.grid(True)
     pl.legend(('Closure stress field','Observed crack tip posn','Recon. crack tip posn'),loc="best")
     pl.xlabel('Radius from crack center (mm)')
@@ -160,8 +160,8 @@ def run(_xmldoc,_element,
             reff_side2*1e3,seff_side2/1e6,'x')
     for observcnt in range(len(reff_side2)):        
         (effective_length, sigma, tensile_displ, dsigmaext_dxt) = solve_normalstress(xrange,x_bnd,closure_stress_side2,xstep,seff_side2[observcnt],aside2,sigma_yield,crack_model_normal)
-	pl.plot(effective_length*1e3,seff_side2[observcnt]/1e6,'.')
-	pass
+        pl.plot(effective_length*1e3,seff_side2[observcnt]/1e6,'.')
+        pass
     pl.grid(True)
     pl.legend(('Closure stress field','Observed crack tip posn','Recon. crack tip posn'),loc="best")
     pl.xlabel('Radius from crack center (mm)')
@@ -178,47 +178,47 @@ def run(_xmldoc,_element,
      power_per_m2_stddev_side1,
      vibration_ampl_side1) = angled_friction_model(x_bnd,xrange,xstep,
                                                    dc_numdraws_int,
-						   dc_YoungsModulus_numericunits.value("Pa"),
-						   dc_PoissonsRatio_float,
-						   sigma_yield,tau_yield,
-						   friction_coefficient,
-						   closure_stress_side1,
-						   crack_initial_opening_side1,
-						   angular_stddev,
-						   aside1,
-						   static_load,
-						   vib_normal_stress_ampl,
-						   vib_shear_stress_ampl,
-						   dc_excitation_frequency_numericunits.value("Hz"),
-						   crack_model_normal,
-						   crack_model_shear,
-						   1.0,
-						   msqrtR,
-						   verbose,
-						   doplots)
-						  
+                                                   dc_YoungsModulus_numericunits.value("Pa"),
+                                                   dc_PoissonsRatio_float,
+                                                   sigma_yield,tau_yield,
+                                                   friction_coefficient,
+                                                   closure_stress_side1,
+                                                   crack_initial_opening_side1,
+                                                   angular_stddev,
+                                                   aside1,
+                                                   static_load,
+                                                   vib_normal_stress_ampl,
+                                                   vib_shear_stress_ampl,
+                                                   dc_excitation_frequency_numericunits.value("Hz"),
+                                                   crack_model_normal,
+                                                   crack_model_shear,
+                                                   1.0,
+                                                   msqrtR,
+                                                   verbose,
+                                                   doplots)
+                                                  
     (power_per_m2_side2,
      power_per_m2_stddev_side2,
      vibration_ampl_side2) = angled_friction_model(x_bnd,xrange,xstep,
                                                    dc_numdraws_int,
-						   dc_YoungsModulus_numericunits.value("Pa"),
-						   dc_PoissonsRatio_float,
-						   sigma_yield,tau_yield,
-						   friction_coefficient,
-						   closure_stress_side2,
-						   crack_initial_opening_side2,
-						   angular_stddev,
-						   aside2,
-						   static_load,
-						   vib_normal_stress_ampl,
-						   vib_shear_stress_ampl,
-						   dc_excitation_frequency_numericunits.value("Hz"),
-						   crack_model_normal,
-						   crack_model_shear,
-						   1.0,
-						   msqrtR,
-						   verbose,
-						   doplots)
+                                                   dc_YoungsModulus_numericunits.value("Pa"),
+                                                   dc_PoissonsRatio_float,
+                                                   sigma_yield,tau_yield,
+                                                   friction_coefficient,
+                                                   closure_stress_side2,
+                                                   crack_initial_opening_side2,
+                                                   angular_stddev,
+                                                   aside2,
+                                                   static_load,
+                                                   vib_normal_stress_ampl,
+                                                   vib_shear_stress_ampl,
+                                                   dc_excitation_frequency_numericunits.value("Hz"),
+                                                   crack_model_normal,
+                                                   crack_model_shear,
+                                                   1.0,
+                                                   msqrtR,
+                                                   verbose,
+                                                   doplots)
 
     (totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,power_per_m2_side1,power_per_m2_stddev_side1)
     (totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,power_per_m2_side2,power_per_m2_stddev_side2)

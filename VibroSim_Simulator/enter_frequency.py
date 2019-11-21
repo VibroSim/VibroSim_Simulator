@@ -17,15 +17,15 @@ def enter_frequency(_xmldoc,_element,descr,defaulttagname):
     if priorfreq is not None:
         priorfreq_val = numericunitsv.fromxml(_xmldoc,priorfreq).value('Hz')
         freq_text = input("Enter %s frequency in Hz (default %f): " % (descr,priorfreq_val))      
-	if len(freq_text.strip())==0:
+        if len(freq_text.strip())==0:
             freq = priorfreq_val
             pass
         else: 
-	    freq=float(freq_text.strip())
-	    pass
+            freq=float(freq_text.strip())
+            pass
         pass
     else: 
         freq_text = input("Enter %s frequency in Hz: " % (descr))      
         freq=float(freq_text.strip())
-	pass
+        pass
     return freq
