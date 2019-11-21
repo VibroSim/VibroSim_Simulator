@@ -52,7 +52,7 @@ def run(_xmldoc,_element, dc_modalfreqs_href):
     pl.clf()
     pl.loglog(frange,np.abs(synresp))
     maxabsresp = np.max(np.abs(synresp))
-    pl.axis((10.0,100e3,maxabsresp/100.0,maxabsresp))
+    pl.axis((10.0,100e3,maxabsresp/1000.0,maxabsresp))
     pl.xlabel('Frequency (Hz)')
     pl.ylabel('Normalized response')
     pl.grid()

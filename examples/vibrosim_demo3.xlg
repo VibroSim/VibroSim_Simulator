@@ -18,8 +18,8 @@
     <dc:YieldStrength dcv:units="Pascals">944.58e6</dc:YieldStrength>
     <dc:PoissonsRatio>0.342</dc:PoissonsRatio>
     <dc:Density dcv:units="kg/m^3">4430</dc:Density>
-    <dc:spcrayleighdamping_alpha dcv:units="s^-1">0.1</dc:spcrayleighdamping_alpha>
-    <dc:spcrayleighdamping_beta dcv:units="s">0.1</dc:spcrayleighdamping_beta>
+    <dc:spcrayleighdamping_alpha dcv:units="s^-1">3e-7</dc:spcrayleighdamping_alpha>
+    <dc:spcrayleighdamping_beta dcv:units="s">5e-7</dc:spcrayleighdamping_beta>
     <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
     <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
     <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
