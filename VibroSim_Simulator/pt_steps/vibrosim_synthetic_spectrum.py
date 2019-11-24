@@ -57,7 +57,7 @@ def run(_xmldoc,_element, dc_modalfreqs_href):
     pl.ylabel('Normalized response')
     pl.grid()
     pl.title('Synthetic spectrum from modal analysis')
-    fig_href = hrefv(posixpath.split(dc_modalfreqs_href.get_bare_unquoted_filename())[0]+"_synthetic_spectrum.png",dc_modalfreqs_href.leafless())
+    fig_href = hrefv(posixpath.splitext(dc_modalfreqs_href.get_bare_unquoted_filename())[0]+"_synthetic_spectrum.png",dc_modalfreqs_href.leafless())
     pl.savefig(fig_href.getpath(),dpi=300)
     
     ret = {

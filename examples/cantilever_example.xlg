@@ -2,21 +2,29 @@
 <dc:experiment xmlns:dc="http://limatix.org/datacollect" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
   <dc:measurement>
     <dc:measnum>1</dc:measnum>
-    <dc:dest xlink:type="simple" xlink:href="vibrosim_demo3_output/"/>
+    <dc:dest xlink:type="simple" xlink:href="cantilever_example_output/"/>
     <!-- dc:heatingdata specifies where the heating data will be stored. 
     Initially this will be filled with dummy (zero) output. The later steps will replace it 
     with meaningful values -->
     <dc:measident>meas1</dc:measident>
     <dc:friction_coefficient>.3968</dc:friction_coefficient>
     <dc:msqrtR dcv:units="m^-1.5">3.942e7</dc:msqrtR>
-    <dc:staticload dcv:units="Pascals">0</dc:staticload>
+    <dc:staticload_mount dcv:units="Newtons">0</dc:staticload_mount>
+    <dc:xducerforce dcv:units="Newtons">100</dc:xducerforce>
     <dc:exclength dcv:units="seconds">1.0</dc:exclength>
     <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
     <dc:numdraws>100</dc:numdraws>
+    <dc:spcmaterial>Aluminum</dc:spcmaterial>
     <dc:YoungsModulus dcv:units="Pascals">69e9</dc:YoungsModulus>
-    <dc:YieldStrength dcv:units="Pascals">240e6</dc:YieldStrength>
-    <dc:PoissonsRatio>0.33</dc:PoissonsRatio>
+    <dc:YieldStrength dcv:units="Pascals">276e6</dc:YieldStrength>
+    <dc:PoissonsRatio>0.32</dc:PoissonsRatio>
     <dc:Density dcv:units="kg/m^3">2697</dc:Density>
+    <dc:spcrayleighdamping_alpha dcv:units="s^-1">2</dc:spcrayleighdamping_alpha>
+    <dc:spcrayleighdamping_beta dcv:units="s">2e-7</dc:spcrayleighdamping_beta>
+    <dc:couplantx dcv:units="m">.245</dc:couplantx>
+    <dc:couplanty dcv:units="m">.025</dc:couplanty>
+    <dc:couplantz dcv:units="m">0</dc:couplantz>
+    <dc:couplantangle dcv:units="degrees">NaN</dc:couplantangle> <!-- NaN means use round couplant (i.e. excitation zone) -->
     <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
     <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
     <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>

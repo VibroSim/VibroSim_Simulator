@@ -7,7 +7,7 @@
   <prx:inputfiles>
     <!-- The <inputfile> tag is where you refer to the "experiment log"
     with one or more sets of simulation parameters -->
-    <prx:inputfile xlink:href="vibrosim_demo3.xlg"/>
+    <prx:inputfile xlink:href="cantilever_example.xlg"/>
   </prx:inputfiles>
 
   <prx:elementmatch>dc:measurement</prx:elementmatch>
@@ -18,7 +18,7 @@
 
   <!-- Build the COMSOL model -->
   <prx:step name="buildmodel" descr="Construct COMSOL model">
-    <prx:script xlink:href="vibrosim_demo3_comsol.m"/>
+    <prx:script xlink:href="cantilever_example_comsol.m"/>
   </prx:step>
 
 
@@ -46,52 +46,52 @@
     <prx:script name="vibrosim_optimize_freqbands.py"/>
   </prx:step>
 
+  <!-- After running optimize_freqbands, look at the total number of steps. 
+  If this is much beyond 10000, then the multisweep segment analysis may take
+  prohibitively long. You can reduce the number of steps by increasing one or 
+  both of the damping parameters. -->
+
   <prx:step name="set_freqbands">
     <prx:script name="vibrocomsol_set_freqbands_comsol.m"/>
   </prx:step>
 
-  <prx:step name="freqband_analysis">
+  <prx:step name="multisweep_seg1_analysis">
     <!-- Run the various MultiSweep segments and
     extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">1</prx:param>
+  </prx:step>
+
+  <prx:step name="multisweep_seg2_analysis">
+    <!-- Run the various MultiSweep segments and
+    extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">2</prx:param>
+  </prx:step>
+
+  <prx:step name="multisweep_seg3_analysis">
+    <!-- Run the various MultiSweep segments and
+    extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">3</prx:param>
+  </prx:step>
+
+  <prx:step name="multisweep_seg4_analysis">
+    <!-- Run the various MultiSweep segments and
+    extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">4</prx:param>
   </prx:step>
   
   <prx:step name="process_multisweep">
     <!-- process the freqband_analysis output
     To create a time-domain waveform -->
+    <prx:script name="vibrosim_process_multisweep.py"/>
   </prx:step>
 
-  <prx:step name="entersweepfreqs">
-    <prx:script name="vibrocomsol_entersweepfreqs.py"/>
-  </prx:step>
-
-  <!-- Set the COMSOL sweep parameter -->
-  <prx:step name="setsweepfrequencies">
-    <prx:script name="vibrocomsol_setsweepfrequencies_comsol.m"/>
-  </prx:step>
-
-  <prx:step name="sweep_analysis">
-    <prx:script name="vibrocomsol_sweep_analysis_comsol.m"/>
-  </prx:step>
-
-  <!-- Enter a burst frequency -->
-  <prx:step name="enterburstfreq">
-    <prx:script name="vibrocomsol_enterburstfreq.py"/>
-  </prx:step>
-
-
-  <!-- Fourth step is to set the COMSOL parameter -->
-  <prx:step name="setburstfrequency">
-    <prx:script name="vibrocomsol_setburstfrequency_comsol.m"/>
-  </prx:step>
-
-
-  <!-- Next step is to run the harmonic burst analysis -->
-  <prx:step name="burst_analysis">
-    <prx:script name="vibrocomsol_burst_analysis_comsol.m"/>
-  </prx:step>
 
   <prx:step name="calc_heating">
-    <prx:script name="vibrosim_calc_heating.py"/>
+    <prx:script name="vibrosim_weldercalc_heating.py"/>
   </prx:step>
   
 
