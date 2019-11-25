@@ -20,6 +20,7 @@ def array2string(array):
 
 
 def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,descr):
+    """Colnum indexed starting with 0... so colnum==0 should be frequency, colnum==1 first data column, etc."""
     
     num_segments=len(segment_filepaths)
 
@@ -314,9 +315,9 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
 
     (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered)=read_spectrum(laser_displspec_filepaths,1,dt,impulseexcitation_width,"laser point displacement m/(N*s)")
 
-    (crackcenternormalstrain_trange,crackcenternormalstrainspec_frange,crackcenternormalstrain_timedomain,crackcenternormalstrainspec,crackcenternormalstrain_filtered_timedomain,crackcenternormalstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,2,dt,impulseexcitation_width,"crack center normal strain (unitless)")
+    (crackcenternormalstrain_trange,crackcenternormalstrainspec_frange,crackcenternormalstrain_timedomain,crackcenternormalstrainspec,crackcenternormalstrain_filtered_timedomain,crackcenternormalstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,2,dt,impulseexcitation_width,"crack center normal strain (unitless)") # colnum==1 is strain magnitude, colnum==2 is normal strain, colnum==3 is shear strain
 
-    (crackcentershearstrain_trange,crackcentershearstrainspec_frange,crackcentershearstrain_timedomain,crackcentershearstrainspec,crackcentershearstrain_filtered_timedomain,crackcentershearstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,2,dt,impulseexcitation_width,"crack center shear strain (unitless)")
+    (crackcentershearstrain_trange,crackcentershearstrainspec_frange,crackcentershearstrain_timedomain,crackcentershearstrainspec,crackcentershearstrain_filtered_timedomain,crackcentershearstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,3,dt,impulseexcitation_width,"crack center shear strain (unitless)")
 
     if laser_veltime_filepath is not None:
         (laser_veltime_trange,laser_veltime) = read_timedomain(laser_veltime_filepath)
