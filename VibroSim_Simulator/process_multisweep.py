@@ -175,6 +175,7 @@ def read_timedomain(filename):
     trange = fieldrowdata[0][time_key] + np.arange(measurement.shape[0],dtype='d')*this_dt
     return (trange,measurement)
 
+example_code = r"""
 path='.'
 
 xducer_velspec_filename_template="cantilever_model_xducercontactprobe_velspec_seg%d.txt"
@@ -197,8 +198,8 @@ laser_displtime_filename = None
 
 
 plotdir = "/tmp"
-output_filename=os.path.join(plotdir,"specimen_modeling_out.py.bz2")  # should be .py.bz2 extension
-
+output_filename=os.path.join(plotdir,"specimen_modeling_out.csv.bz2")  # should be .csv.bz2 extension
+"""
 def process_multisweep(path,
                        xducer_velspec_filename_template,
                        xducer_displspec_filename_template,
@@ -535,102 +536,43 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         
     print("Writing %s..." % (output_filename))
 
-    if hasattr(bz2,"open"):
-        # Use modern py3.x style:
-        outfh=bz2.open(output_filename,"wt")
+    # Write output as compressed .csv
+    out_frame=pd.DataFrame(index=pd.Float64Index(data=np.arange(xducer_displ_timedomain.shape[0]-int(endcrop/dt),dtype='d')*dt,dtype='d',name="Time(s)"))
+    
+    # specimen_resp is displacement response in m per unit N*s impulse
+    # applied at the transducer location 
+    out_frame.insert(len(out_frame.columns),"specimen_resp(m/(N*s))",xducer_displ_timedomain.real[:(-int(endcrop/dt))])
+    
+    # specimen_mobility is velocity response in m/s per unit N*s impulse
+    # applied at the transducer location 
+    out_frame.insert(len(out_frame.columns),"specimen_mobility(m/(N*s^2))",xducer_vel_timedomain.real[:(-int(endcrop/dt))])
+    
+    # specimen_laser is velocity response at laser position in 
+    # m/s per unit N*s impulse
+    # applied at the transducer location 
+    out_frame.insert(len(out_frame.columns),"specimen_laser(m/(N*s^2))",laser_vel_timedomain.real[:(-int(endcrop/dt))])
+    
+
+    
+    # specimen_crackcenternormalstrain is normal strain response at crack center position in 
+    # unitless per unit N*s impulse
+    # applied at the transducer location 
+    out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstrain(1/(N*s))",crackcenternormalstrain_timedomain.real[:(-int(endcrop/dt))])
+
+
+    # specimen_crackcentershearstrain is normal strain response at crack center position in 
+    # unitless per unit N*s impulse
+    # applied at the transducer location 
+    out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstrain(1/(N*s))",crackcentershearstrain_timedomain.real[:(-int(endcrop/dt))])
+    
+    
+    if output_filename.endswith(".bz2"):
+        out_frame.to_csv(output_filename,compression='bz2')
         pass
-    else: # python2.7 backward compatibility
-        outfh=bz2.BZ2File(output_filename,"w")
+    else:
+        out_frame.to_csv(output_filename)
         pass
-    outfh.write(r"""
-# specimen_resp is displacement response in m per unit N*s impulse
-# applied at the transducer location 
-specimen_resp = convolution.impulse_response(h=numpy.array((%s),dtype='d'),
-                                             dt=%.20g,
-                                             t0=%.20g,
-                                             A=%s,
-                                             D=%.20g,
-                                             alpha=%s)
-""" % (array2string(xducer_displ_timedomain.real[:(-int(endcrop/dt))]),
-       dt,
-       0.0,
-       "numpy.array((0,),dtype='d')",
-       0.0,
-       "numpy.array((1.0,),dtype='d')"))
-    
-    outfh.write(r"""
-# specimen_mobility is velocity response in m/s per unit N*s impulse
-# applied at the transducer location 
-specimen_mobility = convolution.impulse_response(h=numpy.array((%s),dtype='d'),
-                                                 dt=%.20g,
-                                                 t0=%.20g,
-                                                 A=%s,
-                                                 D=%.20g,
-                                                 alpha=%s)
-""" % (array2string(xducer_vel_timedomain.real[:(-int(endcrop/dt))]),
-       dt,
-       0.0,
-       "numpy.array((0,),dtype='d')",
-       0.0,
-       "numpy.array((1.0,),dtype='d')"))
-    
-    outfh.write(r"""
-# specimen_laser is velocity response at laser position in 
-# m/s per unit N*s impulse
-# applied at the transducer location 
-specimen_laser = convolution.impulse_response(h=numpy.array((%s),dtype='d'),
-                                                 dt=%.20g,
-                                                 t0=%.20g,
-                                                 A=%s,
-                                                 D=%.20g,
-                                                 alpha=%s)
-""" % (array2string(laser_vel_timedomain.real[:(-int(endcrop/dt))]),
-       dt,
-       0.0,
-       "numpy.array((0,),dtype='d')",
-       0.0,
-       "numpy.array((1.0,),dtype='d')"))
-    
 
-    outfh.write(r"""
-# specimen_crackcenternormalstrain is normal strain response at crack center position in 
-# unitless per unit N*s impulse
-# applied at the transducer location 
-specimen_crackcenternormalstrain = convolution.impulse_response(h=numpy.array((%s),dtype='d'),
-                                                               dt=%.20g,
-                                                               t0=%.20g,
-                                                               A=%s,
-                                                               D=%.20g,
-                                                               alpha=%s)
-""" % (array2string(crackcenternormalstrain_timedomain.real[:(-int(endcrop/dt))]),
-       dt,
-       0.0,
-       "numpy.array((0,),dtype='d')",
-       0.0,
-       "numpy.array((1.0,),dtype='d')"))
-    
-
-    outfh.write(r"""
-# specimen_crackcentershearstrain is shear strain response at crack center position in 
-# unitless per unit N*s impulse
-# applied at the transducer location 
-specimen_crackcentershearstrain = convolution.impulse_response(h=numpy.array((%s),dtype='d'),
-                                                               dt=%.20g,
-                                                               t0=%.20g,
-                                                               A=%s,
-                                                               D=%.20g,
-                                                               alpha=%s)
-""" % (array2string(crackcentershearstrain_timedomain.real[:(-int(endcrop/dt))]),
-       dt,
-       0.0,
-       "numpy.array((0,),dtype='d')",
-       0.0,
-       "numpy.array((1.0,),dtype='d')"))
-    
-
-    outfh.close()
-
-    
 
     #pl.show()
     return (output_filename,plot_paths)

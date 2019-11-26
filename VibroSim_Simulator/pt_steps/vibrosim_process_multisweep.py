@@ -89,7 +89,7 @@ def run(_xmldoc,_element,
         dc_seg4_crackcenterstrain_href.getpath(),
     ]
     
-    output_href=hrefv(quote(dc_measident_str+"_dynamicmodel.py.bz2"),dc_dest_href)
+    output_href=hrefv(quote(dc_measident_str+"_dynamicmodel.csv.bz2"),dc_dest_href)
 
     (output_filename, plotpaths) = process_multisweep_from_files(xducer_velspec_filepaths,
                                                                  xducer_displspec_filepaths,

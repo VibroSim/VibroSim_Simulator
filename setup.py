@@ -81,8 +81,13 @@ em_dict=dict([ (module.name,module) for module in ext_modules])
 
 
 
-#console_scripts=[ "vibro_estparam" ]
-#console_scripts_entrypoints = [ "%s = vibro_estparam.bin.%s:main" % (script,script.replace("-","_")) for script in console_scripts ]
+console_scripts=[ 
+    "vibrosim_optimize_freqbands",
+    "vibrosim_process_multisweep",
+    "vibrosim_process_compare_multisweep",
+ ]
+
+console_scripts_entrypoints = [ "%s = VibroSim_Simulator.bin.%s:main" % (script,script.replace("-","_")) for script in console_scripts ]
 
 
 
@@ -93,7 +98,7 @@ setup(name="VibroSim_Simulator",
       url="http://thermal.cnde.iastate.edu",
       zip_safe=False,
       ext_modules=ext_modules,
-      packages=["VibroSim_Simulator"], # ,"VibroSim_Simulator.bin"],
+      packages=["VibroSim_Simulator", "VibroSim_Simulator.bin"],
       cmdclass={"install_lib": install_lib_save_version },
       package_data={"VibroSim_Simulator": VibroSim_Simulator_package_files},
       entry_points={ "limatix.processtrak.step_url_search_path": [ "limatix.share.pt_steps = VibroSim_Simulator:getstepurlpath" ],

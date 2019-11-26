@@ -9,6 +9,7 @@ VibroSim Simulator relies directly on the following packages:
   * angled_friction_model
   * crackclosuresim2
   * Limatix
+  * Python Pandas 0.17.1 or later
 
 As such, it requires MATLAB, COMSOL, and Python. The Python
 must be at least 2.7 and should include the full ipython,
