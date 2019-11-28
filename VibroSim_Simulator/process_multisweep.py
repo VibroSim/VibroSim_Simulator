@@ -7,7 +7,8 @@ import scipy.interpolate
 import collections
 import read_comsol_probe_txt
 #import lzma
-import bz2
+import pandas as pd
+#import bz2
 
 from matplotlib import pyplot as pl
 
@@ -24,7 +25,6 @@ def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,descr):
     
     num_segments=len(segment_filepaths)
 
-    path
     min_df = np.inf
 
     freq_key='freq (Hz)'
@@ -337,7 +337,7 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         # the minus sign is because the COMSOL model calculation
         # depending on which is used, evaluates positive in the
         # outward normal direction.
-        if xducer_veltime_filename is not None:
+        if xducer_veltime_filepath is not None:
             xducer_veltime_args=xducer_veltime_trange,-xducer_veltime,'-'
             pass
         else:
@@ -385,7 +385,7 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         # the minus sign is because the COMSOL model calculation
         # depending on which is used, evaluates positive in the
         # outward normal direction. 
-        if xducer_displtime_filename is not None:
+        if xducer_displtime_filepath is not None:
             xducer_displtime_args=[xducer_displtime_trange,-xducer_displtime,'-']
             pass
         else:
@@ -410,7 +410,7 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         # the minus sign is because the COMSOL model calculation
         # depending on which is used, evaluates positive in the
         # outward normal direction. 
-        if laser_veltime_filename is not None:
+        if laser_veltime_filepath is not None:
             laser_veltime_args=[laser_veltime_trange,-laser_veltime,'-']
             pass
         else:
@@ -458,7 +458,7 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         # the minus sign is because the COMSOL model calculation
         # depending on which is used, evaluates positive in the
         # outward normal direction. 
-        if laser_displtime_filename is not None:
+        if laser_displtime_filepath is not None:
             laser_displtime_args=[laser_displtime_trange,-laser_displtime,'-']
             pass
         else:
