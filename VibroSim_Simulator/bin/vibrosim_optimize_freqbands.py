@@ -10,7 +10,12 @@ from matplotlib import pyplot as pl
 # to a time-domain response. 
 
 
-def run(args):
+def main(args=None):
+
+    if args is None:
+        args=sys.argv
+        pass
+    
     filename=args[1]
 
     temporal_decay_divisor = 50.0

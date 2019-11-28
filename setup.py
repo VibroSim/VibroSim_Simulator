@@ -102,7 +102,7 @@ setup(name="VibroSim_Simulator",
       cmdclass={"install_lib": install_lib_save_version },
       package_data={"VibroSim_Simulator": VibroSim_Simulator_package_files},
       entry_points={ "limatix.processtrak.step_url_search_path": [ "limatix.share.pt_steps = VibroSim_Simulator:getstepurlpath" ],
-                     #"console_scripts": console_scripts_entrypoints,
+                     "console_scripts": console_scripts_entrypoints,
                  },
       python_requires='>=2.7.0')
 

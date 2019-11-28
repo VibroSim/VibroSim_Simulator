@@ -27,7 +27,10 @@ from limatix.dc_value import numericunitsvalue as numericunitsv
 from VibroSim_Simulator.process_multisweep import process_multisweep
 
 
-def run(args):
+def main(args=None):
+    if args is None:
+        args=sys.argv
+        pass
     
     if len(args) < 8:
         print("usage: vibrosim_process_compare_multisweep <datadir_path>  <xducer_velspec_filename_template> <xducer_displspec_filename_template> <laser_velspec_filename_template> <laser_displspec_filename_template> <crackcenterstrainspec_filename_template> <xducer_veltime_filename> <xducer_displtime_filename> <laser_veltime_filename> <laser_displtime_filename> <[output_filename.py.bz2] [plotdir] [endcrop_seconds]")
