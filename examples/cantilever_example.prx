@@ -90,18 +90,10 @@
   </prx:step>
 
   <prx:step name="simulate_welder">
-    <prx:param name="dc_max_t" dcv:units="s">0.02</prx:param>
-    <prx:param name="dc_mass_of_welder_and_slider" dcv:units="kg">2.0</prx:param>
-    <prx:param name="dc_pneumatic_force" dcv:units="N">100</prx:param>
-    <prx:param name="dc_welder_elec_ampl">1e8</prx:param>
-    <prx:param name="dc_welder_spring_constant" dcv:units="N/m">5000</prx:param>
-    <prx:param name="dc_R_contact" dcv:units="m">25.4e-3</prx:param>
-    <prx:param name="dc_welder_elec_freq" dcv:units="Hz">19890</prx:param>
-    <prx:param name="dc_gpu_device_priority_list">[('NVIDIA CUDA','Quadro GP100'), ('Intel(R) OpenCL HD Graphics','Intel(R) Gen9 HD Graphics NEO'), ('Portable Computing Language', 'pthread-AMD EPYC 7351P 16-Core Processor')]</prx:param>
-    
+    <prx:param name="dc_gpu_device_priority_list">[('NVIDIA CUDA','Quadro GP100'), ('Intel(R) OpenCL HD Graphics','Intel(R) Gen9 HD Graphics NEO'), ('Portable Computing Language', 'pthread-AMD EPYC 7351P 16-Core Processor')]</prx:param>  
     <prx:script name="vibrosim_simulate_welder.py"/>
   </prx:step>
-
+  
   <prx:step name="plot_welder_motion">
     <prx:script name="vibrosim_plot_welder_motion.py"/>
   </prx:step>
