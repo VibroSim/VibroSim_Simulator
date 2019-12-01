@@ -237,10 +237,20 @@ def process_multisweep(path,
         xducer_displtime_filepath = None
         pass
 
+    
+    if laser_velspec_filename_template is not None:
+        laser_velspec_filepaths = [ os.path.join(path,laser_velspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
+        pass
+    else:
+        laser_velspec_filepaths=None
+        pass
 
-    laser_velspec_filepaths = [ os.path.join(path,laser_velspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
-    laser_displspec_filepaths = [ os.path.join(path,laser_displspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
-
+    if laser_displspec_filename_template is not None:
+        laser_displspec_filepaths = [ os.path.join(path,laser_displspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
+        pass
+    else:
+        laser_displspec_filepaths=None
+        pass
 
         
     if laser_veltime_filename is not None:
@@ -257,8 +267,12 @@ def process_multisweep(path,
         laser_displtime_filepath = None
         pass
 
-    crackcenterstrainspec_filepaths = [ os.path.join(path,crackcenterstrainspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
-        
+    if crackcenterstrainspec_filename_template is not None:
+        crackcenterstrainspec_filepaths = [ os.path.join(path,crackcenterstrainspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
+        pass
+    else:
+        crackcenterstrainspec_filepaths = None
+        pass
 
     return process_multisweep_from_files(xducer_velspec_filepaths,
                                          xducer_displspec_filepaths,
@@ -316,13 +330,19 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
 
 
 
-    (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum(laser_velspec_filepaths,1,dt,impulseexcitation_width,"laser point velocity (m/s)/(N*s)")
+    if laser_velspec_filepaths is not None:
+        (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum(laser_velspec_filepaths,1,dt,impulseexcitation_width,"laser point velocity (m/s)/(N*s)")
+        pass
 
-    (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered)=read_spectrum(laser_displspec_filepaths,1,dt,impulseexcitation_width,"laser point displacement m/(N*s)")
+    if laser_displspec_filepaths is not None:
+        (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered)=read_spectrum(laser_displspec_filepaths,1,dt,impulseexcitation_width,"laser point displacement m/(N*s)")
+        pass
 
-    (crackcenternormalstrain_trange,crackcenternormalstrainspec_frange,crackcenternormalstrain_timedomain,crackcenternormalstrainspec,crackcenternormalstrain_filtered_timedomain,crackcenternormalstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,2,dt,impulseexcitation_width,"crack center normal strain (unitless)") # colnum==1 is strain magnitude, colnum==2 is normal strain, colnum==3 is shear strain
-
-    (crackcentershearstrain_trange,crackcentershearstrainspec_frange,crackcentershearstrain_timedomain,crackcentershearstrainspec,crackcentershearstrain_filtered_timedomain,crackcentershearstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,3,dt,impulseexcitation_width,"crack center shear strain (unitless)")
+    if crackcenterstrainspec_filepaths is not None:
+        (crackcenternormalstrain_trange,crackcenternormalstrainspec_frange,crackcenternormalstrain_timedomain,crackcenternormalstrainspec,crackcenternormalstrain_filtered_timedomain,crackcenternormalstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,2,dt,impulseexcitation_width,"crack center normal strain (unitless)") # colnum==1 is strain magnitude, colnum==2 is normal strain, colnum==3 is shear strain
+        
+        (crackcentershearstrain_trange,crackcentershearstrainspec_frange,crackcentershearstrain_timedomain,crackcentershearstrainspec,crackcentershearstrain_filtered_timedomain,crackcentershearstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,3,dt,impulseexcitation_width,"crack center shear strain (unitless)")
+        pass
 
     if laser_veltime_filepath is not None:
         (laser_veltime_trange,laser_veltime) = read_timedomain(laser_veltime_filepath)
@@ -408,133 +428,138 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         pl.savefig(transducer_displacement_time_domain_plotpath,dpi=300)
         plot_paths["transducer_displacement_time_domain"]=transducer_displacement_time_domain_plotpath
         
+        
+        if laser_velspec_filepaths is not None:
+            pl.figure()
+            # This plot should match COMSOL timedomain velocity.
+            # the minus sign is because the COMSOL model calculation
+            # depending on which is used, evaluates positive in the
+            # outward normal direction. 
+            if laser_veltime_filepath is not None:
+                laser_veltime_args=[laser_veltime_trange,-laser_veltime,'-']
+                pass
+            else:
+                laser_veltime_args=[]
+                pass
+            pl.plot(laser_vel_trange,np.real(laser_vel_filtered_timedomain),'-',
+                    laser_vel_trange,np.real(laser_vel_timedomain),'-',
+                    *laser_veltime_args)
+            pl.title('Laser velocity (time domain)')
+            pl.xlabel('Time(s)')
+            pl.ylabel('(m/s)/(N*s)')
+            pl.grid(True)
+            pl.legend(('FD fusion filtered','FD fusion unfiltered','Time domain'))
+            laser_velocity_time_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_velocity_time_domain.png')
+            pl.savefig(laser_velocity_time_domain_plotpath,dpi=300)
+            plot_paths["laser_velocity_time_domain"]=laser_velocity_time_domain_plotpath
 
-        pl.figure()
-        # This plot should match COMSOL timedomain velocity.
-        # the minus sign is because the COMSOL model calculation
-        # depending on which is used, evaluates positive in the
-        # outward normal direction. 
-        if laser_veltime_filepath is not None:
-            laser_veltime_args=[laser_veltime_trange,-laser_veltime,'-']
-            pass
-        else:
-            laser_veltime_args=[]
-            pass
-        pl.plot(laser_vel_trange,np.real(laser_vel_filtered_timedomain),'-',
-                laser_vel_trange,np.real(laser_vel_timedomain),'-',
-                *laser_veltime_args)
-        pl.title('Laser velocity (time domain)')
-        pl.xlabel('Time(s)')
-        pl.ylabel('(m/s)/(N*s)')
-        pl.grid(True)
-        pl.legend(('FD fusion filtered','FD fusion unfiltered','Time domain'))
-        laser_velocity_time_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_velocity_time_domain.png')
-        pl.savefig(laser_velocity_time_domain_plotpath,dpi=300)
-        plot_paths["laser_velocity_time_domain"]=laser_velocity_time_domain_plotpath
 
-
-        pl.figure()
-        pl.loglog(laser_velspec_frange,np.abs(laser_velspec_filtered),'-',
-                  laser_velspec_frange,np.abs(laser_velspec),'-')
-        pl.axis((10,1e5,np.abs(laser_velspec_filtered[1]),np.max(np.abs(laser_velspec_filtered))*1.2))
-        pl.xlabel('Frequency (Hz)')
-        pl.ylabel('(m/s)/N')
-        pl.title('Laser velocity (frequency domain)')
-        pl.grid(True)
-        laser_velocity_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_velocity_frequency_domain.png')
-        pl.savefig(laser_velocity_frequency_domain_plotpath,dpi=300)
-        plot_paths["laser_velocity_frequency_domain"]=laser_velocity_frequency_domain_plotpath
-        
-        
-        pl.figure()
-        pl.semilogx(laser_velspec_frange,np.angle(laser_velspec_filtered))
-        pl.grid(True)
-        pl.xlabel('Frequency (Hz)')
-        pl.ylabel('Radians')
-        pl.title('Laser phase (frequency domain)')
-        laser_phase_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_phase_frequency_domain.png')
-        pl.savefig(laser_phase_frequency_domain_plotpath,dpi=300)
-        plot_paths["laser_phase_frequency_domain"]=laser_phase_frequency_domain_plotpath
-        
-        
-        pl.figure()
-        # This plot should match COMSOL timedomain velocity.
-        # the minus sign is because the COMSOL model calculation
-        # depending on which is used, evaluates positive in the
-        # outward normal direction. 
-        if laser_displtime_filepath is not None:
-            laser_displtime_args=[laser_displtime_trange,-laser_displtime,'-']
-            pass
-        else:
-            laser_displtime_args=[]
-            pass
+            pl.figure()
+            pl.loglog(laser_velspec_frange,np.abs(laser_velspec_filtered),'-',
+                      laser_velspec_frange,np.abs(laser_velspec),'-')
+            pl.axis((10,1e5,np.abs(laser_velspec_filtered[1]),np.max(np.abs(laser_velspec_filtered))*1.2))
+            pl.xlabel('Frequency (Hz)')
+            pl.ylabel('(m/s)/N')
+            pl.title('Laser velocity (frequency domain)')
+            pl.grid(True)
+            laser_velocity_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_velocity_frequency_domain.png')
+            pl.savefig(laser_velocity_frequency_domain_plotpath,dpi=300)
+            plot_paths["laser_velocity_frequency_domain"]=laser_velocity_frequency_domain_plotpath
             
-        pl.plot(laser_displ_trange,np.real(laser_displ_filtered_timedomain),'-',
-                laser_displ_trange,np.real(laser_displ_timedomain),'-',
-                *laser_displtime_args)
-        pl.title('Laser displacement (time domain)')
-        pl.xlabel('Time(s)')
-        pl.ylabel('m/(N*s)')
-        pl.grid(True)
-        pl.legend(('FD fusion filtered','FD fusion unfiltered','Time domain'))
-        laser_displacement_time_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_displacement_time_domain.png')
-        pl.savefig(laser_displacement_time_domain_plotpath,dpi=300)
-        plot_paths["laser_displacement_time_domain"]=laser_displacement_time_domain_plotpath
         
-
-        pl.figure()
-        pl.plot(crackcenternormalstrain_trange,np.real(crackcenternormalstrain_filtered_timedomain),'-',
-                crackcenternormalstrain_trange,np.real(crackcenternormalstrain_timedomain),'-')
-        pl.title('Crack center normal strain (time domain)')
-        pl.xlabel('Time(s)')
-        pl.ylabel('1/(N*s)')
-        pl.grid(True)
-        pl.legend(('FD fusion filtered','FD fusion unfiltered'))
-        crack_center_normal_strain_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_strain_time_domain.png')
-        pl.savefig(crack_center_normal_strain_time_domain_plotpath,dpi=300)
-        plot_paths["crack_center_normal_strain_time_domain"]=crack_center_normal_strain_time_domain_plotpath
+            pl.figure()
+            pl.semilogx(laser_velspec_frange,np.angle(laser_velspec_filtered))
+            pl.grid(True)
+            pl.xlabel('Frequency (Hz)')
+            pl.ylabel('Radians')
+            pl.title('Laser phase (frequency domain)')
+            laser_phase_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_phase_frequency_domain.png')
+            pl.savefig(laser_phase_frequency_domain_plotpath,dpi=300)
+            plot_paths["laser_phase_frequency_domain"]=laser_phase_frequency_domain_plotpath
+            pass # laser_velspec_filepaths
         
-
-        pl.figure()
-        pl.plot(crackcentershearstrain_trange,np.real(crackcentershearstrain_filtered_timedomain),'-',
-                crackcentershearstrain_trange,np.real(crackcentershearstrain_timedomain),'-')
-        pl.title('Crack center shear strain (time domain)')
-        pl.xlabel('Time(s)')
-        pl.ylabel('1/(N*s)')
-        pl.grid(True)
-        pl.legend(('FD fusion filtered','FD fusion unfiltered'))
-        crack_center_shear_strain_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_strain_time_domain.png')
-        pl.savefig(crack_center_shear_strain_time_domain_plotpath,dpi=300)
-        plot_paths["crack_center_shear_strain_time_domain"]=crack_center_shear_strain_time_domain_plotpath
-        
-
-
-
-        pl.figure()
-        pl.loglog(crackcenternormalstrainspec_frange,np.abs(crackcenternormalstrainspec_filtered),'-',
-                  crackcenternormalstrainspec_frange,np.abs(crackcenternormalstrainspec),'-')
-        pl.axis((10,1e5,np.abs(crackcenternormalstrainspec_filtered[1]),np.max(np.abs(crackcenternormalstrainspec_filtered))*1.2))
-        pl.xlabel('Frequency (Hz)')
-        pl.ylabel('1/N')
-        pl.title('Crack center normal strain (frequency domain)')
-        pl.grid(True)
-        crack_center_normal_strain_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_strain_frequency_domain.png')
-        pl.savefig(crack_center_normal_strain_frequency_domain_plotpath,dpi=300)
-        plot_paths["crack_center_normal_strain_frequency_domain"]=crack_center_normal_strain_frequency_domain_plotpath
+        if laser_displspec_filepaths is not None:
+            pl.figure()
+            # This plot should match COMSOL timedomain velocity.
+            # the minus sign is because the COMSOL model calculation
+            # depending on which is used, evaluates positive in the
+            # outward normal direction. 
+            if laser_displtime_filepath is not None:
+                laser_displtime_args=[laser_displtime_trange,-laser_displtime,'-']
+                pass
+            else:
+                laser_displtime_args=[]
+                pass
+                
+            pl.plot(laser_displ_trange,np.real(laser_displ_filtered_timedomain),'-',
+                    laser_displ_trange,np.real(laser_displ_timedomain),'-',
+                    *laser_displtime_args)
+            pl.title('Laser displacement (time domain)')
+            pl.xlabel('Time(s)')
+            pl.ylabel('m/(N*s)')
+            pl.grid(True)
+            pl.legend(('FD fusion filtered','FD fusion unfiltered','Time domain'))
+            laser_displacement_time_domain_plotpath = os.path.join(plotdir,plotprefix+'laser_displacement_time_domain.png')
+            pl.savefig(laser_displacement_time_domain_plotpath,dpi=300)
+            plot_paths["laser_displacement_time_domain"]=laser_displacement_time_domain_plotpath
+            pass
 
 
-        pl.figure()
-        pl.loglog(crackcentershearstrainspec_frange,np.abs(crackcentershearstrainspec_filtered),'-',
-                  crackcentershearstrainspec_frange,np.abs(crackcentershearstrainspec),'-')
-        pl.axis((10,1e5,np.abs(crackcentershearstrainspec_filtered[1]),np.max(np.abs(crackcentershearstrainspec_filtered))*1.2))
-        pl.xlabel('Frequency (Hz)')
-        pl.ylabel('1/N')
-        pl.title('Crack center shear strain (frequency domain)')
-        pl.grid(True)
-        crack_center_shear_strain_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_strain_frequency_domain.png')
-        pl.savefig(crack_center_shear_strain_frequency_domain_plotpath,dpi=300)
-        plot_paths["crack_center_shear_strain_frequency_domain"]=crack_center_shear_strain_frequency_domain_plotpath
 
+        if crackcenterstrainspec_filepaths is not None:
+            pl.figure()
+            pl.plot(crackcenternormalstrain_trange,np.real(crackcenternormalstrain_filtered_timedomain),'-',
+                    crackcenternormalstrain_trange,np.real(crackcenternormalstrain_timedomain),'-')
+            pl.title('Crack center normal strain (time domain)')
+            pl.xlabel('Time(s)')
+            pl.ylabel('1/(N*s)')
+            pl.grid(True)
+            pl.legend(('FD fusion filtered','FD fusion unfiltered'))
+            crack_center_normal_strain_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_strain_time_domain.png')
+            pl.savefig(crack_center_normal_strain_time_domain_plotpath,dpi=300)
+            plot_paths["crack_center_normal_strain_time_domain"]=crack_center_normal_strain_time_domain_plotpath
+            
+            
+            pl.figure()
+            pl.plot(crackcentershearstrain_trange,np.real(crackcentershearstrain_filtered_timedomain),'-',
+                    crackcentershearstrain_trange,np.real(crackcentershearstrain_timedomain),'-')
+            pl.title('Crack center shear strain (time domain)')
+            pl.xlabel('Time(s)')
+            pl.ylabel('1/(N*s)')
+            pl.grid(True)
+            pl.legend(('FD fusion filtered','FD fusion unfiltered'))
+            crack_center_shear_strain_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_strain_time_domain.png')
+            pl.savefig(crack_center_shear_strain_time_domain_plotpath,dpi=300)
+            plot_paths["crack_center_shear_strain_time_domain"]=crack_center_shear_strain_time_domain_plotpath
+            
+            
+            
+            
+            pl.figure()
+            pl.loglog(crackcenternormalstrainspec_frange,np.abs(crackcenternormalstrainspec_filtered),'-',
+                      crackcenternormalstrainspec_frange,np.abs(crackcenternormalstrainspec),'-')
+            pl.axis((10,1e5,np.abs(crackcenternormalstrainspec_filtered[1]),np.max(np.abs(crackcenternormalstrainspec_filtered))*1.2))
+            pl.xlabel('Frequency (Hz)')
+            pl.ylabel('1/N')
+            pl.title('Crack center normal strain (frequency domain)')
+            pl.grid(True)
+            crack_center_normal_strain_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_strain_frequency_domain.png')
+            pl.savefig(crack_center_normal_strain_frequency_domain_plotpath,dpi=300)
+            plot_paths["crack_center_normal_strain_frequency_domain"]=crack_center_normal_strain_frequency_domain_plotpath
+            
+            
+            pl.figure()
+            pl.loglog(crackcentershearstrainspec_frange,np.abs(crackcentershearstrainspec_filtered),'-',
+                      crackcentershearstrainspec_frange,np.abs(crackcentershearstrainspec),'-')
+            pl.axis((10,1e5,np.abs(crackcentershearstrainspec_filtered[1]),np.max(np.abs(crackcentershearstrainspec_filtered))*1.2))
+            pl.xlabel('Frequency (Hz)')
+            pl.ylabel('1/N')
+            pl.title('Crack center shear strain (frequency domain)')
+            pl.grid(True)
+            crack_center_shear_strain_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_strain_frequency_domain.png')
+            pl.savefig(crack_center_shear_strain_frequency_domain_plotpath,dpi=300)
+            plot_paths["crack_center_shear_strain_frequency_domain"]=crack_center_shear_strain_frequency_domain_plotpath
+            pass # crackcenterstrainspec_filepaths
 
         pass
         
@@ -551,23 +576,26 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
     # applied at the transducer location 
     out_frame.insert(len(out_frame.columns),"specimen_mobility(m/(N*s^2))",xducer_vel_timedomain.real[:(-int(endcrop/dt))])
     
-    # specimen_laser is velocity response at laser position in 
-    # m/s per unit N*s impulse
-    # applied at the transducer location 
-    out_frame.insert(len(out_frame.columns),"specimen_laser(m/(N*s^2))",laser_vel_timedomain.real[:(-int(endcrop/dt))])
-    
+    if laser_velspec_filepaths is not None:
+        # specimen_laser is velocity response at laser position in 
+        # m/s per unit N*s impulse
+        # applied at the transducer location 
+        out_frame.insert(len(out_frame.columns),"specimen_laser(m/(N*s^2))",laser_vel_timedomain.real[:(-int(endcrop/dt))])
+        pass
 
-    
-    # specimen_crackcenternormalstrain is normal strain response at crack center position in 
-    # unitless per unit N*s impulse
-    # applied at the transducer location 
-    out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstrain(1/(N*s))",crackcenternormalstrain_timedomain.real[:(-int(endcrop/dt))])
+    if crackcenterstrainspec_filepaths is not None:
+
+        # specimen_crackcenternormalstrain is normal strain response at crack center position in 
+        # unitless per unit N*s impulse
+        # applied at the transducer location 
+        out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstrain(1/(N*s))",crackcenternormalstrain_timedomain.real[:(-int(endcrop/dt))])
 
 
-    # specimen_crackcentershearstrain is normal strain response at crack center position in 
-    # unitless per unit N*s impulse
-    # applied at the transducer location 
-    out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstrain(1/(N*s))",crackcentershearstrain_timedomain.real[:(-int(endcrop/dt))])
+        # specimen_crackcentershearstrain is normal strain response at crack center position in 
+        # unitless per unit N*s impulse
+        # applied at the transducer location 
+        out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstrain(1/(N*s))",crackcentershearstrain_timedomain.real[:(-int(endcrop/dt))])
+        pass
     
     
     if output_filename.endswith(".bz2"):
