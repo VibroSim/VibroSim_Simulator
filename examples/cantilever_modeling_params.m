@@ -80,20 +80,6 @@ AddParamToParamdb(M,'amplitude',1.0,'V');
 AddParamToParamdb(M,'spclength',0.2538,'m'); % length, measured by Jared Taylor
 AddParamToParamdb(M,'spcwidth',50.9e-3,'m'); % width, measured by Jared Taylor
 AddParamToParamdb(M,'spcthickness',6.45e-3,'m'); % thickness, measured by Jared Taylor
-%AddParamToParamdb(M,'spcviscousdamping',1.2e4,'N*s'); % This was value used in June 16 run
-%AddParamToParamdb(M,'spcviscousdamping',5e4,'N*s'); % Value used up until 10/31/19
-%AddParamToParamdb(M,'spcviscousdamping',7e3,'N*s'); % Value used after 10/31/19
-AddParamToParamdb(M,'spcviscousdamping',2e3,'N*s'); % Value used after 11/06/19
-
-AddParamToParamdb(M,'mountdamping_scalefactor',2.5e-1); % Factor by which the mount damping is larger than calculated from theory ... 2.5e-5 for 11/7/19
-AddParamToParamdb(M,'mountstiffness_scalefactor',2.5e-1); % Factor by which the mount stiffness is larger than calculated from theory... 2.5e-5 for 11/7/19
-
-% Baseline mountstiffness and limiting_mountdamping are to help make the frequency-dependent mount stiffness and mount 
-% damping closer to linear to help with the eigenvalue (modal) analysis. 
-% Generally select them by adding frequency domain 1D plots of the cantilever_mount_dampingperarea and cantilever_mount_stiffnessperarea
-% and making them low and high enough respectively not to mess too much with the lowest order resonance of interest. 
-AddParamToParamdb(M,'baseline_mountstiffness',2.5e11,'N/m^3');
-AddParamToParamdb(M,'limiting_mountdamping',3e8,'N*s/m^3');
 
 
 % These parameters are book values for Aluminum (6061?) material 

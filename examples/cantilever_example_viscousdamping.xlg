@@ -1,0 +1,72 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dc:experiment xmlns:dc="http://limatix.org/datacollect" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
+  <!-- Common parameters for all "measurements" (really simulations) go 
+  here -->
+  <dc:dest xlink:type="simple" xlink:href="cantilever_example_viscousdamping_output/"/>  <!-- Location for writing output files -->
+ 
+  <dc:friction_coefficient>.3968</dc:friction_coefficient>
+  <dc:msqrtR dcv:units="m^-1.5">3.942e7</dc:msqrtR>
+  <dc:staticload_mount dcv:units="Newtons">0</dc:staticload_mount>
+  <dc:xducerforce dcv:units="Newtons">100</dc:xducerforce>
+  <dc:exclength dcv:units="seconds">1.0</dc:exclength>
+  <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
+  <dc:numdraws>100</dc:numdraws>
+  <dc:spcmaterial>Aluminum</dc:spcmaterial>
+  <dc:YoungsModulus dcv:units="Pascals">69e9</dc:YoungsModulus>
+  <dc:YieldStrength dcv:units="Pascals">276e6</dc:YieldStrength>
+  <dc:PoissonsRatio>0.32</dc:PoissonsRatio>
+  <dc:Density dcv:units="kg/m^3">2697</dc:Density>
+  <dc:spcviscousdamping dcv:units='N*s'>2e3</dc:spcviscousdamping>
+  <dc:mountdamping_scalefactor>2.5e-1</dc:mountdamping_scalefactor>
+  <dc:mountstiffness_scalefactor>2.5e-1</dc:mountstiffness_scalefactor>
+  <dc:baseline_mountstiffness dcv:units='N/m^3'>2.5e11</dc:baseline_mountstiffness>
+  <dc:limiting_mountdamping dcv:units='N*s/m^3'>3e8<dc:limiting_mountdamping>
+
+  
+  <dc:mass_of_welder_and_slider dcv:units="kg">2.0</dc:mass_of_welder_and_slider>
+  <dc:pneumatic_force dcv:units="N">100</dc:pneumatic_force>
+  <dc:welder_elec_ampl>1e8</dc:welder_elec_ampl>
+  <dc:welder_spring_constant dcv:units="N/m">5000</dc:welder_spring_constant>
+  <dc:R_contact dcv:units="m">25.4e-3</dc:R_contact>
+  <!-- <dc:welder_elec_freq dcv:units="Hz">19890</dc:welder_elec_freq> (more robust to just use the built-in default until we have auto-tune ready -->
+  
+  <!-- "couplant" coordinates are really the coordinates of the welder tip -->
+  <dc:couplantx dcv:units="m">.245</dc:couplantx>
+  <dc:couplanty dcv:units="m">.025</dc:couplanty>
+  <dc:couplantz dcv:units="m">0</dc:couplantz>
+  <dc:couplantangle dcv:units="degrees">NaN</dc:couplantangle> <!-- NaN means use round couplant (i.e. excitation zone) -->
+  
+
+  <!-- reff_side1, seff_side1, reff_side2, seff_side2 are how
+  the closure state of the crack is specified: by radius of 
+  closure point at different external stress levels -->
+
+  <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
+  <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
+  <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
+  <dc:seff_side2 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> 0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side2>
+
+  <!-- The temporal profile of the excitation waveform -->
+  <!-- The ultrasonic welder only supports t0==t1 and t2==t3 -->
+  <dc:exc_t0 dcv:units="s">0.02</dc:exc_t0> <!-- Turn on time -->
+  <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1> <!-- Full ampltude time -->
+  <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2> <!-- Amplitude decay start -->
+  <dc:exc_t3 dcv:units="s">0.98</dc:exc_t3> <!-- Turn off time -->
+  <!-- <dc:exc_t4 dcv:units="s">1.02</dc:exc_t4> --> <!-- Assumed end of vibration-->
+  <dc:exc_t4 dcv:units="s">0.03</dc:exc_t4>
+
+    <prx:param name="dc_max_t" dcv:units="s">0.04</prx:param>
+
+
+  
+  <!-- Each dc:measurement element corresponds to a simulation run -->
+  <!-- Parameters from above can be moved inside and varied between 
+  different dc:measurement elements -->
+  <dc:measurement>
+    <dc:measnum>1</dc:measnum> <!-- used as an index, not strictly necessary -->
+    <dc:measident>meas1</dc:measident> <!-- measident is used as a filename prefix -->
+
+    
+
+  </dc:measurement>
+</dc:experiment>  
