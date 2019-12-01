@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import scipy.interpolate
 import collections
-import read_comsol_probe_txt
+from . import read_comsol_probe_txt
 #import lzma
 import pandas as pd
 #import bz2
