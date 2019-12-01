@@ -299,7 +299,11 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
 
     (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered)=read_spectrum(xducer_displspec_filepaths,1,dt,impulseexcitation_width,"transducer displacement m/(N*s)")
 
-
+    # Try adding step to xducer_displ_timedomain
+    #xducer_displ_timedomain -= .31e-3
+    #xducer_displ_timedomain=np.cumsum(xducer_vel_timedomain)*dt
+    #xducer_displ_timedomain[0]=.6e-3
+    
 
     if xducer_veltime_filepath is not None:
         (xducer_veltime_trange,xducer_veltime) = read_timedomain(xducer_veltime_filepath)
@@ -576,4 +580,3 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
 
     #pl.show()
     return (output_filename,plot_paths)
-    pass
