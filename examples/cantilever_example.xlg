@@ -16,10 +16,10 @@
   <dc:YieldStrength dcv:units="Pascals">276e6</dc:YieldStrength>
   <dc:PoissonsRatio>0.32</dc:PoissonsRatio>
   <dc:Density dcv:units="kg/m^3">2697</dc:Density>
-  <dc:spcrayleighdamping_alpha dcv:units="s^-1">2</dc:spcrayleighdamping_alpha>
+  <dc:spcrayleighdamping_alpha dcv:units="s^-1">5</dc:spcrayleighdamping_alpha>
   <dc:spcrayleighdamping_beta dcv:units="s">2e-7</dc:spcrayleighdamping_beta>
   
-  <dc:mass_of_welder_and_slider> dcv:units="kg">2.0</dc:mass_of_welder_and_slider>
+  <dc:mass_of_welder_and_slider dcv:units="kg">2.0</dc:mass_of_welder_and_slider>
   <dc:pneumatic_force dcv:units="N">100</dc:pneumatic_force>
   <dc:welder_elec_ampl>1e8</dc:welder_elec_ampl>
   <dc:welder_spring_constant dcv:units="N/m">5000</dc:welder_spring_constant>
