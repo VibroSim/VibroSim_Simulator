@@ -223,6 +223,8 @@ def run(_xmldoc,_element,
     (totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,power_per_m2_side1,power_per_m2_stddev_side1)
     (totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,power_per_m2_side2,power_per_m2_stddev_side2)
 
+    # !!!*** Need to consider uncertainty due to uncertainty in mu, msqrtR, plus response variability in here!!!***
+
     totalpower=totalpower_side1 + totalpower_side2
      
     pl.figure()

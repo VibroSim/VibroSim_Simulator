@@ -9,7 +9,7 @@
     <dc:measident>meas1</dc:measident>
     <dc:friction_coefficient>.3968</dc:friction_coefficient>
     <dc:msqrtR dcv:units="m^-1.5">3.942e7</dc:msqrtR>
-    <dc:staticload_mount dcv:units="Newtons">0</dc:staticload_mount>
+    <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack -->
     <dc:xducerforce dcv:units="Newtons">0</dc:xducerforce>
     <dc:exclength dcv:units="seconds">1.0</dc:exclength>
     <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>

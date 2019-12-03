@@ -73,7 +73,7 @@
   </prx:step>
 
   <prx:step name="calc_heating">
-    <prx:script name="vibrosim_calc_heating.py"/>
+    <prx:script name="vibrosim_calc_heating_singlefrequency.py"/>
   </prx:step>
   
 
