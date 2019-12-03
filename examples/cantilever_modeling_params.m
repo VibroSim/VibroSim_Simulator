@@ -38,9 +38,6 @@ AddParamToParamdb(M,'simulationburstfreq',15270,'Hz');
 AddParamToParamdb(M,'simulationneigs',70);  % Number of frequencies for modal analysis to seek out
 AddParamToParamdb(M,'simulationeigsaround',100,'Hz'); % Center frequency for modal analysis
 
-AddParamToParamdb(M,'simulationtimestart',0.2,'s');
-AddParamToParamdb(M,'simulationtimestep',0.02,'s');
-AddParamToParamdb(M,'simulationtimeend',1.8,'s');
 
 AddParamToParamdb(M,'simulationcameranetd',.022,'K');
 AddParamToParamdb(M,'simulationsurfaceemissivity',1.0);

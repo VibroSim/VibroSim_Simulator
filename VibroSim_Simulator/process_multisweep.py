@@ -220,7 +220,7 @@ def process_multisweep(path,
 ):  # !!!*** Remember to change process_multisweep_from_files() default params with these default params ***!!!
 
     xducer_velspec_filepaths=[ os.path.join(path,xducer_velspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
-    xducer_displspec_filepaths=[ os.path.join(path,xducer_velspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
+    xducer_displspec_filepaths=[ os.path.join(path,xducer_displspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
 
 
     if xducer_veltime_filename is not None:

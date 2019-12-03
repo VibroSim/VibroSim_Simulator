@@ -1,4 +1,4 @@
-% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_heatingdata_href,dc_staticload_mount_float,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float)
+% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_heatingdata_href,dc_staticload_mount_float,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
 %> figure out the parameters to pass.
@@ -50,6 +50,11 @@ AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
 AddParamToParamdb(M,'spcYoungsModulus',dc_YoungsModulus_float,'Pa');
 AddParamToParamdb(M,'spcPoissonsRatio',dc_PoissonsRatio_float,'');
 AddParamToParamdb(M,'spcDensity',dc_Density_float,'kg/m^3');
+
+% simulationtimestart, simulationtimestep, and simulationtimeend specify the time range of the heat flow simulation
+AddParamToParamdb(M,'simulationtimestart',dc_exc_t0_float,'s');
+AddParamToParamdb(M,'simulationtimestep',0.02,'s');
+AddParamToParamdb(M,'simulationtimeend',dc_exc_t4_float+0.8,'s'); % .8 seconds after assumed end of vibration
 
 AddParamToParamdb(M,'spcmaterialdampingtype','RayleighDamping');
 AddParamToParamdb(M,'spcrayleighdamping_alpha',dc_spcrayleighdamping_alpha_float,'s^-1');

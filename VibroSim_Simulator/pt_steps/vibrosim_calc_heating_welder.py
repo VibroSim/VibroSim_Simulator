@@ -120,7 +120,6 @@ def run(_xmldoc,_element,
         dc_friction_coefficient_float,
         dc_msqrtR_numericunits,
         dc_staticload_numericunits,
-        dc_exclength_numericunits,
         dc_tortuosity_numericunits,
         dc_numdraws_int,
         dc_YoungsModulus_numericunits,
@@ -147,7 +146,12 @@ def run(_xmldoc,_element,
     dc_heatingdata_el = _xmldoc.xpathsinglecontext(_element,"dc:heatingdata")
     dc_heatingdata_href=hrefv.fromxml(_xmldoc,dc_heatingdata_el)
 
+
+    # note t and tstep are the steps for heating output table, 
+    # as distinct from trange and dt which correspond to the motion file
+    # and are much finer
     t=np.linspace(dc_exc_t0_numericunits.value('s'),dc_exc_t4_numericunits.value('s'),100)
+    t_step = t[1]-t[0]
     
     friction_coefficient = dc_friction_coefficient_float
     msqrtR = dc_msqrtR_numericunits.value("m^-1.5")
@@ -160,6 +164,8 @@ def run(_xmldoc,_element,
     motiontable = pd.read_csv(dc_motion_href.getpath(),index_col=0)
 
     
+    # Note distinction between trange and dt defined here and the 
+    # t and t_step defined for the heating output table above. 
     trange = np.array(motiontable.index) # ["Time(s)"]
     dt=trange[1]-trange[0]
     
@@ -168,6 +174,18 @@ def run(_xmldoc,_element,
     # and running that through this !!!***
     crack_normalstrain = np.array(motiontable["specimen_crackcenternormalstrain"])
     crack_shearstrain = np.array(motiontable["specimen_crackcentershearstrain"])
+
+    pl.figure()
+    pl.plot(trange*1e3,crack_normalstrain*1e6,'-',
+            trange*1e3,crack_shearstrain*1e6,'-')
+    pl.grid(True)
+    pl.legend(('Normal strain','shear strain'))
+    pl.xlabel('Time (ms)')
+    pl.ylabel('Engineering strain (micros)')
+    pl.title('Crack strain')
+    crack_strain_href = hrefv(quote(dc_measident_str+"_crack_strain.png"),dc_dest_href)
+    pl.savefig(crack_strain_href.getpath(),dpi=300)
+    
     
     ## pad to power-of-two size
     #n = 2.0**np.ceil(np.log(trange_orig.shape[0]*1.0)/np.log(2.0)) # next power of 2
@@ -377,21 +395,25 @@ def run(_xmldoc,_element,
     normalheating_segment_power_per_m2_stddev_side2=np.zeros((normalstrain_num_extrema,xrange.shape[0]),dtype='d')
     for xidx in range(xrange.shape[0]):
          # vectorized over time-segments
-         straindiff = normalstrain_segment_end_strain - normalstrain_segment_start_strain
+        straindiff = np.abs(normalstrain_segment_end_strain - normalstrain_segment_start_strain)
          
-         normalheating_segment_power_per_m2_hertz_side1 = splev(straindiff,normalheating_power_per_m2_hertz_side1_surr_tck[xidx])
-         normalheating_segment_power_per_m2_hertz_stddev_side1 = splev(straindiff,normalheating_power_per_m2_hertz_stddev_side1_surr_tck[xidx])
+        normalheating_segment_power_per_m2_hertz_side1 = splev(straindiff,normalheating_power_per_m2_hertz_side1_surr_tck[xidx],ext=2)
+        normalheating_segment_power_per_m2_hertz_side1[normalheating_segment_power_per_m2_hertz_side1 < 0.0] = 0.0 # negative heating not allowed (in case spline fit goes negative for some reason)
+        normalheating_segment_power_per_m2_hertz_stddev_side1 = splev(straindiff,normalheating_power_per_m2_hertz_stddev_side1_surr_tck[xidx],ext=2)
+        normalheating_segment_power_per_m2_hertz_stddev_side1[normalheating_segment_power_per_m2_hertz_stddev_side1 < 0.0] = 0.0 # negative stddev not allowed (in case spline fit goes negative for some reason)
 
-         normalheating_segment_power_per_m2_hertz_side2 = splev(straindiff,normalheating_power_per_m2_hertz_side2_surr_tck[xidx])
-         normalheating_segment_power_per_m2_hertz_stddev_side2 = splev(straindiff,normalheating_power_per_m2_hertz_stddev_side2_surr_tck[xidx])
+        normalheating_segment_power_per_m2_hertz_side2 = splev(straindiff,normalheating_power_per_m2_hertz_side2_surr_tck[xidx],ext=2)
+        normalheating_segment_power_per_m2_hertz_side2[normalheating_segment_power_per_m2_hertz_side2 < 0.0] = 0.0 # negative heating not allowed (in case spline fit goes negative for some reason)
+        normalheating_segment_power_per_m2_hertz_stddev_side2 = splev(straindiff,normalheating_power_per_m2_hertz_stddev_side2_surr_tck[xidx],ext=2)
+        normalheating_segment_power_per_m2_hertz_stddev_side2[normalheating_segment_power_per_m2_hertz_stddev_side2 < 0.0] = 0.0 # negative stddev not allowed (in case spline fit goes negative for some reason)
          
-         normalheating_segment_power_per_m2_side1[:,xidx] = normalheating_segment_power_per_m2_hertz_side1*normalstrain_segment_frequency
-         normalheating_segment_power_per_m2_stddev_side1[:,xidx] = normalheating_segment_power_per_m2_hertz_stddev_side1*normalstrain_segment_frequency
+        normalheating_segment_power_per_m2_side1[:,xidx] = normalheating_segment_power_per_m2_hertz_side1*normalstrain_segment_frequency
+        normalheating_segment_power_per_m2_stddev_side1[:,xidx] = normalheating_segment_power_per_m2_hertz_stddev_side1*normalstrain_segment_frequency
 
-         normalheating_segment_power_per_m2_side2[:,xidx] = normalheating_segment_power_per_m2_hertz_side2*normalstrain_segment_frequency
-         normalheating_segment_power_per_m2_stddev_side2[:,xidx] = normalheating_segment_power_per_m2_hertz_stddev_side2*normalstrain_segment_frequency
+        normalheating_segment_power_per_m2_side2[:,xidx] = normalheating_segment_power_per_m2_hertz_side2*normalstrain_segment_frequency
+        normalheating_segment_power_per_m2_stddev_side2[:,xidx] = normalheating_segment_power_per_m2_hertz_stddev_side2*normalstrain_segment_frequency
          
-         pass
+        pass
     
          
     normalheatingtable_power_per_m2_fine_side1 = np.zeros((trange.shape[0],xrange.shape[0]),dtype='d')
@@ -411,6 +433,30 @@ def run(_xmldoc,_element,
     normalheatingtable_power_per_m2_side1 = filterfine(normalheatingtable_power_per_m2_fine_side1,trange,t)
     normalheatingtable_power_per_m2_side2 = filterfine(normalheatingtable_power_per_m2_fine_side2,trange,t)
 
+
+    pl.figure()
+    pl.clf()
+    pl.imshow(normalheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+    pl.colorbar()
+    pl.grid(True)
+    pl.xlabel('Radius from crack center (mm)')
+    pl.ylabel('Time (s)')
+    pl.title('Heating power due to normal strain (W/m^2), side1')
+    normal_heatgram_side1_href = hrefv(quote(dc_measident_str+"_normal_heatgram_side1.png"),dc_dest_href)
+    pl.savefig(normal_heatgram_side1_href.getpath(),dpi=300)
+
+    pl.figure()
+    pl.clf()
+    pl.imshow(normalheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+    pl.colorbar()
+    pl.grid(True)
+    pl.xlabel('Radius from crack center (mm)')
+    pl.ylabel('Time (s)')
+    pl.title('Heating power due to normal strain (W/m^2), side2')
+    normal_heatgram_side2_href = hrefv(quote(dc_measident_str+"_normal_heatgram_side2.png"),dc_dest_href)
+    pl.savefig(normal_heatgram_side2_href.getpath(),dpi=300)
+    
+    
     # normalstrain_heating = surrogate_calc_heating()
     
     meanpower_per_m2_side1 = np.mean(normalheatingtable_power_per_m2_side1,axis=0) # average over time... should add in shear
@@ -422,6 +468,8 @@ def run(_xmldoc,_element,
 
     totalpower=totalpower_side1 + totalpower_side2
      
+
+
     pl.figure()
     pl.clf()
     pl.plot(-xrange*1e3,meanpower_per_m2_side1/1.e3,'-',
@@ -447,8 +495,11 @@ def run(_xmldoc,_element,
     
 
     ret= { 
+        "dc:crack_strain": crack_strain_href,
         "dc:closureplot_side1": closure_state_side1_href,
         "dc:closureplot_side2": closure_state_side2_href,
+        "dc:normal_heatgram_side1": normal_heatgram_side1_href,
+        "dc:normal_heatgram_side2": normal_heatgram_side2_href,
         "dc:heatpower": heatpower_href,  # heating plot
         "dc:heatingdata": dc_heatingdata_href, # TSV (tab separated value) data for COMSOL
         "dc:heatingtotalpower": numericunitsv(totalpower,"W"),
