@@ -4,6 +4,8 @@ import os.path
 import numpy as np
 from matplotlib import pyplot as pl
 
+from .read_spectrum import read_spectrum
+
 def assess_segment(dt,nt,temporal_decay_divisor,spectral_decay_divisor,complex_freqs,segstart,segentries):
     # Our requirement is that all resonances must decay to 1/1000 
     # of their peak before the FFT periodicity kicks in.
@@ -116,27 +118,12 @@ def split_segment(dt,nt,temporal_decay_divisor,spectral_decay_divisor,complex_fr
     return (refined_bestcutoff,seg1_downsampling,seg1_steps,seg2_downsampling,seg2_steps)
 
 
-def optimize_freqbands(filename,temporal_decay_divisor,spectral_decay_divisor,min_freq,dt,FourSegs):
+def optimize_freqbands(complex_freqs_raw,temporal_decay_divisor,spectral_decay_divisor,min_freq,dt,FourSegs):
     """if FourSegs is True we generate four segments, otherwise
     we generate three segments"""
 
-    if filename.lower().endswith(".txt"):
-        # .txt extension... assume COMSOL
-        from VibroSim_Simulator import read_comsol_probe_txt
-        (metadata,fieldheaderdata,fieldrowdata) = read_comsol_probe_txt.read(filename)
-        complex_freqs_raw=fieldrowdata[0]['freq (1/s)'][1]
-        pass
-    elif filename.lower().endswith(".xls") or filename.lower().endswith(".xlsx"):
-        # Excel... assume ANSYS
-        import pandas as pd
-
-        #pd.read_excel(filename)
-        raise NotImplementedError()
-        pass
-    else:
-        raise ValueError("Unknown filename extension %s" % (sys.path.splitext(filename)[1]))
     
-    complex_freqs = complex_freqs_raw[complex_freqs_raw.real >= min_freq]
+    complex_freqs = complex_freqs_raw[(~np.isnan(complex_freqs_raw.real)) & (~np.isnan(complex_freqs_raw.imag)) & (complex_freqs_raw.real >= min_freq)]
     t_maxreqd = np.max(-np.log(1.0/temporal_decay_divisor)/(2.0*np.pi*complex_freqs.imag))
 
     # For the moment let's assume a power of 2 number of timesteps

@@ -5,6 +5,7 @@ import numpy as np
 from matplotlib import pyplot as pl
 
 from limatix.dc_value import numericunitsvalue as numericunitsv
+from VibroSim_Simulator.read_spectrum import read_spectrum
 from VibroSim_Simulator import optimize_freqbands
 
 # Run this on output of modal analysis to interpret 
@@ -23,11 +24,12 @@ def run(dc_modalfreqs_href,
     dt=1e-6 # 1 us timestep in final result
 
     
+    complex_freqs_raw = read_spectrum(filename)
     (seg1_freqstart,seg1_freqstep,seg1_freqend,
      seg2_freqstart,seg2_freqstep,seg2_freqend,
      seg3_freqstart,seg3_freqstep,seg3_freqend,
      seg4_freqstart,seg4_freqstep,seg4_freqend
-    ) = optimize_freqbands.optimize_freqbands(filename,dc_temporal_decay_divisor_float,dc_spectral_decay_divisor_float,min_freq,dt,True)
+    ) = optimize_freqbands.optimize_freqbands(complex_freqs_raw,dc_temporal_decay_divisor_float,dc_spectral_decay_divisor_float,min_freq,dt,True)
     
     ret = {
         "dc:freqband_seg1_start": numericunitsv(seg1_freqstart,"Hz"),
