@@ -18,10 +18,8 @@ from crackclosuresim2 import inverse_closure
 from crackclosuresim2 import crackopening_from_tensile_closure
 from crackclosuresim2 import solve_normalstress
 
-from crackclosuresim2 import ModeI_throughcrack_CODformula
-from crackclosuresim2 import Tada_ModeI_CircularCrack_along_midline
-from crackclosuresim2 import ModeII_throughcrack_CSDformula
-from crackclosuresim2.fabrikant import Fabrikant_ModeII_CircularCrack_along_midline
+from crackclosuresim2 import crack_model_normal_by_name
+from crackclosuresim2 import crack_model_shear_by_name
 
 from angled_friction_model.angled_friction_model import angled_friction_model
 from angled_friction_model.angled_friction_model import integrate_power
@@ -214,7 +212,7 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
                                                        sigma_yield,tau_yield,
                                                        friction_coefficient,
                                                        closure_stress,
-                                                       crack_initial_opening,
+                                                       crack_opening,
                                                        angular_stddev,
                                                        aside,
                                                        static_load,
@@ -395,7 +393,7 @@ def calc_heating_welder(friction_coefficient,
                         30, # surrogate_npoints
                         normalstrain_maxPP,
                         x_bnd,xrange,xstep,
-                        numdraws
+                        numdraws,
                         YoungsModulus, # Pa
                         PoissonsRatio,
                         sigma_yield,
@@ -418,7 +416,7 @@ def calc_heating_welder(friction_coefficient,
                         30, # surrogate_npoints
                         normalstrain_maxPP,
                         x_bnd,xrange,xstep,
-                        numdraws
+                        numdraws,
                         YoungsModulus, # Pa
                         PoissonsRatio,
                         sigma_yield,
@@ -442,7 +440,7 @@ def calc_heating_welder(friction_coefficient,
                         30, # surrogate_npoints
                         shearstrain_maxPP,
                         x_bnd,xrange,xstep,
-                        numdraws
+                        numdraws,
                         YoungsModulus, # Pa
                         PoissonsRatio,
                         sigma_yield,
@@ -464,7 +462,7 @@ def calc_heating_welder(friction_coefficient,
                         30, # surrogate_npoints
                         shearstrain_maxPP,
                         x_bnd,xrange,xstep,
-                        numdraws
+                        numdraws,
                         YoungsModulus, # Pa
                         PoissonsRatio,
                         sigma_yield,
@@ -604,6 +602,27 @@ def calc_heating_welder(friction_coefficient,
     
 
 
+    shear_heatgram_side1_fig=pl.figure()
+    pl.clf()
+    pl.imshow(shearheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+    pl.colorbar()
+    pl.grid(True)
+    pl.xlabel('Radius from crack center (mm)')
+    pl.ylabel('Time (s)')
+    pl.title('Heating power due to shear strain (W/m^2), side1')
+
+
+    shear_heatgram_side2_fig=pl.figure()
+    pl.clf()
+    pl.imshow(shearheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+    pl.colorbar()
+    pl.grid(True)
+    pl.xlabel('Radius from crack center (mm)')
+    pl.ylabel('Time (s)')
+    pl.title('Heating power due to shear strain (W/m^2), side2')
+    
+
+
         
     meanpower_per_m2_side1 = np.mean(normalheatingtable_power_per_m2_side1,axis=0) + np.mean(shearheatingtable_power_per_m2_side1,axis=0) # average over time... 
     meanpower_per_m2_side2 = np.mean(normalheatingtable_power_per_m2_side2,axis=0) + np.mean(shearheatingtable_power_per_m2_side2,axis=0) # average over time...
@@ -647,8 +666,8 @@ def calc_heating_welder(friction_coefficient,
             normalheatingtable_power_per_m2_side2,
             shearheatingtable_power_per_m2_side1,
             shearheatingtable_power_per_m2_side2,
-            meanpower_per_m2_side1
-            meanpower_per_m2_side2
+            meanpower_per_m2_side1,
+            meanpower_per_m2_side2,
             totalpower)
             
             
@@ -674,11 +693,14 @@ def calc_heating_singlefrequency(friction_coefficient,
                                  crack_model_normal_name,
                                  crack_model_shear_name,
                                  crack_model_shear_factor,
-                                 exc_t0,exc_t3, # s
+                                 excitation_frequency,
+                                 exc_t0,exc_t1,exc_t2,exc_t3,exc_t4, # s
                                  harmonicburst_normalstrain, # NOTE: complex
                                  harmonicburst_shearstrain, # NOTE: complex                
                                  heatingdata_path):
 
+    verbose=False
+    doplots=False
 
     # note t and tstep are the steps for heating output table, 
     # as distinct from trange and dt which correspond to the motion file
@@ -692,10 +714,10 @@ def calc_heating_singlefrequency(friction_coefficient,
     tau_yield = sigma_yield/2.0
     
                         
-    # Note distinction between trange and dt defined here and the 
-    # t and t_step defined for the heating output table above. 
-    trange = np.array(motiontable.index) # ["Time(s)"]
-    dt=trange[1]-trange[0]
+    ## Note distinction between trange and dt defined here and the 
+    ## t and t_step defined for the heating output table above. 
+    #trange = np.array(motiontable.index) # ["Time(s)"]
+    #dt=trange[1]-trange[0]
                         
     
     # Note: We are ignoring the phases of the normal and shear strains
@@ -710,19 +732,19 @@ def calc_heating_singlefrequency(friction_coefficient,
     (power_per_m2_side1,
      power_per_m2_stddev_side1,
      vibration_ampl_side1) = angled_friction_model(x_bnd,xrange,xstep,
-                                                   dc_numdraws_int,
-                                                   dc_YoungsModulus_numericunits.value("Pa"),
-                                                   dc_PoissonsRatio_float,
+                                                   numdraws,
+                                                   YoungsModulus,
+                                                   PoissonsRatio,
                                                    sigma_yield,tau_yield,
                                                    friction_coefficient,
                                                    closure_stress_side1,
-                                                   crack_initial_opening_side1,
+                                                   crack_opening_side1,
                                                    angular_stddev,
                                                    aside1,
                                                    static_load,
                                                    vib_normal_stress_ampl,
                                                    vib_shear_stress_ampl,
-                                                   dc_excitation_frequency_numericunits.value("Hz"),
+                                                   excitation_frequency,
                                                    crack_model_normal,
                                                    crack_model_shear,
                                                    1.0,
@@ -733,19 +755,19 @@ def calc_heating_singlefrequency(friction_coefficient,
     (power_per_m2_side2,
      power_per_m2_stddev_side2,
      vibration_ampl_side2) = angled_friction_model(x_bnd,xrange,xstep,
-                                                   dc_numdraws_int,
-                                                   dc_YoungsModulus_numericunits.value("Pa"),
-                                                   dc_PoissonsRatio_float,
+                                                   numdraws,
+                                                   YoungsModulus,
+                                                   PoissonsRatio,
                                                    sigma_yield,tau_yield,
                                                    friction_coefficient,
                                                    closure_stress_side2,
-                                                   crack_initial_opening_side2,
+                                                   crack_opening_side2,
                                                    angular_stddev,
                                                    aside2,
                                                    static_load,
                                                    vib_normal_stress_ampl,
                                                    vib_shear_stress_ampl,
-                                                   dc_excitation_frequency_numericunits.value("Hz"),
+                                                   excitation_frequency,
                                                    crack_model_normal,
                                                    crack_model_shear,
                                                    1.0,
@@ -775,12 +797,17 @@ def calc_heating_singlefrequency(friction_coefficient,
     pl.title('Crack power deposition')
 
 
+    heatingenvelope = np.zeros(t.shape[0],dtype='d')
+    heatingenvelope[ (t >= exc_t0) & (t < exc_t1) ] = (1.0-np.cos( np.pi*(t[ (t >= exc_t0) & (t < exc_t1) ]-exc_t0)/(exc_t1-exc_t0)))/2.0
+    heatingenvelope[ (t >= exc_t1) & (t < exc_t2) ] = 1.0
+    heatingenvelope[ (t >= exc_t2) & (t < exc_t3) ] = (1.0+np.cos( np.pi*(t[ (t >= exc_t2) & (t < exc_t3) ]-exc_t2)/(exc_t3-exc_t2)))/2.0
+    
     heatingfh = open(heatingdata_path,"w")
     heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2) \t side2_heating(W/m^2)\n")
     
     for tidx in range(t.shape[0]):
         for xidx in range(xrange.shape[0]):
-            heatingfh.write("%.8e\t%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],power_per_m2_side1[xidx],power_per_m2_side2[xidx]))
+            heatingfh.write("%.8e\t%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],heatingenvelope[tidx]*power_per_m2_side1[xidx],heatingenvelope[tidx]*power_per_m2_side2[xidx]))
             pass
         pass
     heatingfh.close()

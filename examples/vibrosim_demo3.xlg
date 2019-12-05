@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dc:experiment xmlns:dc="http://limatix.org/datacollect" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
+  <!-- This example illustrates the use of single frequency excitation,
+       interactive querying of the user to select sweep and burst 
+       parameters, and the use of submeasurements. 
+
+       Suggest sweep from 33500-33600 Hz with a 5 Hz step 
+       Then do the burst at 33560.88 Hz
+-->
   <dc:measurement>
     <dc:measnum>1</dc:measnum>
     <dc:dest xlink:type="simple" xlink:href="vibrosim_demo3_output/"/>
@@ -9,7 +16,9 @@
     <dc:measident>meas1</dc:measident>
     <dc:friction_coefficient>.3968</dc:friction_coefficient>
     <dc:msqrtR dcv:units="m^-1.5">3.942e7</dc:msqrtR>
-    <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack -->
+    <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
+    <dc:staticload_mount dcv:units="N">0</dc:staticload_mount> <!-- combined static load on both mounts -->
+    <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack... Should really run static analysis step and calculate from staticload_mount -->
     <dc:xducerforce dcv:units="Newtons">0</dc:xducerforce>
     <dc:exclength dcv:units="seconds">1.0</dc:exclength>
     <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
@@ -21,14 +30,52 @@
     <dc:Density dcv:units="kg/m^3">4430</dc:Density>
     <dc:spcrayleighdamping_alpha dcv:units="s^-1">3e-7</dc:spcrayleighdamping_alpha>
     <dc:spcrayleighdamping_beta dcv:units="s">5e-7</dc:spcrayleighdamping_beta>
+    
+    <!-- reff_side1, seff_side1, reff_side2, seff_side2 are how
+	 the closure state of the crack is specified: by radius of 
+	 closure point at different external stress levels.
+	 These are interpreted in the context of the selected  
+	 crack model_normal -->
+    <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
+    <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
+    
     <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
     <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
     <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
     <dc:seff_side2 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> 0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side2>
-    <dc:exc_t0 dcv:units="s">0.0</dc:exc_t0>
-    <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1>
-    <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2>
-    <dc:exc_t3 dcv:units="s">1.00</dc:exc_t3>
-
+    <dc:exc_t0 dcv:units="s">0.0</dc:exc_t0>  <!-- start of envelope ramp-up -->
+    <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1> <!-- end of enelope ramp-up -->
+    <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2> <!-- start of envelope ramp-down-->
+    <dc:exc_t3 dcv:units="s">1.00</dc:exc_t3> <!-- end of envelope ramp down -->
+    <dc:exc_t4 dcv:units="s">1.00</dc:exc_t4> <!-- end of vibration calculation -->
+    
+    <!-- This example also illustrates how to run multiple sub-tests
+	 with different parameters and different subsets of steps. 
+	 The experiment log has several <dc:submeas> elements, each
+	 defining an alternative parameter set. 
+	 
+	 All of the .prx steps from the relevant fork-point on 
+	 then need to have their <prx:elementmatch> set to
+	 <prx:elementmatch>dc:measurement/dc:submeas</prx:elementmatch>
+	 or a constrained subset of that. That way all of those
+	 steps put their output with the submeasurement
+	 (the previous steps' output will be accessible because it
+	 is in the parent elements)
+    -->
+    <!-- Here, in each dc:submeas element we insert a dc:measident 
+	 element that overrides the parent, so output files are named
+	 differently between sub-measurements. Also we specify the 
+	 heatcalctype element that is used by the prx:elementmatch in the
+	 .prx file to control which steps are activated for this 
+	 submeasurement
+    -->
+    <dc:submeas>
+      <dc:measident>meas1_direct_singlefreq</dc:measident>
+      <dc:heatcalctype>singlefrequency</dc:heatcalctype>
+    </dc:submeas>
+    <dc:submeas>
+      <dc:measident>meas1_via_weldercalc</dc:measident>
+      <dc:heatcalctype>welder</dc:heatcalctype>
+    </dc:submeas>
   </dc:measurement>
 </dc:experiment>  

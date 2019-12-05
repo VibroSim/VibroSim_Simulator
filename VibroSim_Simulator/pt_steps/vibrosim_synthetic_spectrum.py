@@ -17,7 +17,7 @@ def run(_xmldoc,_element, dc_modalfreqs_href):
     synspec_fig = synthetic_spectrum(complex_freqs_raw)
 
     # Save figure to disk
-    pl.figure(synspec_fig.fignum)
+    pl.figure(synspec_fig.number)
     fig_href = hrefv(posixpath.splitext(dc_modalfreqs_href.get_bare_unquoted_filename())[0]+"_synthetic_spectrum.png",dc_modalfreqs_href.leafless())
     pl.savefig(fig_href.getpath(),dpi=300)
     

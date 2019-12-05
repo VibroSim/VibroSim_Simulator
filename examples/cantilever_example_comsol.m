@@ -1,4 +1,4 @@
-% function ret = cantilever_example_comsol(dc_dest_href,dc_measident_str,dc_heatingdata_href,dc_staticload_mount_float,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float,dc_couplantx_float, dc_couplanty_float, dc_couplantz_float, dc_couplantangle_float, dc_exc_t0_float, dc_exc_t4_float)
+% function ret = cantilever_example_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float,dc_couplantx_float, dc_couplanty_float, dc_couplantz_float, dc_couplantangle_float, dc_exc_t0_float, dc_exc_t4_float)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
 %> figure out the parameters to pass.
@@ -34,7 +34,6 @@ cantilever_modeling_params(M);
 
 
 % Set COMSOL parameters from experiment log, passed as parameters
-AddParamToParamdb(M,'staticload_mount',dc_staticload_mount_float);
 AddParamToParamdb(M,'xducerforce',dc_xducerforce_float,'N');
 AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
 AddParamToParamdb(M,'spcYoungsModulus',dc_YoungsModulus_float,'Pa');
@@ -61,7 +60,6 @@ isolator_coords=[];
 
 % Extract needed parameters...
 
-ObtainDCParameter(M,'staticload_mount');
 ObtainDCParameter(M,'xducerforce','N');
 
 
@@ -120,7 +118,7 @@ bldcrack = @(M,geom,specimen) CreateCrack(M,geom,'crack',specimen, ...
 					  [0,0,-1], ...
 					  [ .001, .002, .003 ], ...
                                           {'solidmech_multisweep'}, ...
-					  dc_heatingdata_href{1}); % Text file to hold crack heating energies. 
+					  dc_dummy_heatingdata_href{1}); % Text file to hold crack heating energies. 
 
 % Define a procedure for creating the various physics definitions. Steps can be 
 % sequenced by using the pipe (vertical bar | ) character. 

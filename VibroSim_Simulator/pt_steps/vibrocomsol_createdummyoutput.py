@@ -20,17 +20,17 @@ from limatix.dc_value import hrefvalue as hrefv
 
 def run(dc_dest_href,dc_measident_str):
 
-    heatingdata_href = hrefv(quote(dc_measident_str+"_heatingdata.txt"),dc_dest_href)
+    dummy_heatingdata_href = hrefv(quote(dc_measident_str+"_dummy_heatingdata.txt"),dc_dest_href)
     
-    heatingdatapath = heatingdata_href.getpath()
+    dummy_heatingdatapath = dummy_heatingdata_href.getpath()
 
     # Create directory if needed
-    if not os.path.exists(os.path.split(heatingdatapath)[0]):
-        os.mkdir(os.path.split(heatingdatapath)[0])
+    if not os.path.exists(os.path.split(dummy_heatingdatapath)[0]):
+        os.mkdir(os.path.split(dummy_heatingdatapath)[0])
         pass
 
-    fh = open(heatingdatapath,"w")
+    fh = open(dummy_heatingdatapath,"w")
     fh.write("% t(s) \t r(m) \t side1_heating(W/m^2) \t side2_heating(W/m^2)\n")
     fh.write("0\t0\t0\t0\n")
     fh.close()
-    return { "dc:heatingdata": heatingdata_href }
+    return { "dc:dummy_heatingdata": dummy_heatingdata_href }

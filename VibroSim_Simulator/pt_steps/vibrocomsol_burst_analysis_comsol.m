@@ -1,4 +1,4 @@
-% function [ ret ] = burst_analysis(dc_model_comsol_withburstfrequency_href)
+% function [ ret ] = burst_analysis(dc_dest_href,dc_measident_str,dc_model_comsol_withburstfrequency_href)
 
 modelfile = dc_model_comsol_withburstfrequency_href{1};
 model=mphload(modelfile);
@@ -14,7 +14,7 @@ model.study('solidmech_harmonicburst_study').run;
 
 % Determine filename for harmonic results
 
-[modelpath,modelname,modelext] = fileparts(modelfile);
+%[modelpath,modelname,modelext] = fileparts(modelfile);
 %modal_export_name=fullfile(modelpath,[ modelname '_modalfreq.txt' ]);
 
 %model.result.export('solidmech_modal_export').set('filename',buildabspath(modal_export_name));
@@ -24,7 +24,7 @@ model.study('solidmech_harmonicburst_study').run;
 %savefilename = fullfile(tempdir,sprintf('vibrosim_%s',char(java.lang.System.getProperty('user.name'))),[ modelname '_burstcalc.mph' ]);
 
 % Save .mph output
-savefilename = fullfile(modelpath,[ modelname '_burstcalc.mph' ]);
+savefilename = fullfile(dc_dest_href{1},[ dc_measident_str '_burstcalc.mph' ]);
 
 mphsave(model,savefilename); 
 

@@ -66,19 +66,57 @@
     <prx:script name="vibrocomsol_setburstfrequency_comsol.m"/>
   </prx:step>
 
-
   <!-- Next step is to run the harmonic burst analysis -->
   <prx:step name="burst_analysis">
     <prx:script name="vibrocomsol_burst_analysis_comsol.m"/>
   </prx:step>
 
-  <prx:step name="calc_heating">
+
+  <!-- This example also illustrates how to run multiple sub-tests
+  with different parameters and different subsets of steps. 
+  The experiment log has several <dc:submeas> elements, each
+  defining an alternative parameter set. 
+
+  All of the .prx steps from the relevant fork-point on 
+  then need to have their <prx:elementmatch> set to
+  <prx:elementmatch>dc:measurement/dc:submeas</prx:elementmatch>
+  or a constrained subset of that. That way all of those
+  steps put their output with the submeasurement
+  (the previous steps' output will be accessible because it
+  is in the parent elements)
+  -->
+
+  <!-- 
+  In this case on dc:submeas[heatcalctype='singlefrequency'] 
+  we do the normal single frequency heating calculation
+  --> 
+  <prx:step name="eval_closure_state_from_tip_positions">
+    <prx:script name="vibrosim_eval_closure_state_from_tip_positions.py"/>
+  </prx:step>
+
+  <prx:step name="calc_heating_singlefrequency">
+    <prx:elementmatch>dc:measurement/dc:submeas[dc:heatcalctype='singlefrequency']</prx:elementmatch>
     <prx:script name="vibrosim_calc_heating_singlefrequency.py"/>
   </prx:step>
-  
+  <!--
+      In this case on dc:submeas[heatcalctype='welder'] 
+      we use vibrosim_calc_singlefrequency_motion.py to create 
+      a motion file and then vibrosim_calc_heating_welder.py 
+      to evaluate the heating based on the motion file.
+  -->
 
-  <!-- Finally we run the heatflow analysis -->
+  <prx:step name="calc_singlefrequency_motion">
+    <prx:elementmatch>dc:measurement/dc:submeas[dc:heatcalctype='welder']</prx:elementmatch>
+    <prx:script name="vibrosim_calc_singlefrequency_motion.py"/>
+  </prx:step>
+  <prx:step name="calc_heating_welder">
+    <prx:elementmatch>dc:measurement/dc:submeas[dc:heatcalctype='welder']</prx:elementmatch>
+    <prx:script name="vibrosim_calc_heating_welder.py"/>
+  </prx:step>
+
+  <!-- Finally we run the heatflow analysis. This runs on all sub-measurements -->
   <prx:step name="heatflow_analysis">
+    <prx:elementmatch>dc:measurement/dc:submeas</prx:elementmatch>
     <prx:script name="vibrocomsol_heatflow_analysis_comsol.m"/>
   </prx:step>
 

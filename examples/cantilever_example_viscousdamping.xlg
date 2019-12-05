@@ -6,6 +6,8 @@
  
   <dc:friction_coefficient>.3968</dc:friction_coefficient>
   <dc:msqrtR dcv:units="m^-1.5">3.942e7</dc:msqrtR>
+  <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
+
   <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack -->
   <dc:xducerforce dcv:units="Newtons">100</dc:xducerforce>
   <dc:exclength dcv:units="seconds">1.0</dc:exclength>
@@ -36,10 +38,13 @@
   <dc:couplantz dcv:units="m">0</dc:couplantz>
   <dc:couplantangle dcv:units="degrees">NaN</dc:couplantangle> <!-- NaN means use round couplant (i.e. excitation zone) -->
   
-
   <!-- reff_side1, seff_side1, reff_side2, seff_side2 are how
   the closure state of the crack is specified: by radius of 
-  closure point at different external stress levels -->
+  closure point at different external stress levels.
+  These are interpreted in the context of the selected  
+  crack model_normal -->
+  <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
+  <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
 
   <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
   <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>

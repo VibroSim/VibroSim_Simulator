@@ -1,4 +1,4 @@
-% function [ ret ] = sweep_analysis(dc_model_comsol_withsweepfrequencies_href)
+% function [ ret ] = sweep_analysis(dc_dest_href,dc_measident_str,dc_model_comsol_withsweepfrequencies_href)
 
 modelfile = dc_model_comsol_withsweepfrequencies_href{1};
 model=mphload(modelfile);
@@ -9,8 +9,8 @@ ModelUtil.showPlots(true);
 
 % Determine filename for harmonic sweep results
 
-[modelpath,modelname,modelext] = fileparts(modelfile);
-spectrum_image_name=fullfile(modelpath,[ modelname '_sweep_spectrum.png' ]);
+%[modelpath,modelname,modelext] = fileparts(modelfile);
+spectrum_image_name=fullfile(dc_dest_href{1},[ dc_measident_str '_sweep_spectrum.png' ]);
 
 
 CreateOrReplace(model.result.export,'vibro_harmonicsweep_spectrum_image','vibro_harmonicsweep_spectrum','Image1D');
@@ -24,7 +24,7 @@ model.study('solidmech_harmonicsweep_study').run;
 
 
 % Save .mph output in temporary directory in case use wants to load it back in
-savefilename = fullfile(tempdir,sprintf('vibrosim_%s',char(java.lang.System.getProperty('user.name'))),[ modelname '_harmonicsweep.mph' ]);
+savefilename = fullfile(tempdir,sprintf('vibrosim_%s',char(java.lang.System.getProperty('user.name'))),[ dc_measident_str '_harmonicsweep.mph' ]);
 mphsave(model,savefilename); 
 
 % run the plot/export
