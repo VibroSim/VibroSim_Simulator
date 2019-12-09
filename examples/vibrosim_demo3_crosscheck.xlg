@@ -1,14 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <dc:experiment xmlns:dc="http://limatix.org/datacollect" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
-  <!-- This example illustrates the use of single frequency excitation.
-       and interactive querying of the user to select sweep and burst 
-       parameters.
+  <!-- This example illustrates the use of single frequency excitation,
+       interactive querying of the user to select sweep and burst 
+       parameters. In addition it demonstrates the use of 
+       submeasurements to cross-check between the ultrasonic welder
+       heating calculations in VibroSim and the single frequency 
+       heating calculations.
 
        Suggest sweep from 33550-33650 Hz with a 10 Hz step 
        Then do the burst at 33608 Hz 
 -->
   <dc:measurement>
-    <dc:dest xlink:type="simple" xlink:href="vibrosim_demo3_output/"/> <!-- specify where to save the generated output -->
+    <dc:dest xlink:type="simple" xlink:href="vibrosim_demo3_crosscheck_output/"/> <!-- specify where to save the generated output -->
     <!-- dc:heatingdata specifies where the heating data will be stored. 
     Initially this will be filled with dummy (zero) output. The later steps will replace it 
     with meaningful values -->
@@ -49,5 +52,33 @@
     <dc:exc_t3 dcv:units="s">1.00</dc:exc_t3> <!-- end of envelope ramp down -->
     <dc:exc_t4 dcv:units="s">1.00</dc:exc_t4> <!-- end of vibration calculation -->
     
+    <!-- This example illustrates how to run multiple sub-tests
+	 with different parameters and different subsets of steps. 
+	 The experiment log has several <dc:submeas> elements, each
+	 defining an alternative parameter set. 
+	 
+	 All of the .prx steps from the relevant fork-point on 
+	 then need to have their <prx:elementmatch> set to
+	 <prx:elementmatch>dc:measurement/dc:submeas</prx:elementmatch>
+	 or a constrained subset of that. That way all of those
+	 steps put their output with the submeasurement
+	 (the previous steps' output will be accessible because it
+	 is in the parent elements)
+    -->
+    <!-- Here, in each dc:submeas element we insert a dc:measident 
+	 element that overrides the parent, so output files are named
+	 differently between sub-measurements. Also we specify the 
+	 heatcalctype element that is used by the prx:elementmatch in the
+	 .prx file to control which steps are activated for this 
+	 submeasurement
+    -->
+    <dc:submeas>
+      <dc:measident>meas1_direct_singlefreq</dc:measident>
+      <dc:heatcalctype>singlefrequency</dc:heatcalctype>
+    </dc:submeas>
+    <dc:submeas>
+      <dc:measident>meas1_via_weldercalc</dc:measident>
+      <dc:heatcalctype>welder</dc:heatcalctype>
+    </dc:submeas>
   </dc:measurement>
 </dc:experiment>  
