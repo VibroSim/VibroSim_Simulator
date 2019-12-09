@@ -95,17 +95,17 @@ def run(_xmldoc,_element,
 
     # Can use scriptify(process_multisweep_from_files) in next line to debug processing script
     (output_filename, plotpaths) = process_multisweep_from_files(xducer_velspec_filepaths,
-                                                                            xducer_displspec_filepaths,
-                                                                            laser_velspec_filepaths,
-                                                                            laser_displspec_filepaths,
-                                                                            crackcenterstrainspec_filepaths,
-                                                                            output_href.getpath(),
-                                                                            plotdir=dc_dest_href.getpath(),
-                                                                            plotprefix=dc_measident_str,
-                                                                            num_segments=4,
-                                                                            dt=dt,
-                                                                            impulseexcitation_width=impulseexcitation_width, 
-                                                                            endcrop=endcrop)
+                                                                 xducer_displspec_filepaths,
+                                                                 laser_velspec_filepaths,
+                                                                 laser_displspec_filepaths,
+                                                                 crackcenterstrainspec_filepaths,
+                                                                 output_href.getpath(),
+                                                                 plotdir=dc_dest_href.getpath(),
+                                                                 plotprefix=dc_measident_str,
+                                                                 num_segments=4,
+                                                                 dt=dt,
+                                                                 impulseexcitation_width=impulseexcitation_width, 
+                                                                 endcrop=endcrop)
     ret = {
         "dc:dynamicmodel": output_href,
     }

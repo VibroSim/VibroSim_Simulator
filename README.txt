@@ -4,22 +4,32 @@ VibroSim Simulator
 VibroSim Simulator is a set of tools to organize and facilitate
 simulating Vibrothermography testing using VibroSim.
 
+PLEASE NOTE THAT VIBROSIM MAY NOT HAVE BEEN ADEQUATELY 
+VALIDATED, THE NUMBERS BUILT INTO IT ALMOST CERTAINLY 
+DO NOT APPLY TO YOUR VIBROTHERMOGRAPHY PROCESS. ITS OUTPUT 
+CANNOT BE TRUSTED AND IS NOT SUITABLE FOR ENGINEERING 
+REQUIREMENTS WITHOUT APPLICATION- AND PROCESS-SPECIFIC 
+VALIDATION. 
+
 VibroSim Simulator relies directly on the following packages:
   * VibroSim_COMSOL
   * angled_friction_model
   * crackclosuresim2
+  * VibroSim_WelderModel (if ultrasonic welder-base excitation
+    is to be simulated)
   * Limatix
-  * Python Pandas 0.17.1 or later
 
-As such, it requires MATLAB, COMSOL, and Python. The Python
-must be at least 2.7 and should include the full ipython,
-matplotlib, numpy, scipy stack. To build crackclosuresim2
-you will also need the platform compiler for your Python
-version (see the crackclosuresim2 documentation for more
-information).
+As such, it requires MATLAB, COMSOL, and Python. The COMSOL
+Structural Mechanics Module and COMSOL LiveLink for MATLAB
+are also necessary. The Python version must be at least 2.7 
+and should include the full IPython, Matplotlib, Numpy, Scipy 
+stack as well as Pandas v0.17.1 or later. To build 
+crackclosuresim2 you will also need the platform compiler 
+for your Python version (see the crackclosuresim2 documentation 
+for more information).
 
 the Git version control system and the GitPython bindings
-are strongly reommended.
+are strongly recommended.
 
 While the current implementation uses COMSOL for vibration
 calculation and for heat flow evaluation, because of the

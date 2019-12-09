@@ -309,6 +309,9 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
                                   endcrop=250e-3 # Amount of time (s) to crop off end of unfiltered timedomain to remove anticausal portion of signal
                               ):  # !!!*** Remember to change process_multisweep() default params with these default params ***!!!
     
+
+    #endcrop=0.0
+
     (xducer_vel_trange,xducer_velspec_frange,xducer_vel_timedomain,xducer_velspec,xducer_vel_filtered_timedomain,xducer_velspec_filtered)=read_spectrum(xducer_velspec_filepaths,1,dt,impulseexcitation_width,"transducer velocity (m/s)/(N*s)")
 
     (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered)=read_spectrum(xducer_displspec_filepaths,1,dt,impulseexcitation_width,"transducer displacement m/(N*s)")
@@ -566,21 +569,22 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
     print("Writing %s..." % (output_filename))
 
     # Write output as compressed .csv
-    out_frame=pd.DataFrame(index=pd.Float64Index(data=np.arange(xducer_displ_timedomain.shape[0]-int(endcrop/dt),dtype='d')*dt,dtype='d',name="Time(s)"))
+    endpoint = xducer_displ_timedomain.shape[0]-int(endcrop/dt)
+    out_frame=pd.DataFrame(index=pd.Float64Index(data=np.arange(endpoint,dtype='d')*dt,dtype='d',name="Time(s)"))
     
     # specimen_resp is displacement response in m per unit N*s impulse
     # applied at the transducer location 
-    out_frame.insert(len(out_frame.columns),"specimen_resp(m/(N*s))",xducer_displ_timedomain.real[:(-int(endcrop/dt))])
+    out_frame.insert(len(out_frame.columns),"specimen_resp(m/(N*s))",xducer_displ_filtered_timedomain.real[:endpoint])
     
     # specimen_mobility is velocity response in m/s per unit N*s impulse
     # applied at the transducer location 
-    out_frame.insert(len(out_frame.columns),"specimen_mobility(m/(N*s^2))",xducer_vel_timedomain.real[:(-int(endcrop/dt))])
+    out_frame.insert(len(out_frame.columns),"specimen_mobility(m/(N*s^2))",xducer_vel_timedomain.real[:endpoint])
     
     if laser_velspec_filepaths is not None:
         # specimen_laser is velocity response at laser position in 
         # m/s per unit N*s impulse
         # applied at the transducer location 
-        out_frame.insert(len(out_frame.columns),"specimen_laser(m/(N*s^2))",laser_vel_timedomain.real[:(-int(endcrop/dt))])
+        out_frame.insert(len(out_frame.columns),"specimen_laser(m/(N*s^2))",laser_vel_timedomain.real[:endpoint])
         pass
 
     if crackcenterstrainspec_filepaths is not None:
@@ -588,13 +592,13 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         # specimen_crackcenternormalstrain is normal strain response at crack center position in 
         # unitless per unit N*s impulse
         # applied at the transducer location 
-        out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstrain(1/(N*s))",crackcenternormalstrain_timedomain.real[:(-int(endcrop/dt))])
+        out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstrain(1/(N*s))",crackcenternormalstrain_timedomain.real[:endpoint])
 
 
         # specimen_crackcentershearstrain is normal strain response at crack center position in 
         # unitless per unit N*s impulse
         # applied at the transducer location 
-        out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstrain(1/(N*s))",crackcentershearstrain_timedomain.real[:(-int(endcrop/dt))])
+        out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstrain(1/(N*s))",crackcentershearstrain_timedomain.real[:endpoint])
         pass
     
     

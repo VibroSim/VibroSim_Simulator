@@ -1,4 +1,4 @@
-% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_staticload_mount_float,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float)
+% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_amplitude_float,dc_staticload_mount_float,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
 %> figure out the parameters to pass.
@@ -44,6 +44,7 @@ VibroSim_default_params(M);
 
 
 % Set COMSOL parameters from experiment log, passed as parameters
+AddParamToParamdb(M,'amplitude',dc_amplitude_float,'V');
 AddParamToParamdb(M,'staticload_mount',dc_staticload_mount_float,'N');
 AddParamToParamdb(M,'xducerforce_mount',dc_xducerforce_float,'N');
 AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
