@@ -1,5 +1,7 @@
 % function [ ret ] = setburstfrequency(dc_dest_href,dc_measident_str,dc_model_comsol_href,dc_excitation_frequency_float)
 
+import com.comsol.model.util.*
+
 modelfile = dc_model_comsol_href{1};
 model=mphload(modelfile);
 

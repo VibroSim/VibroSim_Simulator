@@ -1,5 +1,7 @@
 % function [ ret ] = setsweepfrequencies(dc_dest_href,dc_measident_str,dc_model_comsol_href,dc_sweep_start_frequency_float,dc_sweep_step_frequency_float,dc_sweep_end_frequency_float)
 
+import com.comsol.model.util.*
+
 modelfile = dc_model_comsol_href{1};
 model=mphload(modelfile);
 

@@ -1,5 +1,7 @@
 % function [ ret ] = vibrocomsol_multisweep_seg1_analysis_comsol(dc_dest_href,dc_measident_str,dc_model_comsol_withsegboundaries_href,segnum_int)
 
+import com.comsol.model.util.*
+
 modelfile = dc_model_comsol_withsegboundaries_href{1};
 model=mphload(modelfile);
 

@@ -1,5 +1,7 @@
 % function [ ret ] = vibrocomsol_set_freqbands_comsol(dc_dest_href,dc_measident_str,dc_model_comsol_href,dc_freqband_seg1_start_float,dc_freqband_seg1_step_float,dc_freqband_seg1_end_float,dc_freqband_seg2_start_float,dc_freqband_seg2_step_float,dc_freqband_seg2_end_float,dc_freqband_seg3_start_float,dc_freqband_seg3_step_float,dc_freqband_seg3_end_float,dc_freqband_seg4_start_float,dc_freqband_seg4_step_float,dc_freqband_seg4_end_float)
 
+import com.comsol.model.util.*
+
 modelfile = dc_model_comsol_href{1};
 model=mphload(modelfile);
 

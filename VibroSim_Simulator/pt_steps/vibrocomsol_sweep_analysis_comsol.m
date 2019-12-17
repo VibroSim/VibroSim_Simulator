@@ -1,5 +1,7 @@
 % function [ ret ] = sweep_analysis(dc_dest_href,dc_measident_str,dc_model_comsol_withsweepfrequencies_href)
 
+import com.comsol.model.util.*
+
 modelfile = dc_model_comsol_withsweepfrequencies_href{1};
 model=mphload(modelfile);
 

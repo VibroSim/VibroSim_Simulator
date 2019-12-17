@@ -1,5 +1,7 @@
 % function [ ret ] = heatflow_analysis(dc_dest_href,dc_measident_str,dc_model_comsol_href,dc_heatingdata_href,dc_exc_t3_float)
 
+import com.comsol.model.util.*
+
 modelfile = dc_model_comsol_href{1};
 model=mphload(modelfile);
 
