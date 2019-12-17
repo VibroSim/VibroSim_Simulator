@@ -4,9 +4,6 @@ import posixpath
 import numpy as np
 from matplotlib import pyplot as pl
 
-from limatix.dc_value import hrefvalue as hrefv
-from limatix.dc_value import numericunitsvalue as numericunitsv
-
 
 
 from VibroSim_Simulator import read_spectrum
