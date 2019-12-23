@@ -45,6 +45,6 @@ def read_spectrum(filename):
         complex_freqs_raw = freqs_realpart + (0+1j)*freqs_imagpart
         pass
     else:
-        raise ValueError("Unknown filename extension %s" % (sys.path.splitext(filename)[1]))
+        raise ValueError("Unknown filename extension %s" % (os.path.splitext(filename)[1]))
 
     return complex_freqs_raw
