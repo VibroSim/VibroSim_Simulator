@@ -33,9 +33,9 @@ def main(args=None):
         pass
     
     if len(args) < 8:
-        print("usage: vibrosim_process_compare_multisweep <datadir_path>  <xducer_velspec_filename_template> <xducer_displspec_filename_template> <laser_velspec_filename_template> <laser_displspec_filename_template> <crackcenterstrainspec_filename_template> <xducer_veltime_filename> <xducer_displtime_filename> <laser_veltime_filename> <laser_displtime_filename> <[output_filename.py.bz2] [plotdir] [endcrop_seconds]")
+        print("usage: vibrosim_process_compare_multisweep <datadir_path>  <xducer_velspec_filename_template> <xducer_displspec_filename_template> <laser_velspec_filename_template> <laser_displspec_filename_template> <crackcenterstrainspec_filename_template> <xducer_veltime_filename> <xducer_displtime_filename> <laser_veltime_filename> <laser_displtime_filename> <[output_filename.csv.bz2] [plotdir] [endcrop_seconds]")
         print(" ")
-        print("Example: vibrosim_process_multisweep .  meas1_withsegboundaries_xducercontactprobe_velspec_seg%d.txt meas1_withsegboundaries_xducercontactprobe_displspec_seg%d.txt meas1_withsegboundaries_laser_velspec_seg%d.txt meas1_withsegboundaries_laser_displspec_seg%d.txt meas1_withsegboundaries_crackcenterstrainspec_seg%d.txt cantilever_model_xducercontactprobe_vel.txt cantilever_model_xducercontactprobe_displ.txt cantilever_model_laser_vel.txt cantilever_model_laser_disp.txt specimen_modeling_out.py.bz2 . 0.1")
+        print("Example: vibrosim_process_multisweep .  meas1_withsegboundaries_xducercontactprobe_velspec_seg%d.txt meas1_withsegboundaries_xducercontactprobe_displspec_seg%d.txt meas1_withsegboundaries_laser_velspec_seg%d.txt meas1_withsegboundaries_laser_displspec_seg%d.txt meas1_withsegboundaries_crackcenterstrainspec_seg%d.txt cantilever_model_xducercontactprobe_vel.txt cantilever_model_xducercontactprobe_displ.txt cantilever_model_laser_vel.txt cantilever_model_laser_disp.txt specimen_modeling_out.csv.bz2 . 0.1")
         print(" ")
         print("Optional templates (such as laser displacement, laser velocity, and crack center strain) can be specified as \"None\".")
         sys.exit(0)
