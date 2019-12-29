@@ -27,17 +27,18 @@ from angled_friction_model.angled_friction_model import integrate_power
 
 
 
-def fit_surrogate(strainvals,heatingvals):
+def fit_surrogate(svals,heatingvals):
     """ Fit a 1D surrogate over axis 0 of 2D array heatingvals, Each row of heatingvals corresponsd to
-    the corresponding entry in strainvals. The operation is vectorized over the columns (axis 1) of 
+    the corresponding entry in svals, which represents stress or strain depending on the mode. 
+    The operation is vectorized over the columns (axis 1) of 
     heatingvals"""
     
     # Fit surrogate with splrep()
     # Allow two interior knots and a cubic spline fit
     # Fit over axis 0 of heatingvals (corresponds to axis of strainvals); iterate over axis 1 of heatingvals
 
-    min_sv = np.min(strainvals)
-    max_sv = np.max(strainvals)
+    min_sv = np.min(svals)
+    max_sv = np.max(svals)
 
     interior_knots=(
         min_sv + (max_sv-min_sv)/3.0,
@@ -48,7 +49,7 @@ def fit_surrogate(strainvals,heatingvals):
     tck = np.zeros(heatingvals.shape[1],dtype='O')
     
     for xidx in range(heatingvals.shape[1]):
-        tck[xidx] = scipy.interpolate.splrep(strainvals,heatingvals[:,xidx],
+        tck[xidx] = scipy.interpolate.splrep(svals,heatingvals[:,xidx],
                                              k=3,
                                              task=-1,
                                              t=interior_knots)
@@ -109,47 +110,48 @@ def filterfine(finedata,finetrange,coarsetrange):
     return filtered_coarse
 
 
-def strain_segments_between_extrema(trange,crack_strain):
-    """ Break crack_strain, a function of time with timebase trange, 
+def segments_between_extrema(trange,crack_stress_or_strain):
+    """ Break crack stress or strain, a function of time with timebase trange, 
     into segments connecting extrema -- the first point, all the relative 
     extrema in the waveform, and the last point. Return the characteristics
     of each segment"""
 
     # Find extrema
-    strain_relative_maxima = (crack_strain[1:-1] > crack_strain[2:]) & (crack_strain[1:-1] > crack_strain[:-2])
-    strain_relative_minima = (crack_strain[1:-1] < crack_strain[2:]) & (crack_strain[1:-1] < crack_strain[:-2])
-    strain_extrema = strain_relative_minima | strain_relative_maxima
-    strain_extrema_indices = np.concatenate(((0,),np.where(strain_extrema)[0]+1,(crack_strain.shape[0]-1,)))
+    relative_maxima = (crack_stress_or_strain[1:-1] > crack_stress_or_strain[2:]) & (crack_stress_or_strain[1:-1] > crack_stress_or_strain[:-2])
+    relative_minima = (crack_stress_or_strain[1:-1] < crack_stress_or_strain[2:]) & (crack_stress_or_strain[1:-1] < crack_stress_or_strain[:-2])
+    extrema = relative_minima | relative_maxima
+    extrema_indices = np.concatenate(((0,),np.where(extrema)[0]+1,(crack_stress_or_strain.shape[0]-1,)))
     
-    strain_num_extrema=strain_extrema_indices.shape[0]-1
+    num_extrema=extrema_indices.shape[0]-1
 
-    strain_segment_start_indices=strain_extrema_indices[:-1]
-    strain_segment_end_indices=strain_extrema_indices[1:]
+    segment_start_indices=extrema_indices[:-1]
+    segment_end_indices=extrema_indices[1:]
     
-    strain_segment_start_strain=crack_strain[strain_segment_start_indices]
-    strain_segment_end_strain=crack_strain[strain_segment_end_indices]
+    segment_start_values=crack_stress_or_strain[segment_start_indices]
+    segment_end_values=crack_stress_strain[segment_end_indices]
 
-    strain_maxPP = np.max(np.abs(strain_segment_start_strain-strain_segment_end_strain))
+    maxPP = np.max(np.abs(segment_start_values-segment_end_values))
 
-    strain_segment_start_time=trange[strain_segment_start_indices]
-    strain_segment_end_time=trange[strain_segment_end_indices]
+    segment_start_time=trange[segment_start_indices]
+    segment_end_time=trange[segment_end_indices]
 
-    strain_segment_timeperiod=strain_segment_end_time - strain_segment_start_time
+    segment_timeperiod=segment_end_time - segment_start_time
 
-    strain_segment_frequency=1.0/(2.0*strain_segment_timeperiod) # A segment corresponds to peak->valley or half of a 360deg. wave
+    segment_frequency=1.0/(2.0*segment_timeperiod) # A segment corresponds to peak->valley or half of a 360deg. wave
 
-    return (strain_maxPP,  # Maximum peak-to-peak variation in strain
-            strain_segment_start_indices,
-            strain_segment_end_indices,
-            strain_segment_start_strain,
-            strain_segment_end_strain,
-            strain_segment_frequency)
+    return (maxPP,  # Maximum peak-to-peak variation in strain
+            segment_start_indices,
+            segment_end_indices,
+            segment_start_values,
+            segment_end_values,
+            segment_frequency)
 
 
 
 def train_surrogate(surrogate_type, # either "normal" or "shear"
+                    input_type, # either "stress" or "strain",
                     surrogate_npoints,
-                    strain_maxPP,
+                    maxPP, # maximum stress or strain depending on input_type
                     x_bnd,xrange,xstep, # range of radii from crack center
                     numdraws,
                     YoungsModulus, # Pa
@@ -172,6 +174,7 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
     
     
     plane_stress_modulus = YoungsModulus/(1.0-PoissonsRatio**2.0)
+    shear_modulus = YoungsModulus/(2.0*(1.0+PoissonsRatio))
     tau_yield = sigma_yield/2.0
     
     crack_model_normal = crack_model_normal_by_name(crack_model_normal_name,YoungsModulus,PoissonsRatio)
@@ -181,17 +184,31 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
 
 
     # Train 1D surrogate for crack heating
-    strain_PP_range=np.linspace(0,strain_maxPP,surrogate_npoints)
+    PP_range=np.linspace(0,maxPP,surrogate_npoints)
     
-    heating_power_per_m2_hertz = np.zeros((strain_PP_range.shape[0],xrange.shape[0]),dtype='d')
-    heating_power_per_m2_hertz_stddev = np.zeros((strain_PP_range.shape[0],xrange.shape[0]),dtype='d')
+    heating_power_per_m2_hertz = np.zeros((PP_range.shape[0],xrange.shape[0]),dtype='d')
+    heating_power_per_m2_hertz_stddev = np.zeros((PP_range.shape[0],xrange.shape[0]),dtype='d')
     
-    for strainidx in range(strain_PP_range.shape[0]):
+    for idx in range(PP_range.shape[0]):
         # We'll assume here that the static_load shift due to the mean of upper and lower)
         # is irrelevant... Really it ought to be another surrogate parameter...
-    
-        stress_PP = plane_stress_modulus * strain_PP_range[strainidx] # peak-to-peak stress
 
+        if input_type=="strain":
+            if surrogate_type == "normal":
+                stress_PP = plane_stress_modulus * PP_range[idx] # peak-to-peak stress
+                pass
+            elif surrogate_type == "shear":
+                stress_PP = shear_modulus * PP_range[idx] # peak-to-peak stress
+                pass
+            else:
+                raise ValueError("Unknown surrogate type: %s" % (surrogate_type))
+            
+            pass
+        else:
+            assert(input_type=="stress")
+            stress_PP = PP_range[idx]
+            pass
+        
         if surrogate_type == "normal":
             vib_normal_stress_ampl = stress_PP/2.0 #... divide by 2 converts from Peak-to-peak to amplitude
             vib_shear_stress_ampl = 0.0
@@ -203,7 +220,7 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
         else:
             raise ValueError("Unknown surrogate type: %s" % (surrogate_type))
         
-        (heating_power_per_m2_hertz[strainidx,:],
+        (heating_power_per_m2_hertz[idx,:],
          heating_power_per_m2_hertz_stddev[strainidx,:],
          vibration_ampl) = angled_friction_model(x_bnd,xrange,xstep,
                                                        numdraws,
@@ -228,8 +245,8 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
 
         pass
          
-    heating_power_per_m2_hertz_surr_tck = fit_surrogate(strain_PP_range,heating_power_per_m2_hertz)
-    heating_power_per_m2_hertz_stddev_surr_tck = fit_surrogate(strain_PP_range,heating_power_per_m2_hertz_stddev)
+    heating_power_per_m2_hertz_surr_tck = fit_surrogate(PP_range,heating_power_per_m2_hertz)
+    heating_power_per_m2_hertz_stddev_surr_tck = fit_surrogate(PP_range,heating_power_per_m2_hertz_stddev)
          
     return (heating_power_per_m2_hertz_surr_tck,heating_power_per_m2_hertz_stddev_surr_tck)
 
@@ -237,23 +254,23 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
 def evaluate_per_segment_heating_power(xrange,
                                        heating_power_per_m2_hertz_surr_tck, # array of (tck) tuples with surrogates for heating power, one surrogate per x position
                                        heating_power_per_m2_hertz_stddev_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                       segment_start_strain,
-                                       segment_end_strain,
+                                       segment_start_value, # stress or strain
+                                       segment_end_value, # stress or strain
                                        segment_frequency):
     
-    num_extrema = segment_start_strain.shape[0]
+    num_extrema = segment_start_value.shape[0]
     
     heating_segment_power_per_m2=np.zeros((num_extrema,xrange.shape[0]),dtype='d')
     heating_segment_power_per_m2_stddev=np.zeros((num_extrema,xrange.shape[0]),dtype='d')
 
-    straindiff = np.abs(segment_end_strain - segment_start_strain)
+    diff = np.abs(segment_end_value - segment_start_value)
     
     for xidx in range(xrange.shape[0]):
          # vectorized over time-segments
          
-        heating_segment_power_per_m2_hertz = splev(straindiff,heating_power_per_m2_hertz_surr_tck[xidx],ext=2)
+        heating_segment_power_per_m2_hertz = splev(diff,heating_power_per_m2_hertz_surr_tck[xidx],ext=2)
         heating_segment_power_per_m2_hertz[heating_segment_power_per_m2_hertz < 0.0] = 0.0 # negative heating not allowed (in case spline fit goes negative for some reason)
-        heating_segment_power_per_m2_hertz_stddev = splev(straindiff,heating_power_per_m2_hertz_stddev_surr_tck[xidx],ext=2)
+        heating_segment_power_per_m2_hertz_stddev = splev(diff,heating_power_per_m2_hertz_stddev_surr_tck[xidx],ext=2)
         heating_segment_power_per_m2_hertz_stddev[heating_segment_power_per_m2_hertz_stddev < 0.0] = 0.0 # negative stddev not allowed (in case spline fit goes negative for some reason)
         
         heating_segment_power_per_m2[:,xidx] = heating_segment_power_per_m2_hertz*segment_frequency
@@ -328,20 +345,34 @@ def calc_heating_welder(friction_coefficient,
 
     # ***!!! Should crosscheck with single frequency result by evaluating a motion table from single frequency data
     # and running that through this !!!***
+
+    if "specimen_crackcenternormalstrain" in motiontable and "specimen_crackcentershearstrain" in motiontable:    
+        crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstrain"])
+        crack_shearmotion = np.array(motiontable["specimen_crackcentershearstrain"])
+        input_type="strain"
+        input_plotmultiplier = 1e6
+        input_plotunits = "micros"
+        pass
+    elif "specimen_crackcenternormalstress" in motiontable and "specimen_crackcentershearstress" in motiontable:    
+        crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstress"])
+        crack_shearmotion = np.array(motiontable["specimen_crackcentershearstress"])
+        input_type="stress"       
+        input_plotmultiplier = 1e-6
+        input_plotunits = "MPa"
+        pass
+    else:
+        raise ValueError("Did not find crack motion data in %s. Looking for specimen_crackcenter[normal/shear][stress/strain] columns." % (motion_path))
     
-    crack_normalstrain = np.array(motiontable["specimen_crackcenternormalstrain"])
-    crack_shearstrain = np.array(motiontable["specimen_crackcentershearstrain"])
-
-    crack_strain_fig = pl.figure()
-    pl.plot(trange*1e3,crack_normalstrain*1e6,'-',
-            trange*1e3,crack_shearstrain*1e6,'-')
+    crack_stressstrain_fig = pl.figure()
+    pl.plot(trange*1e3,crack_normalmotion*input_plotmultiplier,'-',
+            trange*1e3,crack_shearmotion*input_plotmultiplier,'-')
     pl.grid(True)
-    pl.legend(('Normal strain','shear strain'))
+    pl.legend(('Normal %s' % (input_type),'shear %s'% (input_type)))
     pl.xlabel('Time (ms)')
-    pl.ylabel('Engineering strain (micros)')
-    pl.title('Crack strain')
-
-
+    pl.ylabel('Engineering %s (%s)' % (input_type,input_plotunits))
+    pl.title('Crack %s'% (input_type))
+    
+    
     
     
     ## pad to power-of-two size
@@ -364,19 +395,19 @@ def calc_heating_welder(friction_coefficient,
 
 
 
-    (normalstrain_maxPP,  # Maximum peak-to-peak variation in strain
-     normalstrain_segment_start_indices,
-     normalstrain_segment_end_indices,
-     normalstrain_segment_start_strain,
-     normalstrain_segment_end_strain,
-     normalstrain_segment_frequency) = strain_segments_between_extrema(trange,crack_normalstrain)
+    (normal_maxPP,  # Maximum peak-to-peak variation in normal stress or strain
+     normal_segment_start_indices,
+     normal_segment_end_indices,
+     normal_segment_start_value,
+     normal_segment_end_value,
+     normal_segment_frequency) = segments_between_extrema(trange,crack_normalmotion)
     
-    (shearstrain_maxPP,  # Maximum peak-to-peak variation in strain
-     shearstrain_segment_start_indices,
-     shearstrain_segment_end_indices,
-     shearstrain_segment_start_strain,
-     shearstrain_segment_end_strain,
-     shearstrain_segment_frequency) = strain_segments_between_extrema(trange,crack_shearstrain)
+    (shear_maxPP,  # Maximum peak-to-peak variation in shear stress strain
+     shear_segment_start_indices,
+     shear_segment_end_indices,
+     shear_segment_start_value,
+     shear_segment_end_value,
+     shear_segment_frequency) = segments_between_extrema(trange,crack_shearmotion)
                         
     
 
@@ -390,8 +421,9 @@ def calc_heating_welder(friction_coefficient,
         normalheating_power_per_m2_hertz_side1_surr_tck,
         normalheating_power_per_m2_hertz_stddev_side1_surr_tck
     ) = train_surrogate("normal",
+                        input_type,
                         30, # surrogate_npoints
-                        normalstrain_maxPP,
+                        normal_maxPP,
                         x_bnd,xrange,xstep,
                         numdraws,
                         YoungsModulus, # Pa
@@ -413,8 +445,9 @@ def calc_heating_welder(friction_coefficient,
         normalheating_power_per_m2_hertz_side2_surr_tck,
         normalheating_power_per_m2_hertz_stddev_side2_surr_tck
     ) = train_surrogate("normal",
+                        input_type,
                         30, # surrogate_npoints
-                        normalstrain_maxPP,
+                        normal_maxPP,
                         x_bnd,xrange,xstep,
                         numdraws,
                         YoungsModulus, # Pa
@@ -437,8 +470,9 @@ def calc_heating_welder(friction_coefficient,
         shearheating_power_per_m2_hertz_side1_surr_tck,
         shearheating_power_per_m2_hertz_stddev_side1_surr_tck
     ) = train_surrogate("shear",
+                        input_type,
                         30, # surrogate_npoints
-                        shearstrain_maxPP,
+                        shear_maxPP,
                         x_bnd,xrange,xstep,
                         numdraws,
                         YoungsModulus, # Pa
@@ -459,8 +493,9 @@ def calc_heating_welder(friction_coefficient,
         shearheating_power_per_m2_hertz_side2_surr_tck,
         shearheating_power_per_m2_hertz_stddev_side2_surr_tck
     ) = train_surrogate("shear",
+                        input_type,
                         30, # surrogate_npoints
-                        shearstrain_maxPP,
+                        shear_maxPP,
                         x_bnd,xrange,xstep,
                         numdraws,
                         YoungsModulus, # Pa
@@ -476,8 +511,8 @@ def calc_heating_welder(friction_coefficient,
                         crack_model_normal_name,
                         crack_model_shear_name,
                         crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
-
-         
+    
+    
     #(totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,power_per_m2_side1,power_per_m2_stddev_side1)
     #(totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,power_per_m2_side2,power_per_m2_stddev_side2)
          
@@ -490,9 +525,9 @@ def calc_heating_welder(friction_coefficient,
     ) = evaluate_per_segment_heating_power(xrange,
                                            normalheating_power_per_m2_hertz_side1_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
                                            normalheating_power_per_m2_hertz_stddev_side1_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           normalstrain_segment_start_strain,
-                                           normalstrain_segment_end_strain,
-                                           normalstrain_segment_frequency)
+                                           normal_segment_start_value,
+                                           normal_segment_end_value,
+                                           normal_segment_frequency)
     
     (
         normalheating_segment_power_per_m2_side2,
@@ -500,9 +535,9 @@ def calc_heating_welder(friction_coefficient,
     ) = evaluate_per_segment_heating_power(xrange,
                                            normalheating_power_per_m2_hertz_side2_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
                                            normalheating_power_per_m2_hertz_stddev_side2_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           normalstrain_segment_start_strain,
-                                           normalstrain_segment_end_strain,
-                                           normalstrain_segment_frequency)
+                                           normal_segment_start_value,
+                                           normal_segment_end_value,
+                                           normal_segment_frequency)
 
 
     (
@@ -511,9 +546,9 @@ def calc_heating_welder(friction_coefficient,
     ) = evaluate_per_segment_heating_power(xrange,
                                            shearheating_power_per_m2_hertz_side1_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
                                            shearheating_power_per_m2_hertz_stddev_side1_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           shearstrain_segment_start_strain,
-                                           shearstrain_segment_end_strain,
-                                           shearstrain_segment_frequency)
+                                           shear_segment_start_value,
+                                           shear_segment_end_value,
+                                           shear_segment_frequency)
     
     (
         shearheating_segment_power_per_m2_side2,
@@ -521,51 +556,51 @@ def calc_heating_welder(friction_coefficient,
     ) = evaluate_per_segment_heating_power(xrange,
                                            shearheating_power_per_m2_hertz_side2_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
                                            shearheating_power_per_m2_hertz_stddev_side2_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           shearstrain_segment_start_strain,
-                                           shearstrain_segment_end_strain,
-                                           shearstrain_segment_frequency)
+                                           shear_segment_start_value,
+                                           shear_segment_end_value,
+                                           shear_segment_frequency)
     
 
     normalheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                       normalstrain_segment_start_indices,
-                                                                                       normalstrain_segment_end_indices,
+                                                                                       normal_segment_start_indices,
+                                                                                       normal_segment_end_indices,
                                                                                        normalheating_segment_power_per_m2_side1)
     normalheatingtable_power_per_m2_stddev_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                              normalstrain_segment_start_indices,
-                                                                                              normalstrain_segment_end_indices,
+                                                                                              normal_segment_start_indices,
+                                                                                              normal_segment_end_indices,
                                                                                               normalheating_segment_power_per_m2_stddev_side1)
     
     
     normalheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                       normalstrain_segment_start_indices,
-                                                                                       normalstrain_segment_end_indices,
+                                                                                       normal_segment_start_indices,
+                                                                                       normal_segment_end_indices,
                                                                                        normalheating_segment_power_per_m2_side2)
     
     normalheatingtable_power_per_m2_stddev_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                              normalstrain_segment_start_indices,
-                                                                                              normalstrain_segment_end_indices,
+                                                                                              normal_segment_start_indices,
+                                                                                              normal_segment_end_indices,
                                                                                               normalheating_segment_power_per_m2_stddev_side2)
 
     
     shearheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                      shearstrain_segment_start_indices,
-                                                                                      shearstrain_segment_end_indices,
+                                                                                      shear_segment_start_indices,
+                                                                                      shear_segment_end_indices,
                                                                                       shearheating_segment_power_per_m2_side1)
     
     shearheatingtable_power_per_m2_stddev_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                             shearstrain_segment_start_indices,
-                                                                                             shearstrain_segment_end_indices,
+                                                                                             shear_segment_start_indices,
+                                                                                             shear_segment_end_indices,
                                                                                              shearheating_segment_power_per_m2_stddev_side1)
 
     
     shearheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                      shearstrain_segment_start_indices,
-                                                                                      shearstrain_segment_end_indices,
+                                                                                      shear_segment_start_indices,
+                                                                                      shear_segment_end_indices,
                                                                                       shearheating_segment_power_per_m2_side2)
 
     shearheatingtable_power_per_m2_stddev_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                             shearstrain_segment_start_indices,
-                                                                                             shearstrain_segment_end_indices,
+                                                                                             shear_segment_start_indices,
+                                                                                             shear_segment_end_indices,
                                                                                              shearheating_segment_power_per_m2_stddev_side2)
 
     
@@ -588,7 +623,7 @@ def calc_heating_welder(friction_coefficient,
     pl.grid(True)
     pl.xlabel('Radius from crack center (mm)')
     pl.ylabel('Time (s)')
-    pl.title('Heating power due to normal strain (W/m^2), side1')
+    pl.title('Heating power due to normal %s (W/m^2), side1' % (input_type))
 
 
     normal_heatgram_side2_fig=pl.figure()
@@ -598,7 +633,7 @@ def calc_heating_welder(friction_coefficient,
     pl.grid(True)
     pl.xlabel('Radius from crack center (mm)')
     pl.ylabel('Time (s)')
-    pl.title('Heating power due to normal strain (W/m^2), side2')
+    pl.title('Heating power due to normal %s (W/m^2), side2' % (input_type))
     
 
 
@@ -609,7 +644,7 @@ def calc_heating_welder(friction_coefficient,
     pl.grid(True)
     pl.xlabel('Radius from crack center (mm)')
     pl.ylabel('Time (s)')
-    pl.title('Heating power due to shear strain (W/m^2), side1')
+    pl.title('Heating power due to shear %s (W/m^2), side1' % (input_type))
 
 
     shear_heatgram_side2_fig=pl.figure()
@@ -619,7 +654,7 @@ def calc_heating_welder(friction_coefficient,
     pl.grid(True)
     pl.xlabel('Radius from crack center (mm)')
     pl.ylabel('Time (s)')
-    pl.title('Heating power due to shear strain (W/m^2), side2')
+    pl.title('Heating power due to shear %s (W/m^2), side2' % (input_type))
     
 
 
@@ -656,7 +691,7 @@ def calc_heating_welder(friction_coefficient,
     
 
     
-    return (crack_strain_fig,
+    return (crack_stressstrain_fig,
             normal_heatgram_side1_fig,
             normal_heatgram_side2_fig,
             shear_heatgram_side1_fig,
