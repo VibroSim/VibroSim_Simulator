@@ -46,7 +46,7 @@ def run(_xmldoc,_element,
     # Can use scriptify(process_multisweep_ansys) in next line to debug processing script
     (output_filename, plotpaths) = process_multisweep_ansys(dc_laser_name_str,
                                                             dc_crack_name_str,
-                                                            dc_dest_href.getpath(),
+                                                            dc_dest_href.getpath(),dc_measident_str,
                                                             dt,
                                                             impulseexcitation_width,
                                                             endcrop,

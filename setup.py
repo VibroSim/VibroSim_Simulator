@@ -87,6 +87,7 @@ console_scripts=[
     "vibrosim_process_multisweep",
     "vibrosim_process_compare_multisweep",
     "vibrosim_synthetic_spectrum",
+    "vibrosim_process_multisweep_ansys",
  ]
 
 console_scripts_entrypoints = [ "%s = VibroSim_Simulator.bin.%s:main" % (script,script.replace("-","_")) for script in console_scripts ]

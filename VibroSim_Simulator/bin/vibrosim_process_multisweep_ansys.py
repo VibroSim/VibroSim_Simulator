@@ -24,7 +24,7 @@ except ImportError:
 from limatix.dc_value import hrefvalue as hrefv
 from limatix.dc_value import numericunitsvalue as numericunitsv
 
-from VibroSim_Simulator.process_multisweep import process_multisweep
+from VibroSim_Simulator.process_multisweep import process_multisweep_ansys
 
 
 def main(args=None):
@@ -58,13 +58,14 @@ def main(args=None):
 
     if not(output_filename.endswith(".csv.bz2")) and not(output_filename.endswith(".csv")):
         print("Output filename \"%s\" should have a .csv or .csv.bz2 extension" % (output_filename))
+        sys.exit(1)
         pass
     
     
     dt=1e-6
     impulseexcitation_width=2.0e-6
 
-    (output_filename_ref, plotpaths) = process_multisweep_ansys(laser_name,crack_name,plotdir,dt,impulseexcitation_width,endcrop,[ seg1_table,seg2_table,seg3_table,seg4_table ], output_filename)
+    (output_filename_ref, plotpaths) = process_multisweep_ansys(laser_name,crack_name,plotdir,"",dt,impulseexcitation_width,endcrop,[ seg1_table,seg2_table,seg3_table,seg4_table ], output_filename)
     
     
     pass

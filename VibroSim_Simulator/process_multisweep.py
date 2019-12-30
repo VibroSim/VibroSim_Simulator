@@ -26,7 +26,7 @@ def interpolate_spectrum(min_df,dt,FreqResp,impulseexcitation_width):
     
     max_t = 1.0/min_df
     n = int(round(max_t/dt))
-    if not((n & (n-1) == 0) and n != 0):
+    if False and not((n & (n-1) == 0) and n != 0):
         # n is not a power of 2... we don't rely on this here
         # but the way we generated the steps (currently) always
         # generates a power of 2. So raise an error flag because
@@ -103,17 +103,22 @@ def read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,location,quantity,
 
     freq_key = "Frequency (Hz)"
 
-    amplitude_to_join = [ component in (location,quantity,"Amplitude",amplitude_units) if component is not None ]
+    amplitude_to_join = [ component for component in (location,quantity,"Amplitude",amplitude_units) if component is not None ]
     amplitude_title = " ".join(amplitude_to_join)
 
-    phase_to_join = [ component in (location,quantity,"Phase Angle",phase_units) if component is not None ]
+    phase_to_join = [ component for component in (location,quantity,"Phase Angle",phase_units) if component is not None ]
     phase_title = " ".join(phase_to_join)
 
+    descr_to_join = [ component for component in (location,quantity) if component is not None ]
+    descr = " ".join(descr_to_join)
+    
     FreqResp = collections.OrderedDict()
 
     dfs = []
+    
 
     for segnum in range(len(seg_tables)):
+        this_segdata = []
 
         for (index,row) in seg_tables[segnum].iterrows():
             complex_response = row[amplitude_title]*amplitude_multiplier*np.exp((0+1j)*row[phase_title]*phase_multiplier)
@@ -167,29 +172,29 @@ def read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,location,quantity,
     
 
 
-def process_multisweep_ansys(laser_name,crack_name,plotdir,dt,impulseexcitation_width,endcrop,seg_table_names,output_filename):
+def process_multisweep_ansys(laser_name,crack_name,plotdir,plotprefix,dt,impulseexcitation_width,endcrop,seg_table_names,output_filename):
     numsegs = len(seg_table_names)
 
     seg_tables = [ pd.read_excel(seg_table_name) for seg_table_name in seg_table_names ]
 
         
-    (xducer_vel_trange,xducer_velspec_frange,xducer_vel_timedomain,xducer_velspec,xducer_vel_filtered_timedomain,xducer_velspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Velocity","(in/s)",25.4e-3,"(Deg)",np.pi/180.0)
+    (xducer_vel_trange,xducer_velspec_frange,xducer_vel_timedomain,xducer_velspec,xducer_vel_filtered_timedomain,xducer_velspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Velocity","(in/s)",25.4e-3,"(deg)",np.pi/180.0)
 
-    (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Deflection","(in)",25.4e-3,"(Deg)",np.pi/180.0)
+    (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Deflection","(in)",25.4e-3,"(deg)",np.pi/180.0)
 
 
     if laser_name is not None:
-        (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,laser_name, "Velocity","(in/s)",25.4e-3,"(Deg)",np.pi/180.0)
+        (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,laser_name, "Velocity","(in/s)",25.4e-3,"(deg)",np.pi/180.0)
         
-        (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,laser_name, "Deflection","(in)",25.4e-3,"(Deg)",np.pi/180.0)
+        (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,laser_name, "Deflection","(in)",25.4e-3,"(deg)",np.pi/180.0)
         
         pass
 
     if crack_name is not None:
-        (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,crack_name, "Normal Stress","(psi)",6894.76,"(Deg)",np.pi/180.0)
+        (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,crack_name, "Normal Stress","(psi)",6894.76,"(deg)",np.pi/180.0)
         
         
-        (crackcentershearstress_trange,crackcentershearstressspec_frange,crackcentershearstress_timedomain,crackcentershearstressspec,crackcentershearstress_filtered_timedomain,crackcentershearstressspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,crack_name, "Shear Stress","(psi)",6894.76,"(Deg)",np.pi/180.0)
+        (crackcentershearstress_trange,crackcentershearstressspec_frange,crackcentershearstress_timedomain,crackcentershearstressspec,crackcentershearstress_filtered_timedomain,crackcentershearstressspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,crack_name, "Shear Stress","(psi)",6894.76,"(deg)",np.pi/180.0)
         pass
 
 
@@ -419,14 +424,14 @@ def process_multisweep_ansys(laser_name,crack_name,plotdir,dt,impulseexcitation_
     # applied at the transducer location 
     out_frame.insert(len(out_frame.columns),"specimen_mobility(m/(N*s^2))",xducer_vel_timedomain.real[:endpoint])
     
-    if laser_velspec_filepaths is not None:
+    if laser_name is not None:
         # specimen_laser is velocity response at laser position in 
         # m/s per unit N*s impulse
         # applied at the transducer location 
         out_frame.insert(len(out_frame.columns),"specimen_laser(m/(N*s^2))",laser_vel_timedomain.real[:endpoint])
         pass
 
-    if crackcenterstressspec_filepaths is not None:
+    if crack_name is not None:
 
         # specimen_crackcenternormalstress is normal stress response at crack center position in 
         # unitless per unit N*s impulse
