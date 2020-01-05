@@ -68,8 +68,8 @@ def run(_xmldoc,_element,
         dc_exc_t3_numericunits,
         dc_exc_t4_numericunits,
         dc_excitation_frequency_numericunits,
-        dc_harmonicburst_normalstrain_complex, 
-        dc_harmonicburst_shearstrain_complex):
+        dc_harmonicburst_normalstress_complex, 
+        dc_harmonicburst_shearstress_complex):
 
     verbose=False
     doplots=False
@@ -176,8 +176,8 @@ def run(_xmldoc,_element,
                                                 dc_exc_t2_numericunits.value('s'),
                                                 dc_exc_t3_numericunits.value('s'),
                                                 dc_exc_t4_numericunits.value('s'),
-                                                dc_harmonicburst_normalstrain_complex,
-                                                dc_harmonicburst_shearstrain_complex,
+                                                dc_harmonicburst_normalstress_complex,
+                                                dc_harmonicburst_shearstress_complex,
                                                 dc_heatingdata_href.getpath())
     
     

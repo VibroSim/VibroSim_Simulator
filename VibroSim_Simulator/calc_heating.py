@@ -730,8 +730,8 @@ def calc_heating_singlefrequency(friction_coefficient,
                                  crack_model_shear_factor,
                                  excitation_frequency,
                                  exc_t0,exc_t1,exc_t2,exc_t3,exc_t4, # s
-                                 harmonicburst_normalstrain, # NOTE: complex
-                                 harmonicburst_shearstrain, # NOTE: complex                
+                                 harmonicburst_normalstress, # NOTE: complex
+                                 harmonicburst_shearstress, # NOTE: complex                
                                  heatingdata_path):
 
     verbose=False
@@ -756,8 +756,11 @@ def calc_heating_singlefrequency(friction_coefficient,
                         
     
     # Note: We are ignoring the phases of the normal and shear strains
-    vib_normal_stress_ampl = plane_stress_modulus * abs(harmonicburst_normalstrain)
-    vib_shear_stress_ampl = shear_modulus * abs(harmonicburst_shearstrain)
+    #vib_normal_stress_ampl = plane_stress_modulus * abs(harmonicburst_normalstrain)
+    #vib_shear_stress_ampl = shear_modulus * abs(harmonicburst_shearstrain)
+
+    vib_normal_stress_ampl = abs(harmonicburst_normalstress)
+    vib_shear_stress_ampl = abs(harmonicburst_shearstress)
 
     crack_model_normal = crack_model_normal_by_name(crack_model_normal_name,YoungsModulus,PoissonsRatio)
     crack_model_shear = crack_model_shear_by_name(crack_model_shear_name,YoungsModulus,PoissonsRatio)

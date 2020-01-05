@@ -32,22 +32,22 @@ def run(_xmldoc,_element,
         dc_seg1_xducercontactprobe_vel_href,
         dc_seg1_laser_displ_href,
         dc_seg1_laser_vel_href,
-        dc_seg1_crackcenterstrain_href,
+        dc_seg1_crackcenterstress_href,
         dc_seg2_xducercontactprobe_displ_href,
         dc_seg2_xducercontactprobe_vel_href,
         dc_seg2_laser_displ_href,
         dc_seg2_laser_vel_href,
-        dc_seg2_crackcenterstrain_href,
+        dc_seg2_crackcenterstress_href,
         dc_seg3_xducercontactprobe_displ_href,
         dc_seg3_xducercontactprobe_vel_href,
         dc_seg3_laser_displ_href,
         dc_seg3_laser_vel_href,
-        dc_seg3_crackcenterstrain_href,
+        dc_seg3_crackcenterstress_href,
         dc_seg4_xducercontactprobe_displ_href,
         dc_seg4_xducercontactprobe_vel_href,
         dc_seg4_laser_displ_href,
         dc_seg4_laser_vel_href,
-        dc_seg4_crackcenterstrain_href,
+        dc_seg4_crackcenterstress_href,
         dc_endcrop_numericunits=numericunitsv(250e-3,"s")
 ):
 
@@ -83,11 +83,11 @@ def run(_xmldoc,_element,
         dc_seg4_laser_displ_href.getpath(),
     ]
 
-    crackcenterstrainspec_filepaths = [ 
-        dc_seg1_crackcenterstrain_href.getpath(),
-        dc_seg2_crackcenterstrain_href.getpath(),
-        dc_seg3_crackcenterstrain_href.getpath(),
-        dc_seg4_crackcenterstrain_href.getpath(),
+    crackcenterstressspec_filepaths = [ 
+        dc_seg1_crackcenterstress_href.getpath(),
+        dc_seg2_crackcenterstress_href.getpath(),
+        dc_seg3_crackcenterstress_href.getpath(),
+        dc_seg4_crackcenterstress_href.getpath(),
     ]
     
     output_href=hrefv(quote(dc_measident_str+"_dynamicmodel.csv.bz2"),dc_dest_href)
@@ -98,7 +98,7 @@ def run(_xmldoc,_element,
                                                                  xducer_displspec_filepaths,
                                                                  laser_velspec_filepaths,
                                                                  laser_displspec_filepaths,
-                                                                 crackcenterstrainspec_filepaths,
+                                                                 crackcenterstressspec_filepaths,
                                                                  output_href.getpath(),
                                                                  plotdir=dc_dest_href.getpath(),
                                                                  plotprefix=dc_measident_str,

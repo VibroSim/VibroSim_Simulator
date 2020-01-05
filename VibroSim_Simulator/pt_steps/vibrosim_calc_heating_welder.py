@@ -130,7 +130,7 @@ def run(_xmldoc,_element,
 
 
     # can scriptify(calc_heating_welder) to help with debugging
-    (crack_strain_fig,
+    (crack_stress_fig,
      normal_heatgram_side1_fig,
      normal_heatgram_side2_fig,
      shear_heatgram_side1_fig,
@@ -170,9 +170,9 @@ def run(_xmldoc,_element,
                                        dc_heatingdata_href.getpath())
     
 
-    pl.figure(crack_strain_fig.number)
-    crack_strain_href = hrefv(quote(dc_measident_str+"_crack_strain.png"),dc_dest_href)
-    pl.savefig(crack_strain_href.getpath(),dpi=300)
+    pl.figure(crack_stress_fig.number)
+    crack_stress_href = hrefv(quote(dc_measident_str+"_crack_stress.png"),dc_dest_href)
+    pl.savefig(crack_stress_href.getpath(),dpi=300)
 
     pl.figure(normal_heatgram_side1_fig.number)
     normal_heatgram_side1_href = hrefv(quote(dc_measident_str+"_normal_heatgram_side1.png"),dc_dest_href)
@@ -198,7 +198,7 @@ def run(_xmldoc,_element,
     
 
     ret= { 
-        "dc:crack_strain": crack_strain_href,
+        "dc:crack_stress": crack_stress_href,
         "dc:normal_heatgram_side1": normal_heatgram_side1_href,
         "dc:normal_heatgram_side2": normal_heatgram_side2_href,
         "dc:shear_heatgram_side1": shear_heatgram_side1_href,

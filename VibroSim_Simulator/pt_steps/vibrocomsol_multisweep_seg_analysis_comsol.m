@@ -76,18 +76,18 @@ model.result.numerical(sprintf('custom_solidmech_multisweep_seg%d_laser_vel',seg
 model.result.numerical(sprintf('custom_solidmech_multisweep_seg%d_laser_vel',segnum_int)).setResult();
 
 
-% Write out the crack strain
+% Write out the crack stress
 
 
 
-model.result.table(sprintf('solidmech_multisweep_seg%d_crackcenterstrain_table',segnum_int)).clearTableData()
-model.result.table(sprintf('solidmech_multisweep_seg%d_crackcenterstrain_table',segnum_int)).set('storetable','inmodelandonfile');
+model.result.table(sprintf('solidmech_multisweep_seg%d_crackcenterstress_table',segnum_int)).clearTableData()
+model.result.table(sprintf('solidmech_multisweep_seg%d_crackcenterstress_table',segnum_int)).set('storetable','inmodelandonfile');
 
-seg_crackcenterstrain_file = fullfile(dc_dest_href{1},sprintf('%s_crackcenterstrainspec_seg%d.txt',dc_measident_str,segnum_int));
-model.result.table(sprintf('solidmech_multisweep_seg%d_crackcenterstrain_table',segnum_int)).set('filename',buildabspath(seg_crackcenterstrain_file));
+seg_crackcenterstress_file = fullfile(dc_dest_href{1},sprintf('%s_crackcenterstressspec_seg%d.txt',dc_measident_str,segnum_int));
+model.result.table(sprintf('solidmech_multisweep_seg%d_crackcenterstress_table',segnum_int)).set('filename',buildabspath(seg_crackcenterstress_file));
 
-model.result.numerical(sprintf('solidmech_multisweep_seg%d_crackcenterstrain',segnum_int)).run;
-model.result.numerical(sprintf('solidmech_multisweep_seg%d_crackcenterstrain',segnum_int)).setResult();
+model.result.numerical(sprintf('solidmech_multisweep_seg%d_crackcenterstress',segnum_int)).run;
+model.result.numerical(sprintf('solidmech_multisweep_seg%d_crackcenterstress',segnum_int)).setResult();
 
 
 ret={ 
@@ -95,6 +95,6 @@ ret={
   { sprintf('dc:seg%d_xducercontactprobe_vel',segnum_int), {seg_xducercontactprobe_vel_file} },
   { sprintf('dc:seg%d_laser_displ',segnum_int), {seg_laser_displ_file} },
   { sprintf('dc:seg%d_laser_vel',segnum_int), {seg_laser_vel_file} },
-  { sprintf('dc:seg%d_crackcenterstrain',segnum_int), {seg_crackcenterstrain_file} },
+  { sprintf('dc:seg%d_crackcenterstress',segnum_int), {seg_crackcenterstress_file} },
 };
 

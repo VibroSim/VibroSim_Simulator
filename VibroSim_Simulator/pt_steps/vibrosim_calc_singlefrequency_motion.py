@@ -43,8 +43,8 @@ def run(_xmldoc,_element,
         dc_exc_t3_numericunits,
         dc_exc_t4_numericunits,
         dc_excitation_frequency_numericunits,
-        dc_harmonicburst_normalstrain_complex, 
-        dc_harmonicburst_shearstrain_complex):
+        dc_harmonicburst_normalstress_complex, 
+        dc_harmonicburst_shearstress_complex):
 
     t0 = dc_exc_t0_numericunits.value("s")
     t1 = dc_exc_t1_numericunits.value("s")
@@ -63,12 +63,12 @@ def run(_xmldoc,_element,
     heatingenvelope[ (trange >= t1) & (trange < t2) ] = 1.0
     heatingenvelope[ (trange >= t2) & (trange < t3) ] = (1.0+np.cos( np.pi*(trange[ (trange >= t2) & (trange < t3) ]-t2)/(t3-t2)))/2.0
 
-    crackcenternormalstrain = np.real(heatingenvelope*dc_harmonicburst_normalstrain_complex*np.exp((0+1j)*2.0*np.pi*freq*(trange-t0)))
-    crackcentershearstrain = np.real(heatingenvelope*dc_harmonicburst_shearstrain_complex*np.exp((0+1j)*2.0*np.pi*freq*(trange-t0)))
+    crackcenternormalstress = np.real(heatingenvelope*dc_harmonicburst_normalstress_complex*np.exp((0+1j)*2.0*np.pi*freq*(trange-t0)))
+    crackcentershearstress = np.real(heatingenvelope*dc_harmonicburst_shearstress_complex*np.exp((0+1j)*2.0*np.pi*freq*(trange-t0)))
 
     motiontable = pd.DataFrame(index=pd.Float64Index(data=np.arange(trange.shape[0],dtype='d')*dt,dtype='d',name="Time(s)"))
-    motiontable.insert(len(motiontable.columns),"specimen_crackcenternormalstrain",crackcenternormalstrain)
-    motiontable.insert(len(motiontable.columns),"specimen_crackcentershearstrain",crackcentershearstrain)
+    motiontable.insert(len(motiontable.columns),"specimen_crackcenternormalstress(Pa)",crackcenternormalstress)
+    motiontable.insert(len(motiontable.columns),"specimen_crackcentershearstress(Pa)",crackcentershearstress)
 
 
     # Save motiontable CSV and add to return dictionary

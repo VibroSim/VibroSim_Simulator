@@ -587,7 +587,7 @@ def process_multisweep(path,
                        xducer_displspec_filename_template,
                        laser_velspec_filename_template,
                        laser_displspec_filename_template,
-                       crackcenterstrainspec_filename_template,
+                       crackcenterstressspec_filename_template,
                        output_filename,
                        xducer_veltime_filename=None,
                        xducer_displtime_filename=None,
@@ -649,18 +649,18 @@ def process_multisweep(path,
         laser_displtime_filepath = None
         pass
 
-    if crackcenterstrainspec_filename_template is not None:
-        crackcenterstrainspec_filepaths = [ os.path.join(path,crackcenterstrainspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
+    if crackcenterstressspec_filename_template is not None:
+        crackcenterstressspec_filepaths = [ os.path.join(path,crackcenterstressspec_filename_template % (segnum+1)) for segnum in range(num_segments) ]
         pass
     else:
-        crackcenterstrainspec_filepaths = None
+        crackcenterstressspec_filepaths = None
         pass
 
     return process_multisweep_from_files(xducer_velspec_filepaths,
                                          xducer_displspec_filepaths,
                                          laser_velspec_filepaths,
                                          laser_displspec_filepaths,
-                                         crackcenterstrainspec_filepaths,
+                                         crackcenterstressspec_filepaths,
                                          output_filename,
                                          xducer_veltime_filepath=xducer_veltime_filepath,
                                          xducer_displtime_filepath=xducer_displtime_filepath,
@@ -677,7 +677,7 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
                                   xducer_displspec_filepaths,
                                   laser_velspec_filepaths,
                                   laser_displspec_filepaths,
-                                  crackcenterstrainspec_filepaths,
+                                  crackcenterstressspec_filepaths,
                                   output_filename,
                                   xducer_veltime_filepath=None,
                                   xducer_displtime_filepath=None,
@@ -723,10 +723,10 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered)=read_spectrum(laser_displspec_filepaths,1,dt,impulseexcitation_width,"laser point displacement m/(N*s)")
         pass
 
-    if crackcenterstrainspec_filepaths is not None:
-        (crackcenternormalstrain_trange,crackcenternormalstrainspec_frange,crackcenternormalstrain_timedomain,crackcenternormalstrainspec,crackcenternormalstrain_filtered_timedomain,crackcenternormalstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,2,dt,impulseexcitation_width,"crack center normal strain (unitless)") # colnum==1 is strain magnitude, colnum==2 is normal strain, colnum==3 is shear strain
+    if crackcenterstressspec_filepaths is not None:
+        (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum(crackcenterstressspec_filepaths,2,dt,impulseexcitation_width,"crack center normal stress (Pa)") # colnum==1 is stress magnitude, colnum==2 is normal stress, colnum==3 is shear stress
         
-        (crackcentershearstrain_trange,crackcentershearstrainspec_frange,crackcentershearstrain_timedomain,crackcentershearstrainspec,crackcentershearstrain_filtered_timedomain,crackcentershearstrainspec_filtered)=read_spectrum(crackcenterstrainspec_filepaths,3,dt,impulseexcitation_width,"crack center shear strain (unitless)")
+        (crackcentershearstress_trange,crackcentershearstressspec_frange,crackcentershearstress_timedomain,crackcentershearstressspec,crackcentershearstress_filtered_timedomain,crackcentershearstressspec_filtered)=read_spectrum(crackcenterstressspec_filepaths,3,dt,impulseexcitation_width,"crack center shear stress (Pa)")
         pass
 
     if laser_veltime_filepath is not None:
@@ -891,60 +891,60 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
 
 
 
-        if crackcenterstrainspec_filepaths is not None:
+        if crackcenterstressspec_filepaths is not None:
             pl.figure()
-            pl.plot(crackcenternormalstrain_trange,np.real(crackcenternormalstrain_filtered_timedomain),'-',
-                    crackcenternormalstrain_trange,np.real(crackcenternormalstrain_timedomain),'-')
-            pl.title('Crack center normal strain (time domain)')
+            pl.plot(crackcenternormalstress_trange,np.real(crackcenternormalstress_filtered_timedomain),'-',
+                    crackcenternormalstress_trange,np.real(crackcenternormalstress_timedomain),'-')
+            pl.title('Crack center normal stress (time domain)')
             pl.xlabel('Time(s)')
-            pl.ylabel('1/(N*s)')
+            pl.ylabel('Pa/(N*s)')
             pl.grid(True)
             pl.legend(('FD fusion filtered','FD fusion unfiltered'))
-            crack_center_normal_strain_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_strain_time_domain.png')
-            pl.savefig(crack_center_normal_strain_time_domain_plotpath,dpi=300)
-            plot_paths["crack_center_normal_strain_time_domain"]=crack_center_normal_strain_time_domain_plotpath
+            crack_center_normal_stress_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_stress_time_domain.png')
+            pl.savefig(crack_center_normal_stress_time_domain_plotpath,dpi=300)
+            plot_paths["crack_center_normal_stress_time_domain"]=crack_center_normal_stress_time_domain_plotpath
             
             
             pl.figure()
-            pl.plot(crackcentershearstrain_trange,np.real(crackcentershearstrain_filtered_timedomain),'-',
-                    crackcentershearstrain_trange,np.real(crackcentershearstrain_timedomain),'-')
-            pl.title('Crack center shear strain (time domain)')
+            pl.plot(crackcentershearstress_trange,np.real(crackcentershearstress_filtered_timedomain),'-',
+                    crackcentershearstress_trange,np.real(crackcentershearstress_timedomain),'-')
+            pl.title('Crack center shear stress (time domain)')
             pl.xlabel('Time(s)')
-            pl.ylabel('1/(N*s)')
+            pl.ylabel('Pa/(N*s)')
             pl.grid(True)
             pl.legend(('FD fusion filtered','FD fusion unfiltered'))
-            crack_center_shear_strain_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_strain_time_domain.png')
-            pl.savefig(crack_center_shear_strain_time_domain_plotpath,dpi=300)
-            plot_paths["crack_center_shear_strain_time_domain"]=crack_center_shear_strain_time_domain_plotpath
+            crack_center_shear_stress_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_stress_time_domain.png')
+            pl.savefig(crack_center_shear_stress_time_domain_plotpath,dpi=300)
+            plot_paths["crack_center_shear_stress_time_domain"]=crack_center_shear_stress_time_domain_plotpath
             
             
             
             
             pl.figure()
-            pl.loglog(crackcenternormalstrainspec_frange,np.abs(crackcenternormalstrainspec_filtered),'-',
-                      crackcenternormalstrainspec_frange,np.abs(crackcenternormalstrainspec),'-')
-            pl.axis((10,1e5,np.abs(crackcenternormalstrainspec_filtered[1]),np.max(np.abs(crackcenternormalstrainspec_filtered))*1.2))
+            pl.loglog(crackcenternormalstressspec_frange,np.abs(crackcenternormalstressspec_filtered),'-',
+                      crackcenternormalstressspec_frange,np.abs(crackcenternormalstressspec),'-')
+            pl.axis((10,1e5,np.abs(crackcenternormalstressspec_filtered[1]),np.max(np.abs(crackcenternormalstressspec_filtered))*1.2))
             pl.xlabel('Frequency (Hz)')
-            pl.ylabel('1/N')
-            pl.title('Crack center normal strain (frequency domain)')
+            pl.ylabel('Pa/N')
+            pl.title('Crack center normal stress (frequency domain)')
             pl.grid(True)
-            crack_center_normal_strain_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_strain_frequency_domain.png')
-            pl.savefig(crack_center_normal_strain_frequency_domain_plotpath,dpi=300)
-            plot_paths["crack_center_normal_strain_frequency_domain"]=crack_center_normal_strain_frequency_domain_plotpath
+            crack_center_normal_stress_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_normal_stress_frequency_domain.png')
+            pl.savefig(crack_center_normal_stress_frequency_domain_plotpath,dpi=300)
+            plot_paths["crack_center_normal_stress_frequency_domain"]=crack_center_normal_stress_frequency_domain_plotpath
             
             
             pl.figure()
-            pl.loglog(crackcentershearstrainspec_frange,np.abs(crackcentershearstrainspec_filtered),'-',
-                      crackcentershearstrainspec_frange,np.abs(crackcentershearstrainspec),'-')
-            pl.axis((10,1e5,np.abs(crackcentershearstrainspec_filtered[1]),np.max(np.abs(crackcentershearstrainspec_filtered))*1.2))
+            pl.loglog(crackcentershearstressspec_frange,np.abs(crackcentershearstressspec_filtered),'-',
+                      crackcentershearstressspec_frange,np.abs(crackcentershearstressspec),'-')
+            pl.axis((10,1e5,np.abs(crackcentershearstressspec_filtered[1]),np.max(np.abs(crackcentershearstressspec_filtered))*1.2))
             pl.xlabel('Frequency (Hz)')
             pl.ylabel('1/N')
-            pl.title('Crack center shear strain (frequency domain)')
+            pl.title('Crack center shear stress (frequency domain)')
             pl.grid(True)
-            crack_center_shear_strain_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_strain_frequency_domain.png')
-            pl.savefig(crack_center_shear_strain_frequency_domain_plotpath,dpi=300)
-            plot_paths["crack_center_shear_strain_frequency_domain"]=crack_center_shear_strain_frequency_domain_plotpath
-            pass # crackcenterstrainspec_filepaths
+            crack_center_shear_stress_frequency_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_stress_frequency_domain.png')
+            pl.savefig(crack_center_shear_stress_frequency_domain_plotpath,dpi=300)
+            plot_paths["crack_center_shear_stress_frequency_domain"]=crack_center_shear_stress_frequency_domain_plotpath
+            pass # crackcenterstressspec_filepaths
 
         pass
         
@@ -969,18 +969,18 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
         out_frame.insert(len(out_frame.columns),"specimen_laser(m/(N*s^2))",laser_vel_timedomain.real[:endpoint])
         pass
 
-    if crackcenterstrainspec_filepaths is not None:
+    if crackcenterstressspec_filepaths is not None:
 
-        # specimen_crackcenternormalstrain is normal strain response at crack center position in 
+        # specimen_crackcenternormalstress is normal stress response at crack center position in 
         # unitless per unit N*s impulse
         # applied at the transducer location 
-        out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstrain(1/(N*s))",crackcenternormalstrain_timedomain.real[:endpoint])
+        out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstress(Pa/(N*s))",crackcenternormalstress_timedomain.real[:endpoint])
 
 
-        # specimen_crackcentershearstrain is normal strain response at crack center position in 
+        # specimen_crackcentershearstress is normal stress response at crack center position in 
         # unitless per unit N*s impulse
         # applied at the transducer location 
-        out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstrain(1/(N*s))",crackcentershearstrain_timedomain.real[:endpoint])
+        out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstress(Pa/(N*s))",crackcentershearstress_timedomain.real[:endpoint])
         pass
     
     
