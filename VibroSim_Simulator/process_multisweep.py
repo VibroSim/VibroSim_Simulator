@@ -90,7 +90,7 @@ def interpolate_spectrum(min_df,dt,FreqResp,impulseexcitation_width):
     return (trange,frange,meas_timedomain,meas,meas_filtered_timedomain,meas_filtered)
 
 
-def read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,location,quantity,amplitude_units,amplitude_multiplier,phase_units,phase_multiplier):
+def read_spectrum_ansys(seg_table_filenames,seg_tables,dt,impulseexcitation_width,location,quantity,amplitude_units,amplitude_multiplier,phase_units,phase_multiplier):
     """Read spectrum from the given segment tables. 
     location, quantity, and units, joined by spaces give the column title
     to use for the data. The frequency is presumed to be in a column
@@ -119,6 +119,12 @@ def read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,location,quantity,
 
     for segnum in range(len(seg_tables)):
         this_segdata = []
+
+        if amplitude_title not in seg_tables[segnum]:
+            raise ValueError("Table %s missing column \"%s\"" % (seg_table_filenames[segnum],amplitude_title))
+
+        if phase_title not in seg_tables[segnum]:
+            raise ValueError("Table %s missing column \"%s\"" % (seg_table_filenames[segnum],phase_title))
 
         for (index,row) in seg_tables[segnum].iterrows():
             complex_response = row[amplitude_title]*amplitude_multiplier*np.exp((0+1j)*row[phase_title]*phase_multiplier)
@@ -178,23 +184,23 @@ def process_multisweep_ansys(laser_name,crack_name,plotdir,plotprefix,dt,impulse
     seg_tables = [ pd.read_excel(seg_table_name) for seg_table_name in seg_table_names ]
 
         
-    (xducer_vel_trange,xducer_velspec_frange,xducer_vel_timedomain,xducer_velspec,xducer_vel_filtered_timedomain,xducer_velspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Velocity","(in/s)",25.4e-3,"(deg)",np.pi/180.0)
+    (xducer_vel_trange,xducer_velspec_frange,xducer_vel_timedomain,xducer_velspec,xducer_vel_filtered_timedomain,xducer_velspec_filtered) = read_spectrum_ansys(seg_table_names,seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Velocity","(in/s)",25.4e-3,"(deg)",np.pi/180.0)
 
-    (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Deflection","(in)",25.4e-3,"(deg)",np.pi/180.0)
+    (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered) = read_spectrum_ansys(seg_table_names,seg_tables,dt,impulseexcitation_width,"Horn Contact Point", "Deflection","(in)",25.4e-3,"(deg)",np.pi/180.0)
 
 
     if laser_name is not None:
-        (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,laser_name, "Velocity","(in/s)",25.4e-3,"(deg)",np.pi/180.0)
+        (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum_ansys(seg_table_names,seg_tables,dt,impulseexcitation_width,laser_name, "Velocity","(in/s)",25.4e-3,"(deg)",np.pi/180.0)
         
-        (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered) = read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,laser_name, "Deflection","(in)",25.4e-3,"(deg)",np.pi/180.0)
+        (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered) = read_spectrum_ansys(seg_table_names,seg_tables,dt,impulseexcitation_width,laser_name, "Deflection","(in)",25.4e-3,"(deg)",np.pi/180.0)
         
         pass
 
     if crack_name is not None:
-        (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,crack_name, "Normal Stress","(psi)",6894.76,"(deg)",np.pi/180.0)
+        (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum_ansys(seg_table_names,seg_tables,dt,impulseexcitation_width,crack_name, "Normal Stress","(psi)",6894.76,"(deg)",np.pi/180.0)
         
         
-        (crackcentershearstress_trange,crackcentershearstressspec_frange,crackcentershearstress_timedomain,crackcentershearstressspec,crackcentershearstress_filtered_timedomain,crackcentershearstressspec_filtered)=read_spectrum_ansys(seg_tables,dt,impulseexcitation_width,crack_name, "Shear Stress","(psi)",6894.76,"(deg)",np.pi/180.0)
+        (crackcentershearstress_trange,crackcentershearstressspec_frange,crackcentershearstress_timedomain,crackcentershearstressspec,crackcentershearstress_filtered_timedomain,crackcentershearstressspec_filtered)=read_spectrum_ansys(seg_table_names,seg_tables,dt,impulseexcitation_width,crack_name, "Shear Stress","(psi)",6894.76,"(deg)",np.pi/180.0)
         pass
 
 
