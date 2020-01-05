@@ -128,7 +128,7 @@ def segments_between_extrema(trange,crack_stress_or_strain):
     segment_end_indices=extrema_indices[1:]
     
     segment_start_values=crack_stress_or_strain[segment_start_indices]
-    segment_end_values=crack_stress_strain[segment_end_indices]
+    segment_end_values=crack_stress_or_strain[segment_end_indices]
 
     maxPP = np.max(np.abs(segment_start_values-segment_end_values))
 
