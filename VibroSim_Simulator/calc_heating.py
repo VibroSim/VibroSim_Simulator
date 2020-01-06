@@ -221,7 +221,7 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
             raise ValueError("Unknown surrogate type: %s" % (surrogate_type))
         
         (heating_power_per_m2_hertz[idx,:],
-         heating_power_per_m2_hertz_stddev[strainidx,:],
+         heating_power_per_m2_hertz_stddev[idx,:],
          vibration_ampl) = angled_friction_model(x_bnd,xrange,xstep,
                                                        numdraws,
                                                        YoungsModulus,
