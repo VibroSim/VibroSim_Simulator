@@ -20,9 +20,24 @@ def run(_xmldoc,_element, dc_modalfreqs_href,dc_modalcalc_comsol_href):
 
     comsolproc = subprocess.Popen(["comsol","-open",dc_modalcalc_comsol_href.getpath()])
 
-    startfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep start","dc:sweep_start_frequency")
-    stepfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep step","dc:sweep_step_frequency")
-    endfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep end","dc:sweep_end_frequency")
+    # Test for good input
+    good_input = False
+    
+    while not good_input:
+        startfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep start","dc:sweep_start_frequency")
+        stepfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep step","dc:sweep_step_frequency")
+        endfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep end","dc:sweep_end_frequency")
+
+        increasing_check = endfreq > startfreq
+        step_is_small_check = stepfreq < (endfreq - startfreq)
+
+        if increasing_check:
+            if step_is_small_check:
+                good_input = True
+            else:
+                print("Step should be less than the difference between start and end frequencies")
+        else:
+            print("Starting frequency should be less than end frequency")
 
     print("Now close COMSOL if you haven't already.")
 
