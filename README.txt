@@ -28,7 +28,7 @@ crackclosuresim2 you will also need the platform compiler
 for your Python version (see the crackclosuresim2 documentation 
 for more information).
 
-the Git version control system and the GitPython bindings
+The Git version control system and the GitPython bindings
 are strongly recommended.
 
 While the current implementation uses COMSOL for vibration
@@ -45,8 +45,25 @@ Like most the other VibroSim components, VibroSim simulator is
 a Python package. Use the usual
      python setup.py build
      python setup.py install
-commands to install it. Then look in the examples/ folder. 
+commands to install it. Then look in the examples/ folder.
 
+Windows Installation
+--------------------
+
+Additional steps must be followed for this package to work on 
+Windows.
+If COMSOL is to be used, the command line executables for COMSOL 
+need to be added to the path. For COMSOL 5.4 these executables 
+were installed to the following directory:
+	 C:\Program Files\COMSOL\COMSOL54\Multiphysics\bin\win64
+
+This directory needs to be added to the end of `path` 
+environment variable. Searching "environment variables" in the
+start menu is a good way to find where to make this edit.
+
+The matlab files in VibroSim_COMSOL need to be added to an 
+environment variable called:
+	 MATLABPATH
 
 VibroSim Simulator Workflow
 ---------------------------
@@ -107,7 +124,7 @@ in your simulation directory will create a new Git repository there.
 
 We recommend managing your simulation process with two branches:
 "master" which contains the scripts and instructions but no output,
-and "master_processed" which also includes processed output. These
+and "master_processed" which also includes processed output.
 (These two branches can of course themselves be branched as desired).
 
 The "limatix-git" program exists to help automate the process of
@@ -120,7 +137,7 @@ cross-referenced in the ".xlp" files.
 
 To add files to the unprocessed branch, check out that branch,
 run "limatix-git add -a" to stage files for commit, "git status"
-to verify only inputfiles have been staged, and "git commit"
+to verify only input files have been staged, and "git commit"
 to perform the commit. 
 
 To add files to the processed branch, check out that branch, run
