@@ -32,7 +32,14 @@ def run(_xmldoc,_element, dc_modalfreqs_href,dc_modalcalc_comsol_href,dc_sweep_s
     comsolproc = subprocess.Popen(["comsol","-open",dc_modalcalc_comsol_href.getpath()])
 
     # Extract prior value of dc:excitation_frequency with noprovenance as default
-    freq = enter_frequency.enter_frequency(_xmldoc,_element,"burst","dc:excitation_frequency")
+    # Check that a number was given
+    number_input=False
+    while not number_input:
+        try:
+            freq = enter_frequency.enter_frequency(_xmldoc,_element,"burst","dc:excitation_frequency")
+            number_input=True
+        except ValueError:
+            pass
 
 
     print("Now close COMSOL %sif you haven't already." % (image_viewer_text))
