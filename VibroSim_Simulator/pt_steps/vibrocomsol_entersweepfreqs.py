@@ -24,10 +24,33 @@ def run(_xmldoc,_element, dc_modalfreqs_href,dc_modalcalc_comsol_href):
     good_input = False
     
     while not good_input:
-        startfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep start","dc:sweep_start_frequency")
-        stepfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep step","dc:sweep_step_frequency")
-        endfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep end","dc:sweep_end_frequency")
 
+        # Check for a number input
+        number_input=False
+        while not number_input:
+            try:
+                startfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep start","dc:sweep_start_frequency")
+                number_input=True
+            except ValueError:
+                pass
+
+        number_input=False
+        while not number_input:
+            try:
+                stepfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep step","dc:sweep_step_frequency")
+                number_input=True
+            except ValueError:
+                pass
+
+        number_input=False
+        while not number_input:
+            try:
+                endfreq = enter_frequency.enter_frequency(_xmldoc,_element,"sweep end","dc:sweep_end_frequency")
+                number_input=True
+            except ValueError:
+                pass
+
+        # Other problems to catch before COMSOL gets it
         increasing_check = endfreq > startfreq
         step_is_small_check = stepfreq < (endfreq - startfreq)
 
