@@ -52,12 +52,8 @@
   <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1> <!-- Full ampltude time -->
   <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2> <!-- Amplitude decay start -->
   <dc:exc_t3 dcv:units="s">0.98</dc:exc_t3> <!-- Turn off time -->
-  <!-- <dc:exc_t4 dcv:units="s">1.02</dc:exc_t4> --> <!-- Assumed end of vibration-->
-  <dc:exc_t4 dcv:units="s">0.03</dc:exc_t4>
-
-    <prx:param name="dc_max_t" dcv:units="s">0.04</prx:param>
-
-
+  <dc:exc_t4 dcv:units="s">1.02</dc:exc_t4> <!-- Assumed end of vibration-->
+  <!-- <dc:exc_t4 dcv:units="s">0.03</dc:exc_t4> --> <!-- switching exc_t4 to this very small value will make the welder simulation run much faster -->
   
   <!-- Each dc:measurement element corresponds to a simulation run -->
   <!-- Parameters from above can be moved inside and varied between 
