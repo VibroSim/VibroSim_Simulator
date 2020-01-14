@@ -150,6 +150,8 @@ def segments_between_extrema(trange,crack_stress_or_strain):
 
 def train_surrogate(surrogate_type, # either "normal" or "shear"
                     input_type, # either "stress" or "strain",
+                    crack_type, # "quarterpenny", or "halfthrough"
+                    thickness, # only needed for halfthrough, otherwise None
                     surrogate_npoints,
                     maxPP, # maximum stress or strain depending on input_type
                     x_bnd,xrange,xstep, # range of radii from crack center
@@ -241,6 +243,8 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
                                                        crack_model_shear,
                                                        crack_model_shear_factor,
                                                        msqrtR,
+                                                       crack_type,
+                                                       thickness,
                                                        verbose,
                                                        doplots)
 
@@ -316,7 +320,10 @@ def calc_heating_welder(friction_coefficient,
                         aside1,                        
                         closure_stress_side2, # side2 clsoure state
                         crack_opening_side2,
-                        aside2,                        
+                        aside2,
+                        crack_type_side1, # "None", "quarterpenny", or "halfthrough"
+                        crack_type_side2,
+                        thickness,
                         crack_model_normal_name,
                         crack_model_shear_name,
                         crack_model_shear_factor,
@@ -417,102 +424,117 @@ def calc_heating_welder(friction_coefficient,
 
 
     # !!!*** Need to consider uncertainty due to uncertainty in mu, msqrtR, plus response variability in here!!!***
-         
-    (
-        normalheating_power_per_m2_hertz_side1_surr_tck,
-        normalheating_power_per_m2_hertz_stddev_side1_surr_tck
-    ) = train_surrogate("normal",
-                        input_type,
-                        30, # surrogate_npoints
-                        normal_maxPP,
-                        x_bnd,xrange,xstep,
-                        numdraws,
-                        YoungsModulus, # Pa
-                        PoissonsRatio,
-                        sigma_yield,
-                        friction_coefficient,
-                        msqrtR,
-                        closure_stress_side1,
-                        crack_opening_side1,
-                        angular_stddev, # tortuosity, in radians,
-                        aside1, # length of side of crack
-                        static_load,
-                        crack_model_normal_name,
-                        crack_model_shear_name,
-                        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
 
-    
-    (
-        normalheating_power_per_m2_hertz_side2_surr_tck,
-        normalheating_power_per_m2_hertz_stddev_side2_surr_tck
-    ) = train_surrogate("normal",
-                        input_type,
-                        30, # surrogate_npoints
-                        normal_maxPP,
-                        x_bnd,xrange,xstep,
-                        numdraws,
-                        YoungsModulus, # Pa
-                        PoissonsRatio,
-                        sigma_yield,
-                        friction_coefficient,
-                        msqrtR,
-                        closure_stress_side2,
-                        crack_opening_side2,
-                        angular_stddev, # tortuosity, in radians,
-                        aside2, # length of side of crack
-                        static_load,
-                        crack_model_normal_name,
-                        crack_model_shear_name,
-                        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
+    if crack_type_side1 != "None":
+        (
+            normalheating_power_per_m2_hertz_side1_surr_tck,
+            normalheating_power_per_m2_hertz_stddev_side1_surr_tck
+        ) = train_surrogate("normal",
+                            input_type,
+                            crack_type_side1,
+                            thickness,
+                            30, # surrogate_npoints
+                            normal_maxPP,
+                            x_bnd,xrange,xstep,
+                            numdraws,
+                            YoungsModulus, # Pa
+                            PoissonsRatio,
+                            sigma_yield,
+                            friction_coefficient,
+                            msqrtR,
+                            closure_stress_side1,
+                            crack_opening_side1,
+                            angular_stddev, # tortuosity, in radians,
+                            aside1, # length of side of crack
+                            static_load,
+                            crack_model_normal_name,
+                            crack_model_shear_name,
+        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
+        
+        pass
 
+    if crack_type_side2 != "None":
+        (
+            normalheating_power_per_m2_hertz_side2_surr_tck,
+            normalheating_power_per_m2_hertz_stddev_side2_surr_tck
+        ) = train_surrogate("normal",
+                            input_type,
+                            crack_type_side2,
+                            thickness,
+                            30, # surrogate_npoints
+                            normal_maxPP,
+                            x_bnd,xrange,xstep,
+                            numdraws,
+                            YoungsModulus, # Pa
+                            PoissonsRatio,
+                            sigma_yield,
+                            friction_coefficient,
+                            msqrtR,
+                            closure_stress_side2,
+                            crack_opening_side2,
+                            angular_stddev, # tortuosity, in radians,
+                            aside2, # length of side of crack
+                            static_load,
+                            crack_model_normal_name,
+                            crack_model_shear_name,
+        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
+        
 
+    if crack_type_side1 != "None":
+        (
+            shearheating_power_per_m2_hertz_side1_surr_tck,
+            shearheating_power_per_m2_hertz_stddev_side1_surr_tck
+        ) = train_surrogate("shear",
+                            input_type,
+                            crack_type_side1,
+                            thickness,
+                            30, # surrogate_npoints
+                            shear_maxPP,
+                            x_bnd,xrange,xstep,
+                            numdraws,
+                            YoungsModulus, # Pa
+                            PoissonsRatio,
+                            sigma_yield,
+                            friction_coefficient,
+                            msqrtR,
+                            closure_stress_side1,
+                            crack_opening_side1,
+                            angular_stddev, # tortuosity, in radians,
+                            aside1, # length of side of crack
+                            static_load,
+                            crack_model_normal_name,
+                            crack_model_shear_name,
+                            crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
+        pass
     
-    (
-        shearheating_power_per_m2_hertz_side1_surr_tck,
-        shearheating_power_per_m2_hertz_stddev_side1_surr_tck
-    ) = train_surrogate("shear",
-                        input_type,
-                        30, # surrogate_npoints
-                        shear_maxPP,
-                        x_bnd,xrange,xstep,
-                        numdraws,
-                        YoungsModulus, # Pa
-                        PoissonsRatio,
-                        sigma_yield,
-                        friction_coefficient,
-                        msqrtR,
-                        closure_stress_side1,
-                        crack_opening_side1,
-                        angular_stddev, # tortuosity, in radians,
-                        aside1, # length of side of crack
-                        static_load,
-                        crack_model_normal_name,
-                        crack_model_shear_name,
-                        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
-    
-    (
-        shearheating_power_per_m2_hertz_side2_surr_tck,
-        shearheating_power_per_m2_hertz_stddev_side2_surr_tck
-    ) = train_surrogate("shear",
-                        input_type,
-                        30, # surrogate_npoints
-                        shear_maxPP,
-                        x_bnd,xrange,xstep,
-                        numdraws,
-                        YoungsModulus, # Pa
-                        PoissonsRatio,
-                        sigma_yield,
-                        friction_coefficient,
-                        msqrtR,
-                        closure_stress_side2,
-                        crack_opening_side2,
-                        angular_stddev, # tortuosity, in radians,
-                        aside2, # length of side of crack
-                        static_load,
-                        crack_model_normal_name,
-                        crack_model_shear_name,
-                        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
-    
+
+    if crack_type_side2 != "None":
+        (
+            shearheating_power_per_m2_hertz_side2_surr_tck,
+            shearheating_power_per_m2_hertz_stddev_side2_surr_tck
+        ) = train_surrogate("shear",
+                            input_type,
+                            crack_type_side2,
+                            thickness,
+                            30, # surrogate_npoints
+                            shear_maxPP,
+                            x_bnd,xrange,xstep,
+                            numdraws,
+                            YoungsModulus, # Pa
+                            PoissonsRatio,
+                            sigma_yield,
+                            friction_coefficient,
+                            msqrtR,
+                            closure_stress_side2,
+                            crack_opening_side2,
+                            angular_stddev, # tortuosity, in radians,
+                            aside2, # length of side of crack
+                            static_load,
+                            crack_model_normal_name,
+                            crack_model_shear_name,
+                            crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
+        
+        pass
     
     #(totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,power_per_m2_side1,power_per_m2_stddev_side1)
     #(totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,power_per_m2_side2,power_per_m2_stddev_side2)
@@ -520,160 +542,224 @@ def calc_heating_welder(friction_coefficient,
     # Now calculate heating for each normalstrain_segment (via
     # normalstrain_segment_start_strain and normalstrain_segment_end_strain), iterating over x position.
 
-    (
-        normalheating_segment_power_per_m2_side1,
-        normalheating_segment_power_per_m2_stddev_side1
-    ) = evaluate_per_segment_heating_power(xrange,
-                                           normalheating_power_per_m2_hertz_side1_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
-                                           normalheating_power_per_m2_hertz_stddev_side1_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           normal_segment_start_value,
-                                           normal_segment_end_value,
-                                           normal_segment_frequency)
-    
-    (
-        normalheating_segment_power_per_m2_side2,
-        normalheating_segment_power_per_m2_stddev_side2
-    ) = evaluate_per_segment_heating_power(xrange,
-                                           normalheating_power_per_m2_hertz_side2_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
-                                           normalheating_power_per_m2_hertz_stddev_side2_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           normal_segment_start_value,
-                                           normal_segment_end_value,
-                                           normal_segment_frequency)
+    if crack_type_side1 != "None":
+        (
+            normalheating_segment_power_per_m2_side1,
+            normalheating_segment_power_per_m2_stddev_side1
+        ) = evaluate_per_segment_heating_power(xrange,
+                                               normalheating_power_per_m2_hertz_side1_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
+                                               normalheating_power_per_m2_hertz_stddev_side1_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
+                                               normal_segment_start_value,
+                                               normal_segment_end_value,
+                                               normal_segment_frequency)
+        pass
 
-
-    (
-        shearheating_segment_power_per_m2_side1,
-        shearheating_segment_power_per_m2_stddev_side1
-    ) = evaluate_per_segment_heating_power(xrange,
-                                           shearheating_power_per_m2_hertz_side1_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
-                                           shearheating_power_per_m2_hertz_stddev_side1_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           shear_segment_start_value,
-                                           shear_segment_end_value,
-                                           shear_segment_frequency)
-    
-    (
-        shearheating_segment_power_per_m2_side2,
-        shearheating_segment_power_per_m2_stddev_side2
-    ) = evaluate_per_segment_heating_power(xrange,
-                                           shearheating_power_per_m2_hertz_side2_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
-                                           shearheating_power_per_m2_hertz_stddev_side2_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
-                                           shear_segment_start_value,
-                                           shear_segment_end_value,
-                                           shear_segment_frequency)
+    if crack_type_side2 != "None":
+        (
+            normalheating_segment_power_per_m2_side2,
+            normalheating_segment_power_per_m2_stddev_side2
+        ) = evaluate_per_segment_heating_power(xrange,
+                                               normalheating_power_per_m2_hertz_side2_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
+                                               normalheating_power_per_m2_hertz_stddev_side2_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
+                                               normal_segment_start_value,
+                                               normal_segment_end_value,
+                                               normal_segment_frequency)
+        pass
     
 
-    normalheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                       normal_segment_start_indices,
-                                                                                       normal_segment_end_indices,
-                                                                                       normalheating_segment_power_per_m2_side1)
-    normalheatingtable_power_per_m2_stddev_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                              normal_segment_start_indices,
-                                                                                              normal_segment_end_indices,
-                                                                                              normalheating_segment_power_per_m2_stddev_side1)
-    
-    
-    normalheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                       normal_segment_start_indices,
-                                                                                       normal_segment_end_indices,
-                                                                                       normalheating_segment_power_per_m2_side2)
-    
-    normalheatingtable_power_per_m2_stddev_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                              normal_segment_start_indices,
-                                                                                              normal_segment_end_indices,
-                                                                                              normalheating_segment_power_per_m2_stddev_side2)
+    if crack_type_side1 != "None":
+        (
+            shearheating_segment_power_per_m2_side1,
+            shearheating_segment_power_per_m2_stddev_side1
+        ) = evaluate_per_segment_heating_power(xrange,
+                                               shearheating_power_per_m2_hertz_side1_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
+                                               shearheating_power_per_m2_hertz_stddev_side1_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
+                                               shear_segment_start_value,
+                                               shear_segment_end_value,
+                                               shear_segment_frequency)
+        pass
 
+    if crack_type_side2 != "None":
+        (
+            shearheating_segment_power_per_m2_side2,
+            shearheating_segment_power_per_m2_stddev_side2
+        ) = evaluate_per_segment_heating_power(xrange,
+                                               shearheating_power_per_m2_hertz_side2_surr_tck, # array of (tck) tuples with surrogates for heating power one surrogate per x position
+                                               shearheating_power_per_m2_hertz_stddev_side2_surr_tck, # array of (tck) tuples with surrogates for standard deviation, one surrogate per x position
+                                               shear_segment_start_value,
+                                               shear_segment_end_value,
+                                               shear_segment_frequency)
+        pass
     
-    shearheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                      shear_segment_start_indices,
-                                                                                      shear_segment_end_indices,
-                                                                                      shearheating_segment_power_per_m2_side1)
+
+    if crack_type_side1 != "None":
+        normalheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                           normal_segment_start_indices,
+                                                                                           normal_segment_end_indices,
+                                                                                           normalheating_segment_power_per_m2_side1)
+        normalheatingtable_power_per_m2_stddev_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                                  normal_segment_start_indices,
+                                                                                                  normal_segment_end_indices,
+                                                                                                  normalheating_segment_power_per_m2_stddev_side1)
+        pass
     
-    shearheatingtable_power_per_m2_stddev_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                             shear_segment_start_indices,
-                                                                                             shear_segment_end_indices,
-                                                                                             shearheating_segment_power_per_m2_stddev_side1)
+    if crack_type_side2 != "None":
+        normalheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                           normal_segment_start_indices,
+                                                                                           normal_segment_end_indices,
+                                                                                           normalheating_segment_power_per_m2_side2)
+        
+        normalheatingtable_power_per_m2_stddev_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                                  normal_segment_start_indices,
+                                                                                                  normal_segment_end_indices,
+                                                                                                  normalheating_segment_power_per_m2_stddev_side2)
+        
+        pass
 
-    
-    shearheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                      shear_segment_start_indices,
-                                                                                      shear_segment_end_indices,
-                                                                                      shearheating_segment_power_per_m2_side2)
+    if crack_type_side1 != "None":
+        shearheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                          shear_segment_start_indices,
+                                                                                          shear_segment_end_indices,
+                                                                                          shearheating_segment_power_per_m2_side1)
 
-    shearheatingtable_power_per_m2_stddev_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
-                                                                                             shear_segment_start_indices,
-                                                                                             shear_segment_end_indices,
-                                                                                             shearheating_segment_power_per_m2_stddev_side2)
+        
+        shearheatingtable_power_per_m2_stddev_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                                 shear_segment_start_indices,
+                                                                                                 shear_segment_end_indices,
+                                                                                                 shearheating_segment_power_per_m2_stddev_side1)
+        
+        pass
 
+    if crack_type_side2 != "None":
+        shearheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                          shear_segment_start_indices,
+                                                                                          shear_segment_end_indices,
+                                                                                          shearheating_segment_power_per_m2_side2)
+
+        shearheatingtable_power_per_m2_stddev_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
+                                                                                                 shear_segment_start_indices,
+                                                                                                 shear_segment_end_indices,
+                                                                                                 shearheating_segment_power_per_m2_stddev_side2)
+        
+        pass
     
     
     # Need to filter down the fine time data to coarser time grid
-    normalheatingtable_power_per_m2_side1 = filterfine(normalheatingtable_power_per_m2_fine_side1,trange,t)
-    normalheatingtable_power_per_m2_side2 = filterfine(normalheatingtable_power_per_m2_fine_side2,trange,t)
+    if crack_type_side1 != "None":
+        normalheatingtable_power_per_m2_side1 = filterfine(normalheatingtable_power_per_m2_fine_side1,trange,t)
+        shearheatingtable_power_per_m2_side1 = filterfine(shearheatingtable_power_per_m2_fine_side1,trange,t)
+        pass
+    else:
+        normalheatingtable_power_per_m2_side1 = None
+        shearheatingtable_power_per_m2_side1 = None
+        pass
+    
+    
+    if crack_type_side2 != "None":
+        normalheatingtable_power_per_m2_side2 = filterfine(normalheatingtable_power_per_m2_fine_side2,trange,t)
 
-    shearheatingtable_power_per_m2_side1 = filterfine(shearheatingtable_power_per_m2_fine_side1,trange,t)
-    shearheatingtable_power_per_m2_side2 = filterfine(shearheatingtable_power_per_m2_fine_side2,trange,t)
-
+        shearheatingtable_power_per_m2_side2 = filterfine(shearheatingtable_power_per_m2_fine_side2,trange,t)
+        pass
+    else:
+        normalheatingtable_power_per_m2_side2 = None
+        shearheatingtable_power_per_m2_side2 = None
+        pass
+    
     # (Should provide corresponding stddev estimates) 
 
 
 
-    normal_heatgram_side1_fig=pl.figure()
-    pl.clf()
-    pl.imshow(normalheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
-    pl.colorbar()
-    pl.grid(True)
-    pl.xlabel('Radius from crack center (mm)')
-    pl.ylabel('Time (s)')
-    pl.title('Heating power due to normal %s (W/m^2), side1' % (input_type))
+    if crack_type_side1 != "None":
+        normal_heatgram_side1_fig=pl.figure()
+        pl.clf()
+        pl.imshow(normalheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+        pl.colorbar()
+        pl.grid(True)
+        pl.xlabel('Radius from crack center (mm)')
+        pl.ylabel('Time (s)')
+        pl.title('Heating power due to normal %s (W/m^2), side1' % (input_type))
+        pass
+    else:
+        normal_heatgram_side1_fig = None
+        pass
+
+    if crack_type_side2 != "None":
+        normal_heatgram_side2_fig=pl.figure()
+        pl.clf()
+        pl.imshow(normalheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+        pl.colorbar()
+        pl.grid(True)
+        pl.xlabel('Radius from crack center (mm)')
+        pl.ylabel('Time (s)')
+        pl.title('Heating power due to normal %s (W/m^2), side2' % (input_type))
+        pass
+    else:
+        normal_heatgram_side2_fig = None
+        pass
 
 
-    normal_heatgram_side2_fig=pl.figure()
-    pl.clf()
-    pl.imshow(normalheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
-    pl.colorbar()
-    pl.grid(True)
-    pl.xlabel('Radius from crack center (mm)')
-    pl.ylabel('Time (s)')
-    pl.title('Heating power due to normal %s (W/m^2), side2' % (input_type))
+    if crack_type_side1 != "None":
+        shear_heatgram_side1_fig=pl.figure()
+        pl.clf()
+        pl.imshow(shearheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+        pl.colorbar()
+        pl.grid(True)
+        pl.xlabel('Radius from crack center (mm)')
+        pl.ylabel('Time (s)')
+        pl.title('Heating power due to shear %s (W/m^2), side1' % (input_type))
+        pass
+    else:
+        shear_heatgram_side1_fig = None
+        pass
     
 
+    if crack_type_side2 != "None":
+        shear_heatgram_side2_fig=pl.figure()
+        pl.clf()
+        pl.imshow(shearheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
+        pl.colorbar()
+        pl.grid(True)
+        pl.xlabel('Radius from crack center (mm)')
+        pl.ylabel('Time (s)')
+        pl.title('Heating power due to shear %s (W/m^2), side2' % (input_type))
+        pass
+    else:
+        shear_heatgram_side2_fig = None
+        pass
 
-    shear_heatgram_side1_fig=pl.figure()
-    pl.clf()
-    pl.imshow(shearheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
-    pl.colorbar()
-    pl.grid(True)
-    pl.xlabel('Radius from crack center (mm)')
-    pl.ylabel('Time (s)')
-    pl.title('Heating power due to shear %s (W/m^2), side1' % (input_type))
 
-
-    shear_heatgram_side2_fig=pl.figure()
-    pl.clf()
-    pl.imshow(shearheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
-    pl.colorbar()
-    pl.grid(True)
-    pl.xlabel('Radius from crack center (mm)')
-    pl.ylabel('Time (s)')
-    pl.title('Heating power due to shear %s (W/m^2), side2' % (input_type))
+    totalpower = 0.0
     
-
-
-        
-    meanpower_per_m2_side1 = np.mean(normalheatingtable_power_per_m2_side1,axis=0) + np.mean(shearheatingtable_power_per_m2_side1,axis=0) # average over time... 
-    meanpower_per_m2_side2 = np.mean(normalheatingtable_power_per_m2_side2,axis=0) + np.mean(shearheatingtable_power_per_m2_side2,axis=0) # average over time...
-         
-    totalpower_side1 = integrate_power(xrange,meanpower_per_m2_side1)
-    totalpower_side2 = integrate_power(xrange,meanpower_per_m2_side2)
+    if crack_type_side1 != "None":
+        meanpower_per_m2_side1 = np.mean(normalheatingtable_power_per_m2_side1,axis=0) + np.mean(shearheatingtable_power_per_m2_side1,axis=0) # average over time...
+        totalpower_side1 = integrate_power(xrange,crack_type_side1,thickness,meanpower_per_m2_side1)
+        totalpower += totalpower_side1
+        pass
+    else:
+        meanpower_per_m2_side1 = None
+        pass
     
+    if crack_type_side2 != "None":
+        meanpower_per_m2_side2 = np.mean(normalheatingtable_power_per_m2_side2,axis=0) + np.mean(shearheatingtable_power_per_m2_side2,axis=0) # average over time...     
+        totalpower_side2 = integrate_power(xrange,crack_type_side2,thickness,meanpower_per_m2_side2)
+        totalpower += totalpower_side2
+        pass
+    else:
+        meanpower_per_m2_side2=None
+        passs
 
-    totalpower=totalpower_side1 + totalpower_side2
      
 
     heatpower_fig=pl.figure()
     pl.clf()
-    pl.plot(-xrange*1e3,meanpower_per_m2_side1/1.e3,'-',
-            xrange*1e3,meanpower_per_m2_side2/1.e3,'-',)
+    heatpower_fig_plotargs=[]
+    if crack_type_side1 != "None":
+        heatpower_fig_plotargs.extend([-xrange*1e3,meanpower_per_m2_side1/1.e3,'-',])
+        pass
+    if crack_type_side3 != "None":
+        heatpower_fig_plotargs.extend([xrange*1e3,meanpower_per_m2_side2/1.e3,'-'])
+        pass
+    pl.plot(*heatpower_fig_plotargs)
     pl.grid()
     pl.xlabel('Radius from center (mm)')
     pl.ylabel('Heating power (kW/m^2)')
@@ -725,7 +811,10 @@ def calc_heating_singlefrequency(friction_coefficient,
                                  aside1,                        
                                  closure_stress_side2, # side2 clsoure state
                                  crack_opening_side2,
-                                 aside2,                        
+                                 aside2,
+                                 crack_type_side1, # "None", "quarterpenny", or "halfthrough"
+                                 crack_type_side2,
+                                 thickness,
                                  crack_model_normal_name,
                                  crack_model_shear_name,
                                  crack_model_shear_factor,
@@ -768,70 +857,97 @@ def calc_heating_singlefrequency(friction_coefficient,
 
     
     # Now calculate crack heating under the given conditions
-    (power_per_m2_side1,
-     power_per_m2_stddev_side1,
-     vibration_ampl_side1,
-     vibration_shear_ampl_side1) = angled_friction_model(x_bnd,xrange,xstep,
-                                                   numdraws,
-                                                   YoungsModulus,
-                                                   PoissonsRatio,
-                                                   sigma_yield,tau_yield,
-                                                   friction_coefficient,
-                                                   closure_stress_side1,
-                                                   crack_opening_side1,
-                                                   angular_stddev,
-                                                   aside1,
-                                                   static_load,
-                                                   vib_normal_stress_ampl,
-                                                   vib_shear_stress_ampl,
-                                                   excitation_frequency,
-                                                   crack_model_normal,
-                                                   crack_model_shear,
-                                                   1.0,
-                                                   msqrtR,
-                                                   verbose,
-                                                   doplots)
-                                                  
-    (power_per_m2_side2,
-     power_per_m2_stddev_side2,
-     vibration_ampl_side2,
-     vibration_shear_ampl_side2) = angled_friction_model(x_bnd,xrange,xstep,
-                                                   numdraws,
-                                                   YoungsModulus,
-                                                   PoissonsRatio,
-                                                   sigma_yield,tau_yield,
-                                                   friction_coefficient,
-                                                   closure_stress_side2,
-                                                   crack_opening_side2,
-                                                   angular_stddev,
-                                                   aside2,
-                                                   static_load,
-                                                   vib_normal_stress_ampl,
-                                                   vib_shear_stress_ampl,
-                                                   excitation_frequency,
-                                                   crack_model_normal,
-                                                   crack_model_shear,
-                                                   1.0,
-                                                   msqrtR,
-                                                   verbose,
-                                                   doplots)
-
-    (totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,power_per_m2_side1,power_per_m2_stddev_side1)
-    (totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,power_per_m2_side2,power_per_m2_stddev_side2)
+    if crack_type_side1 != "None":
+        (power_per_m2_side1,
+         power_per_m2_stddev_side1,
+         vibration_ampl_side1,
+         vibration_shear_ampl_side1) = angled_friction_model(x_bnd,xrange,xstep,
+                                                             numdraws,
+                                                             YoungsModulus,
+                                                             PoissonsRatio,
+                                                             sigma_yield,tau_yield,
+                                                             friction_coefficient,
+                                                             closure_stress_side1,
+                                                             crack_opening_side1,
+                                                             angular_stddev,
+                                                             aside1,
+                                                             static_load,
+                                                             vib_normal_stress_ampl,
+                                                             vib_shear_stress_ampl,
+                                                             excitation_frequency,
+                                                             crack_model_normal,
+                                                             crack_model_shear,
+                                                             1.0,
+                                                             msqrtR,
+                                                             crack_type_side1,
+                                                             thickness,
+                                                             verbose,
+                                                             doplots)
+        (totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,crack_type_side1,thickness,power_per_m2_side1,power_per_m2_stddev_side1)
+        pass
+    else:
+        power_per_m2_side1 = None
+        pass
+    
+    if crack_type_side2 != "None":
+        (power_per_m2_side2,
+         power_per_m2_stddev_side2,
+         vibration_ampl_side2,
+         vibration_shear_ampl_side2) = angled_friction_model(x_bnd,xrange,xstep,
+                                                             numdraws,
+                                                             YoungsModulus,
+                                                             PoissonsRatio,
+                                                             sigma_yield,tau_yield,
+                                                             friction_coefficient,
+                                                             closure_stress_side2,
+                                                             crack_opening_side2,
+                                                             angular_stddev,
+                                                             aside2,
+                                                             static_load,
+                                                             vib_normal_stress_ampl,
+                                                             vib_shear_stress_ampl,
+                                                             excitation_frequency,
+                                                             crack_model_normal,
+                                                             crack_model_shear,
+                                                             1.0,
+                                                             msqrtR,
+                                                             crack_type_side2,
+                                                             thickness,
+                                                             verbose,
+                                                             doplots)
+        (totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,crack_type_side2,thickness,power_per_m2_side2,power_per_m2_stddev_side2)
+        pass
+    else:
+        power_per_m2_side2 = None
+        pass
+    
 
 
     
     # !!!*** Need to consider uncertainty due to uncertainty in mu, msqrtR, plus response variability in here!!!***
 
-    totalpower=totalpower_side1 + totalpower_side2
+    totalpower = 0.0
 
+    if crack_type_side1 != "None":
+        totalpower += totalpower_side1
+        pass
 
+    if crack_type_side2 != "None":
+        totalpower += totalpower_side2
+        pass
 
 
     heatpower_fig = pl.figure()
     pl.clf()
-    pl.plot(-xrange*1e3,power_per_m2_side1/1.e3,'-',
-            xrange*1e3,power_per_m2_side2/1.e3,'-',)
+    heatpower_fig_args = []
+    
+    if crack_type_side1 != "None":
+        heatpower_fig_args.extend([-xrange*1e3,power_per_m2_side1/1.e3,'-'])
+        pass
+
+    if crack_type_side2 != "None":
+        heatpower_fig_args.extend([xrange*1e3,power_per_m2_side2/1.e3,'-'])
+    pl.plot(*heatpower_fig_args)
     pl.grid()
     pl.xlabel('Radius from center (mm)')
     pl.ylabel('Heating power (kW/m^2)')

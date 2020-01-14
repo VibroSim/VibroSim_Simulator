@@ -56,17 +56,22 @@ def run(_xmldoc,_element,
         dc_PoissonsRatio_float,
         dc_YieldStrength_numericunits,
         dc_Density_numericunits,
-        dc_closurestate_side1_href,
-        dc_closurestate_side2_href,
-        dc_a_side1_numericunits,
-        dc_a_side2_numericunits,
         dc_crack_model_normal_str,
         dc_crack_model_shear_str,
         dc_crack_model_shear_factor_float, # shear sensitivity factor (nominally 1.0)
         dc_exc_t0_numericunits,
         dc_exc_t4_numericunits,
-        dc_motion_href):
+        dc_motion_href,
+        dc_crack_type_side1_str, # "None", "quarterpenny", "halfthrough"
+        dc_crack_type_side2_str,
+        dc_thickness_numericunits=numericunitsv(0.0,"m"), # thickness needed only for crack_type of halfthrough
+        dc_closurestate_side1_href=None,
+        dc_closurestate_side2_href=None,
+        dc_a_side1_numericunits=numericunitsv(0.0,"m"),
+        dc_a_side2_numericunits=numericunitsv(0.0,"m")):
 
+
+    thickness = dc_thickness_numericunits.value("m")
     
     ## Manually extract dc_heatingdata_href so we can do it with no provenance
     #dc_heatingdata_el = _xmldoc.xpathsinglecontext(_element,"dc:heatingdata")
@@ -75,19 +80,24 @@ def run(_xmldoc,_element,
     dc_heatingdata_href = hrefv(quote(dc_measident_str+"_heatingdata.txt"),dc_dest_href)
 
 
-    (xrange_side1,
-     x_bnd_side1,
-     dx_side1,
-     aside1_verify,
-     closure_stress_side1,
-     crack_opening_side1) = load_closurestress(dc_closurestate_side1_href.getpath())
+    if dc_crack_type_side1_str != "None":
+        (xrange_side1,
+         x_bnd_side1,
+         dx_side1,
+         aside1_verify,
+         closure_stress_side1,
+         crack_opening_side1) = load_closurestress(dc_closurestate_side1_href.getpath())
+        pass
 
-    (xrange_side2,
-     x_bnd_side2,
-     dx_side2,
-     aside2_verify,
-     closure_stress_side2,
-     crack_opening_side2) = load_closurestress(dc_closurestate_side2_href.getpath())
+    
+    if dc_crack_type_side2_str != "None":
+        (xrange_side2,
+         x_bnd_side2,
+         dx_side2,
+         aside2_verify,
+         closure_stress_side2,
+         crack_opening_side2) = load_closurestress(dc_closurestate_side2_href.getpath())
+        pass
     
     #closurestate_side1_dataframe = pd.read_csv(dc_closurestate_side1_href.getpath(),index_col=0)
     #closurestate_side2_dataframe = pd.read_csv(dc_closurestate_side2_href.getpath(),index_col=0)
@@ -104,30 +114,52 @@ def run(_xmldoc,_element,
     #closure_stress_side2 = np.array(closurestate_side2_dataframe["Closure stress (Pa)"])
     #crack_opening_side2 = np.array(closurestate_side2_dataframe["Crack opening (m)"])
 
-    shorter_xrange_len = min(xrange_side1.shape[0],xrange_side2.shape[0])
+    xrange_lens = []
+    if dc_crack_type_side1_str != "None":
+        xrange_lens.append(xrange_side1.shape[0])
+        pass
+    
+    if dc_crack_type_side2_str != "None":
+        xrange_lens.append(xrange_side2.shape[0])
+        pass
+    
+    shorter_xrange_len = np.min(xrange_lens)
 
-    if np.any(xrange_side1[:shorter_xrange_len] != xrange_side2[:shorter_xrange_len]):
+    
+    if dc_crack_type_side1_str != "None" and dc_crack_type_side2_str != "None" and np.any(xrange_side1[:shorter_xrange_len] != xrange_side2[:shorter_xrange_len]):
         raise ValueError("Crack radius positions from %s and %s do not match!" % (dc_closurestate_side1_href.humanurl(),dc_closurestate_side2_href.humanurl()))
-        
+    
     # xrange should be the longer of the two possibilities
-    if xrange_side1.shape[0]==shorter_xrange_len:
+    if dc_crack_type_side1_str != "None" and xrange_side1.shape[0]==shorter_xrange_len:
         xrange = xrange_side2
         x_bnd = x_bnd_side2
         pass
     else:
+        assert(dc_crack_type_side2_str != "None")
         xrange=xrange_side1
         x_bnd = x_bnd_side1
         pass
-
+    
     xstep = xrange[1]-xrange[0]
     
     # Extend fields out appropriately for our xrange
-    closure_stress_side1_ext = np.concatenate((closure_stress_side1,np.ones(xrange.shape[0]-closure_stress_side1.shape[0],dtype='d')*closure_stress_side1[-1]))
-    closure_stress_side2_ext = np.concatenate((closure_stress_side2,np.ones(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')*closure_stress_side2[-1]))
-
-    crack_opening_side1_ext = np.concatenate((crack_opening_side1,np.zeros(xrange.shape[0]-closure_stress_side1.shape[0],dtype='d')))
-    crack_opening_side2_ext = np.concatenate((crack_opening_side2,np.zeros(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')))
-
+    if dc_crack_type_side1_str != "None":
+        closure_stress_side1_ext = np.concatenate((closure_stress_side1,np.ones(xrange.shape[0]-closure_stress_side1.shape[0],dtype='d')*closure_stress_side1[-1]))
+        crack_opening_side1_ext = np.concatenate((crack_opening_side1,np.zeros(xrange.shape[0]-closure_stress_side1.shape[0],dtype='d')))
+        pass
+    else:
+        closure_stress_side1_ext=None
+        crack_opening_side2_ext=None
+        pass
+        
+    if dc_crack_type_side1_str != "None":
+        closure_stress_side2_ext = np.concatenate((closure_stress_side2,np.ones(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')*closure_stress_side2[-1]))
+        crack_opening_side2_ext = np.concatenate((crack_opening_side2,np.zeros(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')))
+        pass
+    else:
+        closure_stress_side2_ext=None
+        crack_opening_side2_ext=None
+        pass
 
     # can scriptify(calc_heating_welder) to help with debugging
     (crack_stress_fig,
@@ -158,7 +190,10 @@ def run(_xmldoc,_element,
                                        dc_a_side1_numericunits.value("m"),                        
                                        closure_stress_side2_ext, # side2 clsoure state
                                        crack_opening_side2_ext,
-                                       dc_a_side2_numericunits.value("m"),                        
+                                       dc_a_side2_numericunits.value("m"),
+                                       dc_crack_type_side1_str,
+                                       dc_crack_type_side2_str,
+                                       thickness,
                                        dc_crack_model_normal_str,
                                        dc_crack_model_shear_str,
                                        dc_crack_model_shear_factor_float, # shear sensitivity factor (nominally 1.0)
@@ -169,43 +204,56 @@ def run(_xmldoc,_element,
                                        dc_motion_href.getpath(),
                                        dc_heatingdata_href.getpath())
     
-
+    ret = {}
+    
     pl.figure(crack_stress_fig.number)
     crack_stress_href = hrefv(quote(dc_measident_str+"_crack_stress.png"),dc_dest_href)
     pl.savefig(crack_stress_href.getpath(),dpi=300)
+    
+    ret["dc:crack_stress"] = crack_stress_href
+    
 
-    pl.figure(normal_heatgram_side1_fig.number)
-    normal_heatgram_side1_href = hrefv(quote(dc_measident_str+"_normal_heatgram_side1.png"),dc_dest_href)
-    pl.savefig(normal_heatgram_side1_href.getpath(),dpi=300)
+    if dc_crack_type_side1_str != "None":
+        pl.figure(normal_heatgram_side1_fig.number)
+        normal_heatgram_side1_href = hrefv(quote(dc_measident_str+"_normal_heatgram_side1.png"),dc_dest_href)
+        pl.savefig(normal_heatgram_side1_href.getpath(),dpi=300)
+        ret["dc:normal_heatgram_side1"] = normal_heatgram_side1_href
+
+
+        pl.figure(shear_heatgram_side1_fig.number)
+        shear_heatgram_side1_href = hrefv(quote(dc_measident_str+"_shear_heatgram_side1.png"),dc_dest_href)
+        pl.savefig(shear_heatgram_side1_href.getpath(),dpi=300)
+        
+        ret["dc:shear_heatgram_side1"] = shear_heatgram_side1_href
+        pass
+
+    
+    if dc_crack_type_side2_str != "None":
+        pl.figure(normal_heatgram_side2_fig.number)
+        normal_heatgram_side2_href = hrefv(quote(dc_measident_str+"_normal_heatgram_side2.png"),dc_dest_href)
+        pl.savefig(normal_heatgram_side2_href.getpath(),dpi=300)
+        ret["dc:normal_heatgram_side2"] = normal_heatgram_side2_href
+
+        pl.figure(shear_heatgram_side2_fig.number)
+        shear_heatgram_side2_href = hrefv(quote(dc_measident_str+"_shear_heatgram_side2.png"),dc_dest_href)
+        pl.savefig(shear_heatgram_side2_href.getpath(),dpi=300)
+        ret["dc:shear_heatgram_side2"] = shear_heatgram_side2_href
+        pass
+    
+
                         
-    pl.figure(normal_heatgram_side2_fig.number)
-    normal_heatgram_side2_href = hrefv(quote(dc_measident_str+"_normal_heatgram_side2.png"),dc_dest_href)
-    pl.savefig(normal_heatgram_side2_href.getpath(),dpi=300)
-
-
-    pl.figure(shear_heatgram_side1_fig.number)
-    shear_heatgram_side1_href = hrefv(quote(dc_measident_str+"_shear_heatgram_side1.png"),dc_dest_href)
-    pl.savefig(shear_heatgram_side1_href.getpath(),dpi=300)
-                        
-    pl.figure(shear_heatgram_side2_fig.number)
-    shear_heatgram_side2_href = hrefv(quote(dc_measident_str+"_shear_heatgram_side2.png"),dc_dest_href)
-    pl.savefig(shear_heatgram_side2_href.getpath(),dpi=300)
 
     
     pl.figure(heatpower_fig.number)
     heatpower_href = hrefv(quote(dc_measident_str+"_heatpower.png"),dc_dest_href)
     pl.savefig(heatpower_href.getpath(),dpi=300)
+    ret["dc:heatpower"] = heatpower_href  # heating plot
     
 
-    ret= { 
-        "dc:crack_stress": crack_stress_href,
-        "dc:normal_heatgram_side1": normal_heatgram_side1_href,
-        "dc:normal_heatgram_side2": normal_heatgram_side2_href,
-        "dc:shear_heatgram_side1": shear_heatgram_side1_href,
-        "dc:shear_heatgram_side2": shear_heatgram_side2_href,
-        "dc:heatpower": heatpower_href,  # heating plot
+    ret.update({ 
         "dc:heatingdata": dc_heatingdata_href, # TSV (tab separated value) data for COMSOL
         "dc:heatingtotalpower": numericunitsv(totalpower,"W"),
-    }
-
+    })
+    
+    
     return ret
