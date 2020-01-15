@@ -142,17 +142,36 @@ def run(_xmldoc,_element,
     if dc_crack_type_side1_str != "None" and dc_crack_type_side2_str != "None" and np.any(xrange_side1[:shorter_xrange_len] != xrange_side2[:shorter_xrange_len]):
         raise ValueError("Crack radius positions from %s and %s do not match!" % (dc_closurestate_side1_href.humanurl(),dc_closurestate_side2_href.humanurl()))
 
-    
     # xrange should be the longer of the two possibilities
-    if dc_crack_type_side1_str != "None" and xrange_side1.shape[0]==shorter_xrange_len:
+    if dc_crack_type_side1_str == "None":
+        assert(dc_crack_type_side2_str != "None")
         xrange = xrange_side2
         x_bnd = x_bnd_side2
         pass
-    else:
-        assert(dc_crack_type_side2_str != "None")
-        xrange=xrange_side1
+    elif dc_crack_type_side2_str == "None":
+        xrange = xrange_side1
         x_bnd = x_bnd_side1
         pass
+    else:
+        if xrange_side1.shape[0]==shorter_xrange_len:
+            xrange = xrange_side2
+            x_bnd = x_bnd_side2
+            pass
+        else
+            xrange = xrange_side1
+            x_bnd = x_bnd_side1
+            pass
+    
+    # # xrange should be the longer of the two possibilities
+    # if dc_crack_type_side1_str != "None" and xrange_side1.shape[0]==shorter_xrange_len:
+    #     xrange = xrange_side2
+    #     x_bnd = x_bnd_side2
+    #     pass
+    # else:
+    #     assert(dc_crack_type_side2_str != "None")
+    #     xrange=xrange_side1
+    #     x_bnd = x_bnd_side1
+    #     pass
     
     xstep = xrange[1]-xrange[0]
 
