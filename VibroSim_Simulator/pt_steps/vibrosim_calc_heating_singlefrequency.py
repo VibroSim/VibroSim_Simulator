@@ -217,7 +217,7 @@ def run(_xmldoc,_element,
                                                 dc_a_side2_numericunits.value("m"),
                                                 dc_crack_type_side1_str,
                                                 dc_crack_type_side2_str,
-                                                thickness,
+                                                dc_thickness_numericunits,
                                                 dc_crack_model_normal_str,
                                                 dc_crack_model_shear_str,
                                                 dc_crack_model_shear_factor_float, # shear sensitivity factor (nominally 1.0)
