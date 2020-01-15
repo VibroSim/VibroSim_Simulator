@@ -157,7 +157,7 @@ def run(_xmldoc,_element,
             xrange = xrange_side2
             x_bnd = x_bnd_side2
             pass
-        else
+        else:
             xrange = xrange_side1
             x_bnd = x_bnd_side1
             pass
