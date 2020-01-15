@@ -185,7 +185,7 @@ def run(_xmldoc,_element,
         crack_opening_side2_ext=None
         pass
     
-    if dc_crack_type_side1_str != "None":
+    if dc_crack_type_side2_str != "None":
         closure_stress_side2_ext = np.concatenate((closure_stress_side2,np.ones(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')*closure_stress_side2[-1]))
         crack_opening_side2_ext = np.concatenate((crack_opening_side2,np.zeros(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')))
         pass
