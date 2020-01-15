@@ -886,7 +886,7 @@ def calc_heating_singlefrequency(friction_coefficient,
         (totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,crack_type_side1,thickness,power_per_m2_side1,power_per_m2_stddev_side1)
         pass
     else:
-        power_per_m2_side1 = None
+        power_per_m2_side1 = np.zeros(len(xidx))# None
         pass
     
     if crack_type_side2 != "None":
@@ -918,7 +918,7 @@ def calc_heating_singlefrequency(friction_coefficient,
         (totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,crack_type_side2,thickness,power_per_m2_side2,power_per_m2_stddev_side2)
         pass
     else:
-        power_per_m2_side2 = None
+        power_per_m2_side2 = np.zeros(len(xidx))# None
         pass
     
 
