@@ -65,9 +65,12 @@ def run(_xmldoc,_element,
         dc_exc_t4_numericunits,
         dc_excitation_frequency_numericunits,
         dc_harmonicburst_normalstress_complex, 
-        dc_harmonicburst_shearstress_complex,
+        dc_harmonicburst_shearstressmajor_complex,
+        dc_harmonicburst_shearstressminor_complex,
+        dc_crack_shearstress_axis_str,
         dc_crack_type_side1_str, # "None", "quarterpenny", "halfthrough"
         dc_crack_type_side2_str,
+        dc_crack_shearstress_axis_str, # "major" or "minor"
         dc_thickness_numericunits=numericunitsv(0.0,"m"), # thickness needed only for crack_type of halfthrough
         dc_closurestate_side1_href=None,
         dc_closurestate_side2_href=None,
@@ -220,6 +223,7 @@ def run(_xmldoc,_element,
                                                 dc_thickness_numericunits.value("m"),
                                                 dc_crack_model_normal_str,
                                                 dc_crack_model_shear_str,
+                                                dc_crack_shearstress_axis_str,
                                                 dc_crack_model_shear_factor_float, # shear sensitivity factor (nominally 1.0)
                                                 dc_excitation_frequency_numericunits.value("Hz"),
                                                                                                 
@@ -229,7 +233,8 @@ def run(_xmldoc,_element,
                                                 dc_exc_t3_numericunits.value('s'),
                                                 dc_exc_t4_numericunits.value('s'),
                                                 dc_harmonicburst_normalstress_complex,
-                                                dc_harmonicburst_shearstress_complex,
+                                                dc_harmonicburst_shearstressmajor_complex,
+                                                dc_harmonicburst_shearstressminor_complex,
                                                 dc_heatingdata_href.getpath())
     
     

@@ -49,12 +49,15 @@ def main(args=None):
     plotdir = args[3]
     endcrop = float(args[4])
 
-    seg1_table = args[5]
-    seg2_table = args[6]
-    seg3_table = args[7]
-    seg4_table = args[8]
+    
+    #seg1_table = args[5]
+    #seg2_table = args[6]
+    #seg3_table = args[7]
+    #seg4_table = args[8]
 
-    output_filename=args[9]
+    seg_tables = args[5:-1]
+
+    output_filename=args[-1]
 
     if not(output_filename.endswith(".csv.bz2")) and not(output_filename.endswith(".csv")):
         print("Output filename \"%s\" should have a .csv or .csv.bz2 extension" % (output_filename))
@@ -65,7 +68,7 @@ def main(args=None):
     dt=1e-6
     impulseexcitation_width=2.0e-6
 
-    (output_filename_ref, plotpaths) = process_multisweep_ansys(laser_name,crack_name,plotdir,"",dt,impulseexcitation_width,endcrop,[ seg1_table,seg2_table,seg3_table,seg4_table ], output_filename)
+    (output_filename_ref, plotpaths) = process_multisweep_ansys(laser_name,crack_name,plotdir,"",dt,impulseexcitation_width,endcrop,seg_tables, output_filename)
     
     
     pass

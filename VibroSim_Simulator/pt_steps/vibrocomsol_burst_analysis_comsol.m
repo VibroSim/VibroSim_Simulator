@@ -12,7 +12,7 @@ ModelUtil.showPlots(true);
 % Run the harmonic burst study
 model.study('solidmech_harmonicburst_study').run;
 
-[normalstress,shearstress]=CrackStress(model,'Geom','crack','solidmech_harmonicburst',1);
+[normalstress,shearstressmajor,shearstressminor]=CrackStress(model,'Geom','crack','solidmech_harmonicburst',1);
 
 % Determine filename for harmonic results
 
@@ -33,6 +33,7 @@ mphsave(model,savefilename);
 ret={ 
   { 'dc:burstcalc_comsol', {savefilename} },
   { 'dc:harmonicburst_normalstress', normalstress },
-  { 'dc:harmonicburst_shearstress', shearstress },
+  { 'dc:harmonicburst_shearstressmajor', shearstressmajor },
+  { 'dc:harmonicburst_shearstressminor', shearstressminor },
 };
 

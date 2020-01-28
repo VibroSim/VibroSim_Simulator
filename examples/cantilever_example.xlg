@@ -40,10 +40,12 @@
   crack model_normal -->
   <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
   <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
-    <dc:crack_type_side1>quarterpenny</dc:crack_type_side1>
-    <dc:crack_type_side2>quarterpenny</dc:crack_type_side2>
-    <!-- dc:thickness is used only for crack_type == halfthrough -->
-    <!-- <dc:thickness dcv:units="meters">1e-3</dc:thickness> -->
+  <dc:crack_shearstress_axis>major</dc:crack_shearstress_axis> <!-- Select crack heating calculation for shear along the "major" or "minor" crack axis, as defined by the call to CreateCrack() when the geometry is created in the _comsol.m script --> 
+
+  <dc:crack_type_side1>quarterpenny</dc:crack_type_side1>
+  <dc:crack_type_side2>quarterpenny</dc:crack_type_side2>
+  <!-- dc:thickness is used only for crack_type == halfthrough -->
+  <!-- <dc:thickness dcv:units="meters">1e-3</dc:thickness> -->
 
   <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
   <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>

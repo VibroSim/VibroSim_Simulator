@@ -38,6 +38,7 @@
 	 crack model_normal -->
     <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
     <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
+    <dc:crack_shearstress_axis>major</dc:crack_shearstress_axis> <!-- Select crack heating calculation for shear along the "major" or "minor" crack axis, as defined by the call to CreateCrack() when the geometry is created in the _comsol.m script --> 
 
     <dc:crack_type_side1>quarterpenny</dc:crack_type_side1>
     <dc:crack_type_side2>quarterpenny</dc:crack_type_side2>

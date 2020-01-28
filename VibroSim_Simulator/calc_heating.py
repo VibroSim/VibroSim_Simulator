@@ -326,6 +326,7 @@ def calc_heating_welder(friction_coefficient,
                         thickness,
                         crack_model_normal_name,
                         crack_model_shear_name,
+                        crack_shearstress_axis,
                         crack_model_shear_factor,
                         exc_t0,exc_t4, # s
                         motion_path,
@@ -354,22 +355,33 @@ def calc_heating_welder(friction_coefficient,
     # ***!!! Should crosscheck with single frequency result by evaluating a motion table from single frequency data
     # and running that through this !!!***
 
-    if "specimen_crackcenternormalstrain" in motiontable and "specimen_crackcentershearstrain" in motiontable:    
+    if crack_shearstress_axis=="major":
+        shearstress_column_name = "specimen_crackcentershearstressmajor"
+        shearstrain_column_name = "specimen_crackcentershearstrainmajor"
+        pass
+    elif crack_shearstress_axis=="minor":
+        shearstress_column_name = "specimen_crackcentershearstressminor"
+        shearstrain_column_name = "specimen_crackcentershearstrainminor"
+        pass
+    else: 
+        raise ValueError("Invalid crack_shearstress_axis: %s" % (crack_shearstress_axis))
+
+    if "specimen_crackcenternormalstrain" in motiontable and shearstrain_column_name in motiontable:    
         crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstrain"])
-        crack_shearmotion = np.array(motiontable["specimen_crackcentershearstrain"])
+        crack_shearmotion = np.array(motiontable[shearstrain_column_name])
         input_type="strain"
         input_plotmultiplier = 1e6
         input_plotunits = "micros"
         pass
-    elif "specimen_crackcenternormalstress" in motiontable and "specimen_crackcentershearstress" in motiontable:    
+    elif "specimen_crackcenternormalstress" in motiontable and shearstress_column_name in motiontable:    
         crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstress"])
-        crack_shearmotion = np.array(motiontable["specimen_crackcentershearstress"])
+        crack_shearmotion = np.array(motiontable[shearstress_column_name])
         input_type="stress"       
         input_plotmultiplier = 1e-6
         input_plotunits = "MPa"
         pass
     else:
-        raise ValueError("Did not find crack motion data in %s. Looking for specimen_crackcenter[normal/shear][stress/strain] columns." % (motion_path))
+        raise ValueError("Did not find crack motion data in %s. Looking for specimen_crackcenter[normal/shear][stress/strain][major/minor] columns." % (motion_path))
     
     crack_stressstrain_fig = pl.figure()
     pl.plot(trange*1e3,crack_normalmotion*input_plotmultiplier,'-',
@@ -817,11 +829,13 @@ def calc_heating_singlefrequency(friction_coefficient,
                                  thickness,
                                  crack_model_normal_name,
                                  crack_model_shear_name,
+                                 crack_shearstress_axis,
                                  crack_model_shear_factor,
                                  excitation_frequency,
                                  exc_t0,exc_t1,exc_t2,exc_t3,exc_t4, # s
                                  harmonicburst_normalstress, # NOTE: complex
-                                 harmonicburst_shearstress, # NOTE: complex                
+                                 harmonicburst_shearstressmajor, # NOTE: complex                
+                                 harmonicburst_shearstressminor, # NOTE: complex                
                                  heatingdata_path):
 
     verbose=False
@@ -850,8 +864,16 @@ def calc_heating_singlefrequency(friction_coefficient,
     #vib_shear_stress_ampl = shear_modulus * abs(harmonicburst_shearstrain)
 
     vib_normal_stress_ampl = abs(harmonicburst_normalstress)
-    vib_shear_stress_ampl = abs(harmonicburst_shearstress)
 
+    if crack_shearstress_axis=="major":
+        vib_shear_stress_ampl = abs(harmonicburst_shearstressmajor)
+        pass
+    elif crack_shearstress_axis=="minor":
+        vib_shear_stress_ampl = abs(harmonicburst_shearstressminor)
+        pass
+    else:
+        raise ValueError("Invalid crack_shearstress_axis: %s" % (crack_shearstress_axis))
+        
     crack_model_normal = crack_model_normal_by_name(crack_model_normal_name,YoungsModulus,PoissonsRatio)
     crack_model_shear = crack_model_shear_by_name(crack_model_shear_name,YoungsModulus,PoissonsRatio)
 
