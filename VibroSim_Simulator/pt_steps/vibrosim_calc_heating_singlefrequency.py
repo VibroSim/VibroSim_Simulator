@@ -67,7 +67,6 @@ def run(_xmldoc,_element,
         dc_harmonicburst_normalstress_complex, 
         dc_harmonicburst_shearstressmajor_complex,
         dc_harmonicburst_shearstressminor_complex,
-        dc_crack_shearstress_axis_str,
         dc_crack_type_side1_str, # "None", "quarterpenny", "halfthrough"
         dc_crack_type_side2_str,
         dc_crack_shearstress_axis_str, # "major" or "minor"

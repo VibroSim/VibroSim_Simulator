@@ -920,7 +920,7 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
             pl.ylabel('Pa/(N*s)')
             pl.grid(True)
             pl.legend(('FD fusion filtered','FD fusion unfiltered'))
-            crack_center_shear_stress_major time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_stress_major time_domain.png')
+            crack_center_shear_stress_major_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_stress_major time_domain.png')
             pl.savefig(crack_center_shear_stress_major_time_domain_plotpath,dpi=300)
             plot_paths["crack_center_shear_stress_major_time_domain"]=crack_center_shear_stress_major_time_domain_plotpath
 
