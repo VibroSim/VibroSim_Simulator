@@ -184,7 +184,7 @@ def run(_xmldoc,_element,
         pass
     else:
         closure_stress_side1_ext=None
-        crack_opening_side2_ext=None
+        crack_opening_side1_ext=None
         pass
     
     if dc_crack_type_side2_str != "None":
