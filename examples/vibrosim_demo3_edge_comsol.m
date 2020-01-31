@@ -77,8 +77,17 @@ CreateTransducerDisplacementVariable(M);
 ObtainDCParameter(M,'staticload_mount','N');
 ObtainDCParameter(M,'xducerforce','N');
 
+% Crack position
+AddParamToParamdb(M,'simulationcrackx',.07,'m');
+AddParamToParamdb(M,'simulationcracky',0.0,'m');
+% AddParamToParamdb(M,'simulationcracky',0.0254/2,'m');
+AddParamToParamdb(M,'simulationcrackz',0,'m');
+% Crack size
+AddParamToParamdb(M,'cracksemimajoraxislen',3e-3,'m');
+AddParamToParamdb(M,'cracksemiminoraxislen',25.4e-3,'m');
 % Crack type --> 'penny' or 'through'
-cracktype = 'penny';
+cracktype = 'through';
+
 
 % Define a procedure for building the geometry. Steps can be sequenced by using
 % the pipe (vertical bar | ) character. 
@@ -144,7 +153,7 @@ bldcrack = @(M,geom,specimen) CreateCrack(M,geom,'crack',specimen, ...
 					  [0,0,-1], ...
 					  [ .001, .002, .003 ], ...
                                           {'solidmech_harmonicsweep','solidmech_harmonicburst'}, ...
-					  dc_dummy_heatingdata_href{1},... % Text file to hold crack heating energies. 
+					  dc_dummy_heatingdata_href{1}, ... % Text file to hold crack heating energies. 
                       cracktype); 
 
 % Define a procedure for creating the various physics definitions. Steps can be 
