@@ -377,16 +377,18 @@ def process_multisweep_ansys(laser_name,crack_name,plotdir,plotprefix,dt,impulse
             
             
             pl.figure()
-            pl.plot(crackcentershearstress_trange,np.real(crackcentershearstress_filtered_timedomain),'-',
-                    crackcentershearstress_trange,np.real(crackcentershearstress_timedomain),'-')
+            pl.plot(crackcentershearstressmajor_trange,np.real(crackcentershearstressmajor_filtered_timedomain),'-',
+                    crackcentershearstressmajor_trange,np.real(crackcentershearstressmajor_timedomain),'-')
             pl.title('Crack center shear stress (time domain)')
             pl.xlabel('Time(s)')
             pl.ylabel('Pa/(N*s)')
             pl.grid(True)
             pl.legend(('FD fusion filtered','FD fusion unfiltered'))
-            crack_center_shear_stress_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_stress_time_domain.png')
-            pl.savefig(crack_center_shear_stress_time_domain_plotpath,dpi=300)
-            plot_paths["crack_center_shear_stress_time_domain"]=crack_center_shear_stress_time_domain_plotpath
+            crack_center_shear_stress_major_time_domain_plotpath = os.path.join(plotdir,plotprefix+'crack_center_shear_stress_major_time_domain.png')
+            pl.savefig(crack_center_shear_stress_major_time_domain_plotpath,dpi=300)
+            plot_paths["crack_center_shear_stress_major_time_domain"]=crack_center_shear_stress_major_time_domain_plotpath
+
+
             
             
             
