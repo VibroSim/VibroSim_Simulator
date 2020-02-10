@@ -768,7 +768,7 @@ def calc_heating_welder(friction_coefficient,
     if crack_type_side1 != "None":
         heatpower_fig_plotargs.extend([-xrange*1e3,meanpower_per_m2_side1/1.e3,'-',])
         pass
-    if crack_type_side3 != "None":
+    if crack_type_side2 != "None":
         heatpower_fig_plotargs.extend([xrange*1e3,meanpower_per_m2_side2/1.e3,'-'])
         pass
     pl.plot(*heatpower_fig_plotargs)
