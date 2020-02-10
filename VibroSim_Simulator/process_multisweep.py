@@ -407,9 +407,9 @@ def process_multisweep_ansys(laser_name,crack_name,plotdir,plotprefix,dt,impulse
             
             
             pl.figure()
-            pl.loglog(crackcentershearstressspec_frange,np.abs(crackcentershearstressspec_filtered),'-',
-                      crackcentershearstressspec_frange,np.abs(crackcentershearstressspec),'-')
-            pl.axis((10,1e5,np.abs(crackcentershearstressspec_filtered[1]),np.max(np.abs(crackcentershearstressspec_filtered))*1.2))
+            pl.loglog(crackcentershearstressmajorspec_frange,np.abs(crackcentershearstressmajorspec_filtered),'-',
+                      crackcentershearstressmajorspec_frange,np.abs(crackcentershearstressmajorspec),'-')
+            pl.axis((10,1e5,np.abs(crackcentershearstressmajorspec_filtered[1]),np.max(np.abs(crackcentershearstressmajorspec_filtered))*1.2))
             pl.xlabel('Frequency (Hz)')
             pl.ylabel('Pa/N')
             pl.title('Crack center shear stress (frequency domain)')
