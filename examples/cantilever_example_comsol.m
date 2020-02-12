@@ -1,4 +1,4 @@
-% function ret = cantilever_example_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float,dc_couplantx_float, dc_couplanty_float, dc_couplantz_float, dc_couplantangle_float, dc_exc_t0_float, dc_exc_t4_float)
+% function ret = cantilever_example_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float, dc_spcSpecificHeatCapacity_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float,dc_couplantx_float, dc_couplanty_float, dc_couplantz_float, dc_couplantangle_float, dc_exc_t0_float, dc_exc_t4_float, dc_simulationcameranetd_float)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
 %> figure out the parameters to pass.
@@ -39,6 +39,8 @@ AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
 AddParamToParamdb(M,'spcYoungsModulus',dc_YoungsModulus_float,'Pa');
 AddParamToParamdb(M,'spcPoissonsRatio',dc_PoissonsRatio_float,'');
 AddParamToParamdb(M,'spcDensity',dc_Density_float,'kg/m^3');
+AddParamToParamdb(M,'spcThermalConductivity',dc_spcThermalConductivity_float,'W/m/K');
+AddParamToParamdb(M,'spcSpecificHeatCapacity',dc_spcSpecificHeatCapacity_float,'J/kg/K');
 
 % simulationtimestart, simulationtimestep, and simulationtimeend specify the time range of the heat flow simulation
 AddParamToParamdb(M,'simulationtimestart',dc_exc_t0_float,'s');
@@ -49,6 +51,9 @@ AddParamToParamdb(M,'simulationtimeend',dc_exc_t4_float+0.8,'s'); % .8 seconds a
 AddParamToParamdb(M,'spcmaterialdampingtype','RayleighDamping');
 AddParamToParamdb(M,'spcrayleighdamping_alpha',dc_spcrayleighdamping_alpha_float,'s^-1');
 AddParamToParamdb(M,'spcrayleighdamping_beta',dc_spcrayleighdamping_beta_float,'s');
+
+% Camera noise parameter
+CreateCameraNoise(M,'cameranoise',dc_simulationcameranetd_float);
 
 %                 x          y         z      angle
 %couplant_coord=[ .245,       .025,        0,      NaN    ];
