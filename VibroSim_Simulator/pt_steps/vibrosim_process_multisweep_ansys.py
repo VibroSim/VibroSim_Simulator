@@ -22,12 +22,15 @@ from limatix.dc_value import hrefvalue as hrefv
 from limatix.dc_value import numericunitsvalue as numericunitsv
 
 from VibroSim_Simulator.process_multisweep import process_multisweep_from_files
+from VibroSim_Simulator.process_multisweep import process_multisweep_ansys
 from VibroSim_Simulator.function_as_script import scriptify
 
 
 def run(_xmldoc,_element,
         dc_dest_href,
         dc_measident_str,
+        dc_laser_name_str,
+        dc_crack_name_str,
         dc_seg1_table_href,
         dc_seg2_table_href,
         dc_seg3_table_href,
