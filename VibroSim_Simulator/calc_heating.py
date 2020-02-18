@@ -356,25 +356,25 @@ def calc_heating_welder(friction_coefficient,
     # and running that through this !!!***
 
     if crack_shearstress_axis=="major":
-        shearstress_column_name = "specimen_crackcentershearstressmajor"
-        shearstrain_column_name = "specimen_crackcentershearstrainmajor"
+        shearstress_column_name = "specimen_crackcentershearstressmajor(Pa)"
+        shearstrain_column_name = "specimen_crackcentershearstrainmajor()"
         pass
     elif crack_shearstress_axis=="minor":
-        shearstress_column_name = "specimen_crackcentershearstressminor"
-        shearstrain_column_name = "specimen_crackcentershearstrainminor"
+        shearstress_column_name = "specimen_crackcentershearstressminor(Pa)"
+        shearstrain_column_name = "specimen_crackcentershearstrainminor()"
         pass
     else: 
         raise ValueError("Invalid crack_shearstress_axis: %s" % (crack_shearstress_axis))
 
-    if "specimen_crackcenternormalstrain" in motiontable and shearstrain_column_name in motiontable:    
-        crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstrain"])
+    if "specimen_crackcenternormalstrain()" in motiontable and shearstrain_column_name in motiontable:    
+        crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstrain()"])
         crack_shearmotion = np.array(motiontable[shearstrain_column_name])
         input_type="strain"
         input_plotmultiplier = 1e6
         input_plotunits = "micros"
         pass
-    elif "specimen_crackcenternormalstress" in motiontable and shearstress_column_name in motiontable:    
-        crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstress"])
+    elif "specimen_crackcenternormalstress(Pa)" in motiontable and shearstress_column_name in motiontable:    
+        crack_normalmotion = np.array(motiontable["specimen_crackcenternormalstress(Pa)"])
         crack_shearmotion = np.array(motiontable[shearstress_column_name])
         input_type="stress"       
         input_plotmultiplier = 1e-6
