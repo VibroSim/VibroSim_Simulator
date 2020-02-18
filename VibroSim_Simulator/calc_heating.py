@@ -84,7 +84,7 @@ def filterfine(finedata,finetrange,coarsetrange):
     # Only recent scipy's have axes parameter to vectorize fftconvolve. 
     # otherwise we have to iterate
     if "axes" in inspect.getargspec(scipy.signal.fftconvolve).args:
-        filtered_fine_center = scipy.signal.fftconvolve(finedata,np.ones(filter_npoints,dtype='d')/filter_npoints,mode='valid',axes=0) # length m-n+1
+        filtered_fine_center = scipy.signal.fftconvolve(finedata,np.ones((filter_npoints,1),dtype='d')/filter_npoints,mode='valid',axes=0) # length m-n+1
         pass
     else:
         filtered_fine_center=np.zeros((finedata.shape[0]-filter_npoints+1,finedata.shape[1]),dtype='d')
