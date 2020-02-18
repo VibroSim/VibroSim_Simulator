@@ -445,15 +445,15 @@ def process_multisweep_ansys(laser_name,crack_name,plotdir,plotprefix,dt,impulse
     if crack_name is not None:
 
         # specimen_crackcenternormalstress is normal stress response at crack center position in 
-        # unitless per unit N*s impulse
+        # Pascals per unit N*s impulse
         # applied at the transducer location 
-        out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstress(1/(N*s))",crackcenternormalstress_timedomain.real[:endpoint])
+        out_frame.insert(len(out_frame.columns),"specimen_crackcenternormalstress(Pa/(N*s))",crackcenternormalstress_timedomain.real[:endpoint])
 
 
         # specimen_crackcentershearstress is normal stress response at crack center position in 
-        # unitless per unit N*s impulse
+        # Pascals per unit N*s impulse
         # applied at the transducer location 
-        out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstressmajor(1/(N*s))",crackcentershearstressmajor_timedomain.real[:endpoint])
+        out_frame.insert(len(out_frame.columns),"specimen_crackcentershearstressmajor(Pa/(N*s))",crackcentershearstressmajor_timedomain.real[:endpoint])
         pass
     
     
