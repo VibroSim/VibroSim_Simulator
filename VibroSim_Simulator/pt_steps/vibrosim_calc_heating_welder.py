@@ -80,24 +80,31 @@ def run(_xmldoc,_element,
 
     dc_heatingdata_href = hrefv(quote(dc_measident_str+"_heatingdata.txt"),dc_dest_href)
 
-
     if dc_crack_type_side1_str != "None":
         (xrange_side1,
          x_bnd_side1,
          dx_side1,
-         aside1_verify,
+         a_side1_verify,
          closure_stress_side1,
          crack_opening_side1) = load_closurestress(dc_closurestate_side1_href.getpath())
+        
+        if a_side1_verify is not None: # crack lengths should match
+            assert((a_side1_verify-dc_a_side1_numericunits.value("m"))/dc_a_side1_numericunits.value("m") < 1e-2)
+            pass
         pass
-
     
+
     if dc_crack_type_side2_str != "None":
         (xrange_side2,
          x_bnd_side2,
          dx_side2,
-         aside2_verify,
+         a_side2_verify,
          closure_stress_side2,
          crack_opening_side2) = load_closurestress(dc_closurestate_side2_href.getpath())
+        
+        if a_side2_verify is not None: # crack lengths should match
+            assert((a_side2_verify-dc_a_side2_numericunits.value("m"))/dc_a_side2_numericunits.value("m") < 1e-2)
+            pass
         pass
     
     #closurestate_side1_dataframe = pd.read_csv(dc_closurestate_side1_href.getpath(),index_col=0)
@@ -111,9 +118,10 @@ def run(_xmldoc,_element,
 
 
     #xrange_side2 = np.array(closurestate_side2_dataframe.index)
-        
+    #    
     #closure_stress_side2 = np.array(closurestate_side2_dataframe["Closure stress (Pa)"])
     #crack_opening_side2 = np.array(closurestate_side2_dataframe["Crack opening (m)"])
+
 
     xrange_lens = []
     if dc_crack_type_side1_str != "None":
@@ -126,20 +134,28 @@ def run(_xmldoc,_element,
     
     shorter_xrange_len = np.min(xrange_lens)
 
-    
     if dc_crack_type_side1_str != "None" and dc_crack_type_side2_str != "None" and np.any(xrange_side1[:shorter_xrange_len] != xrange_side2[:shorter_xrange_len]):
         raise ValueError("Crack radius positions from %s and %s do not match!" % (dc_closurestate_side1_href.humanurl(),dc_closurestate_side2_href.humanurl()))
-    
+
     # xrange should be the longer of the two possibilities
-    if dc_crack_type_side1_str != "None" and xrange_side1.shape[0]==shorter_xrange_len:
+    if dc_crack_type_side1_str == "None":
+        assert(dc_crack_type_side2_str != "None")
         xrange = xrange_side2
         x_bnd = x_bnd_side2
         pass
-    else:
-        assert(dc_crack_type_side2_str != "None")
-        xrange=xrange_side1
+    elif dc_crack_type_side2_str == "None":
+        xrange = xrange_side1
         x_bnd = x_bnd_side1
         pass
+    else:
+        if xrange_side1.shape[0]==shorter_xrange_len:
+            xrange = xrange_side2
+            x_bnd = x_bnd_side2
+            pass
+        else:
+            xrange = xrange_side1
+            x_bnd = x_bnd_side1
+            pass
     
     xstep = xrange[1]-xrange[0]
     

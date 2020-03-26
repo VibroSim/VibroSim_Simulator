@@ -164,17 +164,6 @@ def run(_xmldoc,_element,
             x_bnd = x_bnd_side1
             pass
     
-    # # xrange should be the longer of the two possibilities
-    # if dc_crack_type_side1_str != "None" and xrange_side1.shape[0]==shorter_xrange_len:
-    #     xrange = xrange_side2
-    #     x_bnd = x_bnd_side2
-    #     pass
-    # else:
-    #     assert(dc_crack_type_side2_str != "None")
-    #     xrange=xrange_side1
-    #     x_bnd = x_bnd_side1
-    #     pass
-    
     xstep = xrange[1]-xrange[0]
 
     # Extend fields out appropriately for our xrange
