@@ -781,11 +781,31 @@ def calc_heating_welder(friction_coefficient,
 
 
     heatingfh = open(heatingdata_path,"w")
-    heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2) \t side2_heating(W/m^2)\n")
-    
+    if crack_type_side1 != "None" and crack_type_side2 != "None":
+        heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2) \t side2_heating(W/m^2)\n")
+        pass
+    elif crack_type_side1 != "None":
+        heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2)\n")
+        pass
+    elif crack_type_side2 != "None":
+        heatingfh.write("% t(s) \t r(m) \t side2_heating(W/m^2)\n")
+        pass
+    else:
+        raise ValueError("Crack must have at least one side!")
+        
     for tidx in range(t.shape[0]):
         for xidx in range(xrange.shape[0]):
-            heatingfh.write("%.8e\t%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
+            if crack_type_side1 != "None" and crack_type_side2 != "None":
+                heatingfh.write("%.8e\t%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
+                pass
+            elif crack_type_side1 != "None":
+                heatingfh.write("%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx]))
+                pass
+            elif crack_type_side2 != "None":
+                heatingfh.write("%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
+                pass
+            else:
+                raise ValueError("Crack must have at least one side!")
             pass
         pass
     heatingfh.close()
