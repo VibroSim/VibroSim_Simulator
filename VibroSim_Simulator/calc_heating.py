@@ -760,7 +760,7 @@ def calc_heating_welder(friction_coefficient,
         pass
     else:
         meanpower_per_m2_side2=None
-        passs
+        pass
 
      
 
