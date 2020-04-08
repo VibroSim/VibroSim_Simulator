@@ -123,7 +123,7 @@ def run(_xmldoc,_element,dc_dgsfile_href,
             pl.figure()
             pl.imshow(target_frame.T,extent=(DiffStack_x[0]-DiffStack_dx/2.0,DiffStack_x[-1]+DiffStack_dx/2.0,DiffStack_y[0]-DiffStack_dy/2.0,DiffStack_y[-1]+DiffStack_dy/2.0),origin="lower",cmap="hot",vmin=-camera_netd,vmax=camera_netd*9)
             pl.plot(side1tip[0],side1tip[1],'x')
-            pl.plot(side2tip[0],side2tip[1],'*')
+            pl.plot(side2tip[0],side2tip[1],'+')
             pl.plot((ROIlowerleft[0],ROIlowerleft[0],ROIupperright[0],ROIupperright[0],ROIlowerleft[0]),
                     (ROIlowerleft[1],ROIupperright[1],ROIupperright[1],ROIlowerleft[1],ROIlowerleft[1]),'-')
             pl.legend(("Side 1 (left/bottom) tip","Side 2 (right/top) tip","ROI"),loc="best")
