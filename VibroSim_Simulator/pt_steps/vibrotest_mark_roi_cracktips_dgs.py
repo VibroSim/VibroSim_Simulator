@@ -73,7 +73,7 @@ def run(_xmldoc,_element,dc_dgsfile_href,
     print("Click the desired point in the scope, then middle mouse button")
     print("in this window to paste the coordinates")
     
-    dgscope_proc = subprocess.Popen(["dc_scope_sa",dc_dgsfile_href.getpath()])
+    dgscope_proc = subprocess.Popen(["dg_scope_sa",dc_dgsfile_href.getpath()])
 
     # Test for good input
     good_input = False
