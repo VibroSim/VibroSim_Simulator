@@ -31,7 +31,7 @@ def enter_multicoords(_xmldoc,_element):
 
     priors = ( priorROIlowerleft, priorROIupperright, priorside1tip, priorside2tip )
     
-    default_string=", ".join(priors)
+    default_string=", ".join([str(prior) for prior in priors])
 
     if default_string == "None, None, None, None":
         coord_text = input("Enter parenthesized pairs of coordinates,\nseparated by commas: ")      
