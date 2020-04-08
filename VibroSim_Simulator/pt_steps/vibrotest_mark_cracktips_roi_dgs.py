@@ -4,8 +4,16 @@ import ast
 import numpy as np
 import numbers
 
+import numpy as np
+from matplotlib import pyplot as pl
+
+import dataguzzler as dg
+from dataguzzler import metadata as dgm
+import dg_file as dgf
+
 from limatix.dc_value import numericunitsvalue as numericunitsv
 from limatix.dc_value import stringvalue as stringv
+from limatix.dc_value import hrefvalue as hrefv
 from VibroSim_Simulator import format_modes
 
    
@@ -42,8 +50,11 @@ def enter_multicoords(_xmldoc,_element):
     
     return coords  # ( ROIlowerleft, ROIupperright, side1tip, side2tip )
 
-def run(_xmldoc,_element,dc_dgsfile_href):
-
+def run(_xmldoc,_element,dc_dgsfile_href,
+        dc_exc_t0_numericunits,
+        dc_exc_t3_numericunits,
+        dc_simulationcameranetd_numericunits):  # Simulated camera NETD is used to generate same plot bounds as vibrosim_heatflow_analysis.py from crack_heatflow package
+    
     print("DGS file: %s" % (dc_dgsfile_href.getpath()))
     
     print("Based on the displayed .dgs file or known consistent orientation,")
@@ -76,9 +87,53 @@ def run(_xmldoc,_element,dc_dgsfile_href):
                 raise ValueError("Coordinates must be numbers")
             if len(side2tip) != 2 or not isinstance(side2tip[0],numbers.Number) or not isinstance(side2tip[1],numbers.Number):
                 raise ValueError("Coordinates must be numbers")
-                
+
+
+            t0 = dc_exc_t0_numericunits.value("s") # expected welder start time                                                                                 
+            t3 = dc_exc_t3_numericunits.value("s") # expected welder end time                                                                                   
             
-            good_input=True
+            (dgsmetadata,wfmdict) = dgf.loadsnapshot(dc_dgsfile_href.getpath())
+            DiffStack = wfmdict["DiffStack"]
+            DiffStack_dx = dgm.GetMetaDatumWIDbl(DiffStack,"Step1",1.0)
+            DiffStack_x = dgm.GetMetaDatumWIDbl(DiffStack,"IniVal1",0.0) + np.arange(DiffStack.data.shape[0],dtype='d')*DiffStack_dx
+            DiffStack_dy = dgm.GetMetaDatumWIDbl(DiffStack,"Step2",1.0)
+            DiffStack_y = dgm.GetMetaDatumWIDbl(DiffStack,"IniVal2",0.0) + np.arange(DiffStack.data.shape[1],dtype='d')*DiffStack_dy
+            DiffStack_dt = dgm.GetMetaDatumWIDbl(DiffStack,"Step3",1.0)
+            DiffStack_t = dgm.GetMetaDatumWIDbl(DiffStack,"IniVal3",0.0) + np.arange(DiffStack.data.shape[2],dtype='d')*DiffStack_dt
+            DiffStack_units = dgm.GetMetaDatumWIStr(DiffStack,"AmplUnits","Volts")
+            
+            target_time = t0 + ((t3-t0)*(2.0/3.0)) # 2/3rds of way from t0 to t3                                                                                
+            
+            target_frameidx = np.argmin(abs(DiffStack_t-target_time))
+            
+            target_frame = DiffStack.data[:,:,target_frameidx]
+
+            
+            if DiffStack_units != "K":                                                                                                                          
+                raise ValueError("DiffStack channel in %s has incorrect units (got \"%s\"; expected \"K\")." % (dc_dgsfile_href.getpath(),DiffStack_units))     
+            
+            camera_netd = dc_simulationcameranetd_numericunits.value("K")                                                                                       
+
+            pl.figure()
+            pl.imshow(target_frame.T,extent=(DiffStack_x[0]-DiffStack_dx/2.0,DiffStack_x[-1]+DiffStack_dx/2.0,DiffStack_y[0]-DiffStack_dy/2.0,DiffStack_y[-1]+DiffStack_dy/2.0),origin="lower",cmap="hot",vmin=-camera_netd,vmax=camera_netd*9)
+            pl.plot(side1tip[0],side1tip[1],'x')
+            pl.plot(side2tip[0],side2tip[1],'*')
+            pl.plot((ROIlowerleft[0],ROIlowerleft[0],ROIupperright[0],ROIupperright[0],ROIlowerleft[0]),
+                    (ROIlowerleft[1],ROIupperright[1],ROIupperright[1],ROIlowerleft[1],ROIlowerleft[1]),'-')
+            pl.legend(("Side 1 (left/bottom) tip","Side 2 (right/top) tip","ROI"))
+            pl.colorbar()
+            pl.xlabel("%s (%s)" % (dgm.GetMetaDatumWIStr(DiffStack,"Coord1","X Position"),dgm.GetMetaDatumWIStr(DiffStack,"Units1","px")))
+            pl.ylabel("%s (%s)" % (dgm.GetMetaDatumWIStr(DiffStack,"Coord2","Y Position"),dgm.GetMetaDatumWIStr(DiffStack,"Units2","px")))
+            pl.title("t = %f s" % (DiffStack_t[target_frameidx]))
+
+
+            OK = input("Is this OK [y/N]: ")     
+            if OK.strip().upper()=="y" or OK.strip().upper()=="yes":
+                good_input = True
+                pass
+            else:
+                print("Retrying...")
+                pass
             pass
         except SyntaxError as e:
             print("Syntax error: %s; try again" % (str(e)))
