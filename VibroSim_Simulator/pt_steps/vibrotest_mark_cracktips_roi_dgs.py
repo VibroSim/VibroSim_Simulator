@@ -66,6 +66,10 @@ def run(_xmldoc,_element,dc_dgsfile_href,
     print("If one side of the crack does not exist, click for that tip the")
     print("symmetric position about the crack center where that tip would be.")
     print(" ")
+    print("Remember that the tip positions should represent the physical crack")
+    print("tip locations, not the bounds of the heating. Use known crack size")
+    print("if possible.")
+    print(" ")
     print("Click the desired point in the scope, then middle mouse button")
     print("in this window to paste the coordinates")
     
