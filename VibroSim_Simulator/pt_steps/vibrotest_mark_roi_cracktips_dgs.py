@@ -126,7 +126,7 @@ def run(_xmldoc,_element,dc_dgsfile_href,
             pl.plot(side2tip[0],side2tip[1],'*')
             pl.plot((ROIlowerleft[0],ROIlowerleft[0],ROIupperright[0],ROIupperright[0],ROIlowerleft[0]),
                     (ROIlowerleft[1],ROIupperright[1],ROIupperright[1],ROIlowerleft[1],ROIlowerleft[1]),'-')
-            pl.legend(("Side 1 (left/bottom) tip","Side 2 (right/top) tip","ROI"))
+            pl.legend(("Side 1 (left/bottom) tip","Side 2 (right/top) tip","ROI"),loc="best")
             pl.colorbar()
             pl.xlabel("%s (%s)" % (dgm.GetMetaDatumWIStr(DiffStack,"Coord1","X Position"),dgm.GetMetaDatumWIStr(DiffStack,"Units1","px")))
             pl.ylabel("%s (%s)" % (dgm.GetMetaDatumWIStr(DiffStack,"Coord2","Y Position"),dgm.GetMetaDatumWIStr(DiffStack,"Units2","px")))
