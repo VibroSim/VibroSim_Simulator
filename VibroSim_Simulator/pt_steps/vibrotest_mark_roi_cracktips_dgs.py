@@ -62,6 +62,8 @@ def run(_xmldoc,_element,dc_dgsfile_href,
     print("followed by side 1 (left or bottom) crack tip location, and ")
     print("crack side 2 (right or top) crack tip location.")
     print(" ")
+    print("i.e. (roi_left,roi_bot),(roi_right,roi_top),(cracktip1_x,cracktip1_y),(cracktip2_x,cracktip2_y)")
+    print(" ")
 
     print("If one side of the crack does not exist, click for that tip the")
     print("symmetric position about the crack center where that tip would be.")
@@ -130,9 +132,12 @@ def run(_xmldoc,_element,dc_dgsfile_href,
             pl.ylabel("%s (%s)" % (dgm.GetMetaDatumWIStr(DiffStack,"Coord2","Y Position"),dgm.GetMetaDatumWIStr(DiffStack,"Units2","px")))
             pl.title("t = %f s" % (DiffStack_t[target_frameidx]))
 
+            print("Now view and assess the extracted thermal image with locations marked")
+            print("Then close the thermal image window.")
+            pl.show()
 
             OK = input("Is this OK [y/N]: ")     
-            if OK.strip().upper()=="y" or OK.strip().upper()=="yes":
+            if OK.strip().lower()=="y" or OK.strip().upper()=="yes":
                 good_input = True
                 pass
             else:
