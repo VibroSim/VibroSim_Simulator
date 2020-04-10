@@ -4,8 +4,10 @@
   here -->
   <dc:dest xlink:type="simple" xlink:href="cantilever_example_output/"/>  <!-- Location for writing output files -->
  
-  <dc:friction_coefficient>.3968</dc:friction_coefficient>
-  <dc:msqrtR dcv:units="m^-1.5">3.942e7</dc:msqrtR>
+  <!-- we don't have friction_coefficient and msqrtR for aluminum, 
+       ... using numbers for In718 -->
+  <dc:friction_coefficient>.139</dc:friction_coefficient>
+  <dc:msqrtR dcv:units="m^-1.5">7.94e6</dc:msqrtR>
   <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
   <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack -->
   <dc:xducerforce dcv:units="Newtons">100</dc:xducerforce>
