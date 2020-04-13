@@ -7,7 +7,7 @@
   <prx:inputfiles>
     <!-- The <inputfile> tag is where you refer to the "experiment log"
     with one or more sets of simulation parameters -->
-    <prx:inputfile xlink:href="vibrosim_demo3_edge.xlg"/>
+    <prx:inputfile xlink:href="vibrosim_demo4.xlg"/>
   </prx:inputfiles>
 
   <prx:elementmatch>dc:measurement</prx:elementmatch>
@@ -16,9 +16,16 @@
     <prx:script name="vibrocomsol_createdummyoutput.py"/>
   </prx:step>
 
+
   <!-- Build the COMSOL model -->
   <prx:step name="buildmodel" descr="Construct COMSOL model">
-    <prx:script xlink:href="vibrosim_demo3_edge_comsol.m"/>
+    <prx:script xlink:href="vibrosim_demo4_comsol.m"/>
+  </prx:step>
+
+  <!-- Evaluate closure state from the crack tip positions given in the 
+  .xlg file -->
+  <prx:step name="eval_closure_state_from_tip_positions">
+    <prx:script name="vibrosim_eval_closure_state_from_tip_positions.py"/>
   </prx:step>
 
 
@@ -42,11 +49,9 @@
        damping at low frequencies. Increasing dc:spcrayleighdamping_beta
        will increase damping at high frequencies -->
   
-  <!--
   <prx:step name="entersweepfreqs">
     <prx:script name="vibrocomsol_entersweepfreqs.py"/>
   </prx:step>
-  -->
 
   <!-- Set the COMSOL sweep parameter -->
   <prx:step name="setsweepfrequencies">
@@ -58,11 +63,9 @@
   </prx:step>
 
   <!-- Enter a burst frequency -->
-  <!--
   <prx:step name="enterburstfreq">
     <prx:script name="vibrocomsol_enterburstfreq.py"/>
   </prx:step>
-  -->
 
   <!-- Fourth step is to set the COMSOL parameter -->
   <prx:step name="setburstfrequency">
@@ -74,11 +77,6 @@
     <prx:script name="vibrocomsol_burst_analysis_comsol.m"/>
   </prx:step>
 
-  <!-- Evaluate closure state from the crack tip positions given in the 
-  .xlg file -->
-  <prx:step name="eval_closure_state_from_tip_positions">
-    <prx:script name="vibrosim_eval_closure_state_from_tip_positions.py"/>
-  </prx:step>
 
   <!-- Calculate the heating for single frequency tuned excitation -->
   <prx:step name="calc_heating_singlefrequency">

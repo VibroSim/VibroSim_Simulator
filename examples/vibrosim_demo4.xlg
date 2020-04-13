@@ -13,7 +13,7 @@
     Initially this will be filled with dummy (zero) output. The later steps will replace it 
     with meaningful values -->
     <dc:measident>meas1</dc:measident> <!-- measident is used as a filename prefix for the various output files generated -->
-    <dc:amplitude dcv:units="Volts">3</dc:amplitude>
+    <dc:amplitude dcv:units="Volts">6</dc:amplitude>
     <dc:friction_coefficient>.3968</dc:friction_coefficient>
     <dc:msqrtR dcv:units="m^-1.5">3.942e7</dc:msqrtR>
     <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
@@ -30,31 +30,41 @@
     <dc:Density dcv:units="kg/m^3">4430</dc:Density>
     <dc:spcrayleighdamping_alpha dcv:units="s^-1">2</dc:spcrayleighdamping_alpha>
     <dc:spcrayleighdamping_beta dcv:units="s">5e-9</dc:spcrayleighdamping_beta>
+
+    <dc:spcThermalConductivity dcv:units="W/m/K">6.7</dc:spcThermalConductivity>
+    <dc:spcSpecificHeatCapacity dcv:units="J/kg/K">526.3</dc:spcSpecificHeatCapacity>
+    <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise - noise equivalent temperature difference (NETD) -->
+
     
     <!-- reff_side1, seff_side1, reff_side2, seff_side2 are how
 	 the closure state of the crack is specified: by radius of 
 	 closure point at different external stress levels.
 	 These are interpreted in the context of the selected  
 	 crack model_normal -->
-    <!--
     <dc:crack_model_normal>ModeI_throughcrack_CODformula</dc:crack_model_normal>
     <dc:crack_model_shear>ModeII_throughcrack_CSDformula</dc:crack_model_shear>
-    -->
+    <!--
     <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
     <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
+    -->
 
     <!-- Set crack_sype_side1 and crack_type_side2 for heating calculations -->
     <dc:crack_type_side2>halfthrough</dc:crack_type_side2>
     <dc:crack_type_side1>None</dc:crack_type_side1>
 
-    <dc:crack_shearstress_axis>minor</dc:crack_shearstress_axis> <!-- Select crack heating calculation for shear along the "major" or "minor" crack axis, as defined by the call to CreateCrack() when the geometry is created in the _comsol.m script --> 
+
+    <dc:crack_shearstress_axis>major</dc:crack_shearstress_axis> <!-- Select crack heating calculation for shear along the "major" or "minor" crack axis, as defined by the call to CreateCrack() when the geometry is created in the _comsol.m script --> 
 
     <!-- dc:thickness is used only for crack_type == halfthrough -->
-    <dc:thickness dcv:units="meters">3e-3</dc:thickness>
+    <dc:thickness dcv:units="meters">2.e-3</dc:thickness>
     <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
     <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
+    <!--
     <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
     <dc:seff_side2 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> 0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side2>
+    -->
+    <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
+    <dc:seff_side2 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> 0.0 25e5 50e5 75e5 100e5 125e5 150e5 175e5 200e5</dcv:arraydata></dc:seff_side2>
     <dc:exc_t0 dcv:units="s">0.0</dc:exc_t0>  <!-- start of envelope ramp-up -->
     <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1> <!-- end of enelope ramp-up -->
     <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2> <!-- start of envelope ramp-down-->
@@ -62,9 +72,9 @@
     <dc:exc_t4 dcv:units="s">1.00</dc:exc_t4> <!-- end of vibration calculation -->
 
     
-    <dc:sweep_start_frequency dcv:units="Hz">33508.0</dc:sweep_start_frequency>
-    <dc:sweep_step_frequency  dcv:units="Hz">20.0   </dc:sweep_step_frequency>
-    <dc:sweep_end_frequency   dcv:units="Hz">33708.0</dc:sweep_end_frequency>
-    <dc:excitation_frequency  dcv:units="Hz">33608.0</dc:excitation_frequency>
+    <dc:sweep_start_frequency dcv:units="Hz">39400.0</dc:sweep_start_frequency>
+    <dc:sweep_step_frequency  dcv:units="Hz">10.0   </dc:sweep_step_frequency>
+l   <dc:sweep_end_frequency   dcv:units="Hz">39500.0</dc:sweep_end_frequency>
+    <dc:excitation_frequency  dcv:units="Hz">39449.0</dc:excitation_frequency>
   </dc:measurement>
 </dc:experiment>  
