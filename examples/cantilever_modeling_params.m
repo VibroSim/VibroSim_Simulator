@@ -183,5 +183,5 @@ CreateImpulseExcitation(M,'impulse_excitation', ...
 			ObtainDCParameter(M,'impulseexcitation_t0','s'), ...
 			ObtainDCParameter(M,'impulseexcitation_width','s'));
 
-CreateCameraNoise(M,'cameranoise',ObtainDCParameter(M,'simulationcameranetd','K'));
+% CreateCameraNoise(M,'cameranoise',ObtainDCParameter(M,'simulationcameranetd','K'));
 

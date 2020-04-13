@@ -19,7 +19,7 @@
   <dc:Density dcv:units="kg/m^3">2697</dc:Density>
   <dc:spcThermalConductivity dcv:units="W/m/K">167</dc:spcThermalConductivity>
   <dc:spcSpecificHeatCapacity dcv:units="J/kg/K">896</dc:spcSpecificHeatCapacity>
-  <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise -- noise equivalent temperature difference (NETD) -->
+  <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise noise equivalent temperature difference (NETD) -->
   
   <dc:spcrayleighdamping_alpha dcv:units="s^-1">5</dc:spcrayleighdamping_alpha>
   <dc:spcrayleighdamping_beta dcv:units="s">2e-7</dc:spcrayleighdamping_beta>
