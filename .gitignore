@@ -6,3 +6,9 @@
 *.xlp
 *.pro
 *.swp
+*.bak*
+
+build
+dist
+
+*.egg-info
