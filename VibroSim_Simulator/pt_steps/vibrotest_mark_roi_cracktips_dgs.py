@@ -39,7 +39,7 @@ def enter_multicoords(_xmldoc,_element,have_dgs_roi=False):
     
     default_string=", ".join([str(prior) for prior in priors])
 
-    if default_string == "None, None, None, None" or default_string="None, None":
+    if default_string == "None, None, None, None" or default_string=="None, None":
         coord_text = input("Enter parenthesized pairs of coordinates,\nseparated by commas: ")      
         coords = ast.literal_eval(coord_text)
         
@@ -63,7 +63,7 @@ def run(_xmldoc,_element,
         dc_dgsfile_xpath_str="dc:dgsfile",
         dc_override_dgs_roi_bool=False):
 
-    dc_dgsfile_element = _xmldoc.xpathsinglecontext(_element,dgsfile_href_path_str)
+    dc_dgsfile_element = _xmldoc.xpathsinglecontext(_element,dc_dgsfile_xpath_str)
     dc_dgsfile_href = hrefv.fromxml(_xmldoc,dc_dgsfile_element)
     
     print("DGS file: %s" % (dc_dgsfile_href.getpath()))
@@ -72,10 +72,10 @@ def run(_xmldoc,_element,
     DiffStack = wfmdict["DiffStack"]
 
     if not dc_override_dgs_roi_bool and "ROIX1" in DiffStack.MetaData:
-        ROIX1 = DiffStack.MetaData["ROIX1"].value
-        ROIX2 = DiffStack.MetaData["ROIX2"].value
-        ROIY1 = DiffStack.MetaData["ROIY1"].value
-        ROIY2 = DiffStack.MetaData["ROIY2"].value
+        ROIX1 = DiffStack.MetaData["ROIX1"].Value
+        ROIX2 = DiffStack.MetaData["ROIX2"].Value
+        ROIY1 = DiffStack.MetaData["ROIY1"].Value
+        ROIY2 = DiffStack.MetaData["ROIY2"].Value
 
         
         ROIlowerleft = (min(ROIX1,ROIX2),min(ROIY1,ROIY2))
@@ -156,7 +156,7 @@ def run(_xmldoc,_element,
             target_frame = DiffStack.data[:,:,target_frameidx]
 
             
-            if DiffStack_units != "K":                                                                                                                          
+            if DiffStack_units != "K" and DiffStack_units != "Kelvin":                                                                                                                          
                 raise ValueError("DiffStack channel in %s has incorrect units (got \"%s\"; expected \"K\")." % (dc_dgsfile_href.getpath(),DiffStack_units))     
             
             camera_netd = dc_simulationcameranetd_numericunits.value("K")                                                                                       
