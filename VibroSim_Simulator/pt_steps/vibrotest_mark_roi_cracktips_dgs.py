@@ -23,17 +23,23 @@ if sys.version_info[0] < 3:
 
 
 
-def enter_multicoords(_xmldoc,_element):
+def enter_multicoords(_xmldoc,_element,have_dgs_roi=False):
+
     priorROIlowerleft=ast.literal_eval(_xmldoc.xpathsinglecontextstr(_element,"dc:dgs_roicorner1",default="None",noprovenance=True))
     priorROIupperright=ast.literal_eval(_xmldoc.xpathsinglecontextstr(_element,"dc:dgs_roicorner2",default="None",noprovenance=True))
     priorside1tip=ast.literal_eval(_xmldoc.xpathsinglecontextstr(_element,"dc:dgs_cracktipcoords_side1",default="None",noprovenance=True))
     priorside2tip=ast.literal_eval(_xmldoc.xpathsinglecontextstr(_element,"dc:dgs_cracktipcoords_side2",default="None",noprovenance=True))
 
-    priors = ( priorROIlowerleft, priorROIupperright, priorside1tip, priorside2tip )
+    if have_dgs_roi:
+        priors = ( priorside1tip, priorside2tip )
+        pass
+    else:
+        priors = ( priorROIlowerleft, priorROIupperright, priorside1tip, priorside2tip )
+        pass
     
     default_string=", ".join([str(prior) for prior in priors])
 
-    if default_string == "None, None, None, None":
+    if default_string == "None, None, None, None" or default_string="None, None":
         coord_text = input("Enter parenthesized pairs of coordinates,\nseparated by commas: ")      
         coords = ast.literal_eval(coord_text)
         
@@ -50,19 +56,52 @@ def enter_multicoords(_xmldoc,_element):
     
     return coords  # ( ROIlowerleft, ROIupperright, side1tip, side2tip )
 
-def run(_xmldoc,_element,dc_dgsfile_href,
+def run(_xmldoc,_element,
         dc_exc_t0_numericunits,
         dc_exc_t3_numericunits,
-        dc_simulationcameranetd_numericunits):  # Simulated camera NETD is used to generate same plot bounds as vibrosim_heatflow_analysis.py from crack_heatflow package
+        dc_simulationcameranetd_numericunits,  # Simulated camera NETD is used to generate same plot bounds as vibrosim_heatflow_analysis.py from crack_heatflow package
+        dc_dgsfile_xpath_str="dc:dgsfile",
+        dc_override_dgs_roi_bool=False):
+
+    dc_dgsfile_element = _xmldoc.xpathsinglecontext(_element,dgsfile_href_path_str)
+    dc_dgsfile_href = hrefv.fromxml(_xmldoc,dc_dgsfile_element)
     
     print("DGS file: %s" % (dc_dgsfile_href.getpath()))
-    
-    print("Based on the displayed .dgs file or known consistent orientation,")
-    print("enter coordinates of two ROI corners (lower left, upper right)")
-    print("followed by side 1 (left or bottom) crack tip location, and ")
+
+    (dgsmetadata,wfmdict) = dgf.loadsnapshot(dc_dgsfile_href.getpath())
+    DiffStack = wfmdict["DiffStack"]
+
+    if not dc_override_dgs_roi_bool and "ROIX1" in DiffStack.MetaData:
+        ROIX1 = DiffStack.MetaData["ROIX1"].value
+        ROIX2 = DiffStack.MetaData["ROIX2"].value
+        ROIY1 = DiffStack.MetaData["ROIY1"].value
+        ROIY2 = DiffStack.MetaData["ROIY2"].value
+
+        
+        ROIlowerleft = (min(ROIX1,ROIX2),min(ROIY1,ROIY2))
+        ROIupperright = (max(ROIX1,ROIX2),max(ROIY1,ROIY2))
+        print("Using pre-existing ROI from .dgs file...")
+        print(" ")
+        have_dgs_roi = True
+        pass
+    else:
+        have_dgs_roi = False
+        pass
+        
+    print("Based on the displayed .dgs file or known consistent orientation, enter")
+    print("coordinates of")
+    if not have_dgs_roi: 
+        print("two ROI corners (lower left, upper right) followed by")
+        pass
+    print("side 1 (left or bottom) crack tip location, and ")
     print("crack side 2 (right or top) crack tip location.")
     print(" ")
-    print("i.e. (roi_left,roi_bot),(roi_right,roi_top),(cracktip1_x,cracktip1_y),(cracktip2_x,cracktip2_y)")
+    if have_dgs_roi:
+        print("i.e. (cracktip1_x,cracktip1_y),(cracktip2_x,cracktip2_y)")
+        pass
+    else: 
+        print("i.e. (roi_left,roi_bot),(roi_right,roi_top),(cracktip1_x,cracktip1_y),(cracktip2_x,cracktip2_y)")
+        pass
     print(" ")
 
     print("If one side of the crack does not exist, click for that tip the")
@@ -83,8 +122,12 @@ def run(_xmldoc,_element,dc_dgsfile_href,
     while not good_input:
 
         try:
-            (ROIlowerleft,ROIupperright,side1tip,side2tip) = enter_multicoords(_xmldoc,_element)
-            
+            if have_dgs_roi:
+                (side1tip,side2tip) = enter_multicoords(_xmldoc,_element,have_dgs_roi=True)
+                pass
+            else:
+                (ROIlowerleft,ROIupperright,side1tip,side2tip) = enter_multicoords(_xmldoc,_element)
+                pass
             if len(ROIlowerleft) != 2 or not isinstance(ROIlowerleft[0],numbers.Number) or not isinstance(ROIlowerleft[1],numbers.Number):
                 raise ValueError("Coordinates must be numbers")
             if len(ROIupperright) != 2 or not isinstance(ROIupperright[0],numbers.Number) or not isinstance(ROIupperright[1],numbers.Number):
@@ -98,8 +141,6 @@ def run(_xmldoc,_element,dc_dgsfile_href,
             t0 = dc_exc_t0_numericunits.value("s") # expected welder start time                                                                                 
             t3 = dc_exc_t3_numericunits.value("s") # expected welder end time                                                                                   
             
-            (dgsmetadata,wfmdict) = dgf.loadsnapshot(dc_dgsfile_href.getpath())
-            DiffStack = wfmdict["DiffStack"]
             DiffStack_dx = dgm.GetMetaDatumWIDbl(DiffStack,"Step1",1.0)
             DiffStack_x = dgm.GetMetaDatumWIDbl(DiffStack,"IniVal1",0.0) + np.arange(DiffStack.data.shape[0],dtype='d')*DiffStack_dx
             DiffStack_dy = dgm.GetMetaDatumWIDbl(DiffStack,"Step2",1.0)
