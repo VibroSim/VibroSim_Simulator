@@ -1,0 +1,227 @@
+Processtrak Steps
+==================
+
+The following are processtrak steps.
+
+.. py:function:: vibrosim_synthetic_spectrum
+
+    This processtrak step will take the output of the modal analysis and create
+    spectrum. Each mode in the modal analysis is a peak in the spectrum, and the
+    size of the imaginary part of the complex output determines the bandwidth of
+    the peak. 
+
+    :param dc\:modalfreqs: |modalfreqs|
+    :return dc\:modal_synthetic_spectrum: Synthetic spectrum figure.
+
+
+.. py:function:: vibrocomsol_runmodal_comsol
+
+    This processtrak step will open COMSOL, run the modal analysis study, and save the results.
+
+    :param dc\:dest: |dest|
+    :param dc\:measident: |measident|
+    :param dc\:model_comsol: |model_comsol|
+
+    :param dc\:modalcalc_comsol: |modalcalc_comsol|
+    :param dc\:modalfreqs: |modalfreqs|
+
+
+.. py:function:: vibrocomsol_createdummyoutput
+
+    This processtrak step will create a dummy heating data file. This needs to
+    exist to create the COMSOL model. The processtrak step
+    :py:func:`vibrocomsol_calc_heating_welder` will populate this file with
+    crack heating data. The processtrak step
+    :py:func:`vibrocomsol_heatflow_analysis_comsol` will use the data to analyze
+    heat flows.
+
+    :param dc\:dest: |dest|
+    :param dc\:measident: |measident|
+
+    :return dc\:dummy_heatingdata: |dummy_heatingdata|
+
+.. py:function:: vibrocomsol_entersweepfreqs
+
+    This processtrak step will show the results of the modal analysis and set
+    the range of frequencies to be run by a later processtrak step
+    (:py:func:`vibrocomsol_sweep_analysis_comsol`). If the returns of this
+    processtrak step are already defined in the experiment log (.xlp) then those
+    predefined values are given as defaults for the user to accept. This would
+    occur if this step has been run previously or if they are defined in the
+    initial experiment log (.xlg).
+
+    :param dc\:modalfreqs: |modalfreqs|
+    :param dc\:modalcalc_comsol: |modalcalc_comsol|
+
+    :return dc\:sweep_start_frequency: |sweep_start_frequency|
+    :return dc\:sweep_step_frequency: |sweep_step_frequency|
+    :return dc\:sweep_end_frequency: |sweep_end_frequency|
+
+.. py:function:: vibrocomsol_setsweepfrequencies_comsol
+
+    This processtrak step will open COMSOL and set the parameters needed for
+    the sweep analysis.
+
+    :param dc\:dest: |dest|
+    :param dc\:measident: |measident|
+    :param dc\:model_comsol: |model_comsol|
+    :param dc\:sweep_start_frequency: |sweep_start_frequency|
+    :param dc\:sweep_step_frequency: |sweep_step_frequency|
+    :param dc\:sweep_end_frequency: |sweep_end_frequency|
+
+    :return dc\:model_comsol_withsweepfrequencies: |model_comsol_withsweepfrequencies|
+
+.. py:function:: vibrocomsol_sweep_analysis_comsol
+
+    This processtrak step will open COMSOL, run the sweep analysis study, and save the results.
+
+    :param dc\:dest: |dest|
+    :param dc\:measident: |measident|
+    :param dc\:model_comsol_withsweepfrequencies: |model_comsol_withsweepfrequencies|
+
+    :return dc\:sweep_spectrum: |sweep_spectrum|
+
+.. py:function:: vibrocomsol_enterburstfreq 
+
+    This processtrak step will show the results of the modal analysis and the
+    sweep analysis, and then set the range of frequencies to be run by a later
+    processtrak step (:py:func:`vibrocomsol_burst_analysis_comsol`). If the
+    returns of this processtrak step are already defined in the experiment log
+    (.xlp) then those predefined values are given as defaults for the user to
+    accept. This would occur if this step has been run previously or if they
+    are defined in the initial experiment log (.xlg).
+
+    :param dc\:modalfreqs: |modalfreqs|
+    :param dc\:modalcalc_comsol: |modalcalc_comsol|
+    :param dc\:sweep_spectrum: |sweep_spectrum|
+
+    :return dc\:excitation_frequency: |excitation_frequency|
+
+.. py:function:: vibrocomsol_setburstfrequency_comsol
+
+    This processtrak step will open COMSOL and set the parameters needed for
+    the burst analysis.
+
+    :param dc\:dest: |dest|
+    :param dc\:measident: |measident|
+    :param dc\:model_comsol: |model_comsol|
+    :param dc\:excitation_frequency: |excitation_frequency|
+
+    :return dc\:model_comsol_withburstfrequency: |model_comsol_withburstfrequency|
+
+
+.. py:function:: vibrocomsol_burst_analysis_comsol
+
+    This processtrak step will open COMSOL, run the burst analysis study, and
+    save the results.
+
+    :param dc\:dest: |dest|
+    :param dc\:measident: |measident|
+    :param dc\:model_comsol_withburstfrequency: |model_comsol_withburstfrequency|
+
+    :return dc\:burstcalc_comsol: |burstcalc_comsol|
+    :return dc\:harmonicburst_normalstress: |harmonicburst_normalstress|
+    :return dc\:harmonicburst_shearstressmajor: |harmonicburst_shearstressmajor|
+    :return dc\:harmonicburst_shearstressminor: |harmonicburst_shearstressminor|
+
+.. py:function:: vibrosim_calc_heating_singlefrequency
+
+    This processtrak step will calculate the heat generated by the crack when
+    the sample is subjected to the burst excitation.
+
+    :param dc\:dest: |dest|
+    :param dc\:measident: |measident|
+    :param dc\:friction_coefficient: |friction_coefficient|
+    :param dc\:msqrtR: |msqrtR|
+    :param dc\:staticload: |staticload|
+    :param dc\:exclength: |exclength|
+    :param dc\:tortuosity: |tortuosity|
+    :param dc\:numdraws: |numdraws|
+    :param dc\:YoungsModulus: |YoungsModulus|
+    :param dc\:PoissonsRatio: |PoissonsRatio|
+    :param dc\:YieldStrength: |YieldStrength|
+    :param dc\:Density: |Density|
+    :param dc\:crack_model_normal: |crack_model_normal|
+    :param dc\:crack_model_shear: |crack_model_shear|
+    :param dc\:crack_model_shear_factor: |crack_model_shear_factor|
+    :param dc\:exc_t0: |exc_t0|
+    :param dc\:exc_t1: |exc_t1|
+    :param dc\:exc_t2: |exc_t2|
+    :param dc\:exc_t3: |exc_t3|
+    :param dc\:exc_t4: |exc_t4|
+    :param dc\:excitation_frequency: |excitation_frequency|
+    :param dc\:harmonicburst_normalstress: |harmonicburst_normalstress|
+    :param dc\:harmonicburst_shearstressmajor: |harmonicburst_shearstressmajor|
+    :param dc\:harmonicburst_shearstressminor: |harmonicburst_shearstressminor|
+    :param dc\:crack_type_side1: |crack_type_side1|
+    :param dc\:crack_type_side2: |crack_type_side2|
+    :param dc\:crack_shearstress_axis: |crack_shearstress_axis|
+    :param dc\:thickness: |thickness|
+    :param dc\:closurestate_side1: |closurestate_side1|
+    :param dc\:closurestate_side2: |closurestate_side2|
+    :param dc\:a_side1: |a_side1|
+    :param dc\:a_side2: |a_side2|
+
+    :return dc\:heatpower: |heatpower|
+    :return dc\:heatingdata: |heatingdata|
+    :return dc\:heatingtotalpower: |heatingtotalpower|
+
+.. py:function:: vibrocomsol_heatflow_analysis_comsol
+
+
+
+
+.. py:function:: vibrosim_calc_heating_welder
+
+.. |modalfreqs| replace:: The results of a modal analysis step.
+.. |modalcalc_comsol| replace:: Save file for the COMSOL model with modal results.
+.. |dest| replace:: Designated results output folder.
+.. |measident| replace:: Measurement identifier.
+.. |model_comsol| replace:: Save file for the COMSOL model.
+.. |dummy_heatingdata| replace:: Output file for heating data.
+
+.. |sweep_start_frequency| replace:: Starting frequency for a sweep analysis.
+.. |sweep_step_frequency| replace:: Frequency step for a sweep analysis.
+.. |sweep_end_frequency| replace:: Ending frequency for a sweep analysis.
+.. |model_comsol_withsweepfrequencies| replace:: Save file for the COMSOL model with sweep study results.
+
+.. |sweep_spectrum| replace:: Sweep spectrum image.
+
+.. |excitation_frequency| replace:: Burst frequency.
+.. |model_comsol_withburstfrequency| replace:: Save file for the COMSOL model with burst study results.
+
+.. |burstcalc_comsol| replace:: Save file for the COMSOL model with burst study results.
+.. |harmonicburst_normalstress| replace:: Stress in the model at the crack center, normal to the crack face. (Mode I)
+.. |harmonicburst_shearstressmajor| replace:: Stress in the model at the crack center, in the crack semi-major direction. (Mode II)
+.. |harmonicburst_shearstressminor| replace:: Stress in the model at the crack center, in the crack semi-minor direction. (Mode III)
+
+.. |friction_coefficient| replace:: Friction coefficient of the crack surface.
+.. |msqrtR| replace:: Crack asperity density.
+.. |staticload| replace:: Static bending opening load on crack.
+.. |exclength| replace:: Excitation length.
+.. |tortuosity| replace:: Crack tortuosity, standard deviation of the crack trajectory.
+.. |numdraws| replace:: not_implemented
+.. |YoungsModulus| replace:: Youngs modulus of the material.
+.. |PoissonsRatio| replace:: Poissons Ratio of the material. 
+.. |YieldStrength| replace:: Yield strength of the material. 
+.. |Density| replace:: Density of the material.
+.. |crack_model_normal| replace:: not_implemented
+.. |crack_model_shear| replace:: not_implemented
+.. |crack_model_shear_factor| replace:: Sensitivity factor for shear vs normal heating.
+.. |exc_t0| replace:: Start of excitation envelope ramp-up.
+.. |exc_t1| replace:: End of excitation envelope ramp-up.
+.. |exc_t2| replace:: Start of excitation envelope ramp-down.
+.. |exc_t3| replace:: End of excitation envelope ramp down.
+.. |exc_t4| replace:: End of excitation vibration calculation.
+.. |crack_type_side1| replace:: Crack type of side1, can be halfthrough or quarterpenny. 
+.. |crack_type_side2| replace:: Crack type of side2, can be halfthrough or quarterpenny. 
+.. |crack_shearstress_axis| replace:: Major or minor axis, defines the axis on which shear heating is calculated.
+.. |thickness| replace:: Thickness of the material at the crack, used only for halfthrough cracks. 
+.. |closurestate_side1| replace:: not_implemented
+.. |closurestate_side2| replace:: not_implemented
+.. |a_side1| replace:: Semimajor axis length of side 1.
+.. |a_side2| replace:: Semimajor axis length of side 2.
+
+.. |heatpower| replace:: Heat power vs crack location figure.
+.. |heatingdata| replace:: Heating data, replaces the dummy heating data.
+.. |heatingtotalpower| replace:: Total heating power of the crack.
