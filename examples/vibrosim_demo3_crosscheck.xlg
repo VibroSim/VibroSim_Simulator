@@ -17,8 +17,8 @@
     with meaningful values -->
     <dc:measident>meas1</dc:measident> <!-- measident is used as a filename prefix for the various output files generated -->
     <dc:amplitude dcv:units="Volts">3</dc:amplitude>
-    <dc:friction_coefficient>.061</dc:friction_coefficient>
-    <dc:msqrtR dcv:units="m^-1.5">2.9e6</dc:msqrtR>
+    <dc:friction_coefficient>.0661</dc:friction_coefficient>
+    <dc:msqrtR dcv:units="m^-1.5">3.14e6</dc:msqrtR>
     <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
     <dc:staticload_mount dcv:units="N">0</dc:staticload_mount> <!-- combined static load on both mounts -->
     <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack... Should really run static analysis step and calculate from staticload_mount -->
