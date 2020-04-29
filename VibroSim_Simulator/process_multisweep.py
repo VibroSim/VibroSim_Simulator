@@ -500,11 +500,11 @@ def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,descr):
 
         #if measurement_key is None:
         measurement_key = list(fieldheaderdata.keys())[colnum]
-        if last_measurement_key_str != str(measurement_key):
+        if last_measurement_key_str is not None and last_measurement_key_str_updated != str(measurement_key):
             raise ValueError("process_multisweep on %s: inconsistent column #%d key %s vs previous segment %s" % (segment_filepaths[segnum],colnum,str(measurement_key),last_measurement_key_str))
             pass
-        else: 
-            print("process_multsweep: Using column %s for %s." % (str(measurement_key),descr))
+        elif last_measurement_key_str is None: 
+            print("process_multisweep: Using column %s for %s." % (str(measurement_key),descr))
             pass
 
         #if measurement_key != comsol_descr:
@@ -555,6 +555,7 @@ def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,descr):
         pl.title('seg%d' % (segnum+1))
 
         last_measurement_key_str = str(measurement_key)
+        last_measurement_key_str_updated = last_measurement_key_str.replace("seg%d" % (segnum+1),"seg%d" % (segnum+2))
 
         pass
     
@@ -743,9 +744,9 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
     if crackcenterstressspec_filepaths is not None:
         (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum(crackcenterstressspec_filepaths,2,dt,impulseexcitation_width,"crack center normal stress (Pa)") # colnum==1 is stress magnitude, colnum==2 is normal stress, colnum==3 is shear stress major, colnum==4 is shear stress minor
         
-        (crackcentershearstressmajor_trange,crackcentershearstressmajorspec_frange,crackcentershearstressmajor_timedomain,crackcentershearstressmajorspec,crackcentershearstressmajor_filtered_timedomain,crackcentershearstressmajorspec_filtered)=read_spectrum(crackcenterstressmajorspec_filepaths,3,dt,impulseexcitation_width,"crack center shear stress major axis (Pa)")
+        (crackcentershearstressmajor_trange,crackcentershearstressmajorspec_frange,crackcentershearstressmajor_timedomain,crackcentershearstressmajorspec,crackcentershearstressmajor_filtered_timedomain,crackcentershearstressmajorspec_filtered)=read_spectrum(crackcenterstressspec_filepaths,3,dt,impulseexcitation_width,"crack center shear stress major axis (Pa)")
 
-        (crackcentershearstressminor_trange,crackcentershearstressminorspec_frange,crackcentershearstressminor_timedomain,crackcentershearstressminorspec,crackcentershearstressminor_filtered_timedomain,crackcentershearstressminorspec_filtered)=read_spectrum(crackcenterstressminorspec_filepaths,4,dt,impulseexcitation_width,"crack center shear stress minor axis (Pa)")
+        (crackcentershearstressminor_trange,crackcentershearstressminorspec_frange,crackcentershearstressminor_timedomain,crackcentershearstressminorspec,crackcentershearstressminor_filtered_timedomain,crackcentershearstressminorspec_filtered)=read_spectrum(crackcenterstressspec_filepaths,4,dt,impulseexcitation_width,"crack center shear stress minor axis (Pa)")
         pass
 
     if laser_veltime_filepath is not None:
