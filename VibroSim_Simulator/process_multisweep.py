@@ -470,7 +470,7 @@ def process_multisweep_ansys(laser_name,crack_name,plotdir,plotprefix,dt,impulse
 
 
 
-def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,comsol_descr,descr):
+def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,descr):
     """Read COMSOL spectrum... Colnum indexed starting with 0... so colnum==0 should be frequency, colnum==1 first data column, etc."""
     
     num_segments=len(segment_filepaths)
@@ -489,7 +489,8 @@ def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,comsol_des
 
                         
     FreqResp = collections.OrderedDict()
-    
+
+    last_measurement_key_str = None
     for segnum in range(num_segments):
         #filename = filename_template % (segnum+1)
 
@@ -499,8 +500,15 @@ def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,comsol_des
 
         #if measurement_key is None:
         measurement_key = list(fieldheaderdata.keys())[colnum]
-        if measurement_key != comsol_descr:
-            raise ValueError("process_multisweep on %s: Expected column #%d marked %s; got column marked %s" % (segment_filepaths[segnum],colnum,comsol_descr,measurement_key)) 
+        if last_measurement_key_str != str(measurement_key):
+            raise ValueError("process_multisweep on %s: inconsistent column #%d key %s vs previous segment %s" % (segment_filepaths[segnum],colnum,str(measurement_key),last_measurement_key_str))
+            pass
+        else: 
+            print("process_multsweep: Using column %s for %s." % (str(measurement_key),descr))
+            pass
+
+        #if measurement_key != comsol_descr:
+        #    raise ValueError("process_multisweep on %s: Expected column #%d marked %s; got column marked %s" % (segment_filepaths[segnum],colnum,comsol_descr,measurement_key)) 
         #    print("Got measurement field %s" % (measurement_key))
         #    pass
 
@@ -545,6 +553,8 @@ def read_spectrum(segment_filepaths,colnum,dt,impulseexcitation_width,comsol_des
         pl.xlabel('Time (s)')
         pl.ylabel(descr)
         pl.title('seg%d' % (segnum+1))
+
+        last_measurement_key_str = str(measurement_key)
 
         pass
     
@@ -701,9 +711,9 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
 
     #endcrop=0.0
 
-    (xducer_vel_trange,xducer_velspec_frange,xducer_vel_timedomain,xducer_velspec,xducer_vel_filtered_timedomain,xducer_velspec_filtered)=read_spectrum(xducer_velspec_filepaths,1,dt,impulseexcitation_width,"Fillmein_in_process_multisweep.py","transducer velocity (m/s)/(N*s)")
+    (xducer_vel_trange,xducer_velspec_frange,xducer_vel_timedomain,xducer_velspec,xducer_vel_filtered_timedomain,xducer_velspec_filtered)=read_spectrum(xducer_velspec_filepaths,1,dt,impulseexcitation_width,"transducer velocity (m/s)/(N*s)")
 
-    (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered)=read_spectrum(xducer_displspec_filepaths,1,dt,impulseexcitation_width,"Fillmein_in_process_multisweep.py","transducer displacement m/(N*s)")
+    (xducer_displ_trange,xducer_displspec_frange,xducer_displ_timedomain,xducer_displspec,xducer_displ_filtered_timedomain,xducer_displspec_filtered)=read_spectrum(xducer_displspec_filepaths,1,dt,impulseexcitation_width,"transducer displacement m/(N*s)")
 
     # Try adding step to xducer_displ_timedomain
     #xducer_displ_timedomain -= .31e-3
@@ -723,19 +733,19 @@ def process_multisweep_from_files(xducer_velspec_filepaths,
 
 
     if laser_velspec_filepaths is not None:
-        (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum(laser_velspec_filepaths,1,dt,impulseexcitation_width,"Fillmein_in_process_multisweep.py","laser point velocity (m/s)/(N*s)")
+        (laser_vel_trange,laser_velspec_frange,laser_vel_timedomain,laser_velspec,laser_vel_filtered_timedomain,laser_velspec_filtered)=read_spectrum(laser_velspec_filepaths,1,dt,impulseexcitation_width,"laser point velocity (m/s)/(N*s)")
         pass
 
     if laser_displspec_filepaths is not None:
-        (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered)=read_spectrum(laser_displspec_filepaths,1,dt,impulseexcitation_width,"Fillmein_in_process_multisweep.py","laser point displacement m/(N*s)")
+        (laser_displ_trange,laser_displspec_frange,laser_displ_timedomain,laser_displspec,laser_displ_filtered_timedomain,laser_displspec_filtered)=read_spectrum(laser_displspec_filepaths,1,dt,impulseexcitation_width,"laser point displacement m/(N*s)")
         pass
 
     if crackcenterstressspec_filepaths is not None:
-        (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum(crackcenterstressspec_filepaths,2,dt,impulseexcitation_width,"Fillmein_in_process_multisweep.py","crack center normal stress (Pa)") # colnum==1 is stress magnitude, colnum==2 is normal stress, colnum==3 is shear stress major, colnum==4 is shear stress minor
+        (crackcenternormalstress_trange,crackcenternormalstressspec_frange,crackcenternormalstress_timedomain,crackcenternormalstressspec,crackcenternormalstress_filtered_timedomain,crackcenternormalstressspec_filtered)=read_spectrum(crackcenterstressspec_filepaths,2,dt,impulseexcitation_width,"crack center normal stress (Pa)") # colnum==1 is stress magnitude, colnum==2 is normal stress, colnum==3 is shear stress major, colnum==4 is shear stress minor
         
-        (crackcentershearstressmajor_trange,crackcentershearstressmajorspec_frange,crackcentershearstressmajor_timedomain,crackcentershearstressmajorspec,crackcentershearstressmajor_filtered_timedomain,crackcentershearstressmajorspec_filtered)=read_spectrum(crackcenterstressmajorspec_filepaths,3,dt,impulseexcitation_width,"Fillmein_in_process_multisweep.py","crack center shear stress major axis (Pa)")
+        (crackcentershearstressmajor_trange,crackcentershearstressmajorspec_frange,crackcentershearstressmajor_timedomain,crackcentershearstressmajorspec,crackcentershearstressmajor_filtered_timedomain,crackcentershearstressmajorspec_filtered)=read_spectrum(crackcenterstressmajorspec_filepaths,3,dt,impulseexcitation_width,"crack center shear stress major axis (Pa)")
 
-        (crackcentershearstressminor_trange,crackcentershearstressminorspec_frange,crackcentershearstressminor_timedomain,crackcentershearstressminorspec,crackcentershearstressminor_filtered_timedomain,crackcentershearstressminorspec_filtered)=read_spectrum(crackcenterstressminorspec_filepaths,4,dt,impulseexcitation_width,"Fillmein_in_process_multisweep.py","crack center shear stress minor axis (Pa)")
+        (crackcentershearstressminor_trange,crackcentershearstressminorspec_frange,crackcentershearstressminor_timedomain,crackcentershearstressminorspec,crackcentershearstressminor_filtered_timedomain,crackcentershearstressminorspec_filtered)=read_spectrum(crackcenterstressminorspec_filepaths,4,dt,impulseexcitation_width,"crack center shear stress minor axis (Pa)")
         pass
 
     if laser_veltime_filepath is not None:
