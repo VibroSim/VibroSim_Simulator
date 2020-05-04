@@ -5,11 +5,9 @@ Welcome to VibroSim Simulator's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   README
+
    processtrak_steps
-
-.. mat:function:: CreateRectangularBarSpecimen
-
-    
 
 
 Indices and tables
