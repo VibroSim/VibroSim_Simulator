@@ -103,8 +103,12 @@ would be the place to do any manual tweaking of frequency bands !!!*** -->
     <prx:script name="vibrosim_plot_welder_motion.py"/>
   </prx:step>
 
+  <prx:step name="eval_closure_state_from_tip_positions">
+    <prx:script name="vibrosim_eval_closure_state_from_tip_positions.py"/>
+  </prx:step>
+
   <prx:step name="calc_heating">
-    <prx:script name="vibrosim_weldercalc_heating.py"/>
+    <prx:script name="vibrosim_calc_heating_welder.py"/>
   </prx:step>
   
 
