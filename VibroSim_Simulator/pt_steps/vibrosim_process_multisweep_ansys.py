@@ -42,6 +42,9 @@ def run(_xmldoc,_element,
     dt=1e-6
     impulseexcitation_width=2.0e-6
     
+    if not os.path.exists(dc_dest_href.getpath()):
+        os.mkdir(dc_dest_href.getpath())
+        pass
     
     output_href=hrefv(quote(dc_measident_str+"_dynamicmodel.csv.bz2"),dc_dest_href)
 
@@ -49,7 +52,7 @@ def run(_xmldoc,_element,
     # Can use scriptify(process_multisweep_ansys) in next line to debug processing script
     (output_filename, plotpaths) = process_multisweep_ansys(dc_laser_name_str,
                                                             dc_crack_name_str,
-                                                            dc_dest_href.getpath(),dc_measident_str,
+                                                            dc_dest_href.getpath(),dc_measident_str+"_",
                                                             dt,
                                                             impulseexcitation_width,
                                                             endcrop,

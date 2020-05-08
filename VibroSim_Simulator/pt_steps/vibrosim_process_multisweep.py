@@ -90,6 +90,10 @@ def run(_xmldoc,_element,
         dc_seg4_crackcenterstress_href.getpath(),
     ]
     
+    if not os.path.exists(dc_dest_href.getpath()):
+        os.mkdir(dc_dest_href.getpath())
+        pass
+
     output_href=hrefv(quote(dc_measident_str+"_dynamicmodel.csv.bz2"),dc_dest_href)
 
 
@@ -101,7 +105,7 @@ def run(_xmldoc,_element,
                                                                  crackcenterstressspec_filepaths,
                                                                  output_href.getpath(),
                                                                  plotdir=dc_dest_href.getpath(),
-                                                                 plotprefix=dc_measident_str,
+                                                                 plotprefix=dc_measident_str+"_",
                                                                  num_segments=4,
                                                                  dt=dt,
                                                                  impulseexcitation_width=impulseexcitation_width, 
