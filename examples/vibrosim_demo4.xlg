@@ -43,6 +43,7 @@
 	 crack model_normal -->
     <dc:crack_model_normal>ModeI_throughcrack_CODformula</dc:crack_model_normal>
     <dc:crack_model_shear>ModeII_throughcrack_CSDformula</dc:crack_model_shear>
+    <dc:symmetric_cod>true</dc:symmetric_cod> <!-- use symmetric formulas for the throughcrack -->
     <!--
     <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
     <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>

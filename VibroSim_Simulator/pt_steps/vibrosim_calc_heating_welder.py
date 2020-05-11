@@ -65,11 +65,18 @@ def run(_xmldoc,_element,
         dc_crack_type_side1_str, # "None", "quarterpenny", "halfthrough"
         dc_crack_type_side2_str,
         dc_crack_shearstress_axis_str, # "major" or "minor"
+        dc_symmetric_cod_bool=None,
         dc_thickness_numericunits=numericunitsv(0.0,"m"), # thickness needed only for crack_type of halfthrough
         dc_closurestate_side1_href=None,
         dc_closurestate_side2_href=None,
         dc_a_side1_numericunits=numericunitsv(0.0,"m"),
         dc_a_side2_numericunits=numericunitsv(0.0,"m")):
+
+    if dc_crack_model_normal_str=="ModeI_throughcrack_CODformula" and dc_symmetric_cod_bool is None:
+        raise ValueError("dc:symmetric_cod must be set to 'true' or 'false' when using ModeI_throughcrack_CODformula crack model")
+
+    if dc_crack_model_shear_str=="ModeII_throughcrack_CSDformula" and dc_symmetric_cod_bool is None:
+        raise ValueError("dc:symmetric_cod must be set to 'true' or 'false' when using ModeII_throughcrack_CSDformula crack model")
 
 
     thickness = dc_thickness_numericunits.value("m")
@@ -213,6 +220,7 @@ def run(_xmldoc,_element,
                                        thickness,
                                        dc_crack_model_normal_str,
                                        dc_crack_model_shear_str,
+                                       dc_symmetric_cod_bool,
                                        dc_crack_shearstress_axis_str,
                                        dc_crack_model_shear_factor_float, # shear sensitivity factor (nominally 1.0)
                                        
