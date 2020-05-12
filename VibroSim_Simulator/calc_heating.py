@@ -168,6 +168,7 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
                     static_load, # static load (if any) to be superimposed on preexisting closure stress and crack opening
                     crack_model_normal_name,
                     crack_model_shear_name,
+                    Symmetric_COD,
                     crack_model_shear_factor): # shear sensitivity factor (nominally 1.0)
     
     verbose=False
@@ -179,8 +180,8 @@ def train_surrogate(surrogate_type, # either "normal" or "shear"
     shear_modulus = YoungsModulus/(2.0*(1.0+PoissonsRatio))
     tau_yield = sigma_yield/2.0
     
-    crack_model_normal = crack_model_normal_by_name(crack_model_normal_name,YoungsModulus,PoissonsRatio)
-    crack_model_shear = crack_model_shear_by_name(crack_model_shear_name,YoungsModulus,PoissonsRatio)
+    crack_model_normal = crack_model_normal_by_name(crack_model_normal_name,YoungsModulus,PoissonsRatio,Symmetric_COD=Symmetric_COD)
+    crack_model_shear = crack_model_shear_by_name(crack_model_shear_name,YoungsModulus,PoissonsRatio,Symmetric_CSD=Symmetric_COD)
     
     
 
@@ -328,6 +329,7 @@ def calc_heating_welder(friction_coefficient,
                         thickness,
                         crack_model_normal_name,
                         crack_model_shear_name,
+                        Symmetric_COD,
                         crack_shearstress_axis,
                         crack_model_shear_factor,
                         exc_t0,exc_t4, # s
@@ -463,7 +465,8 @@ def calc_heating_welder(friction_coefficient,
                             static_load,
                             crack_model_normal_name,
                             crack_model_shear_name,
-        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
+                            Symmetric_COD,
+                            crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
         
         pass
 
@@ -491,7 +494,8 @@ def calc_heating_welder(friction_coefficient,
                             static_load,
                             crack_model_normal_name,
                             crack_model_shear_name,
-        crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
+                            Symmetric_COD,
+                            crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
         
 
     if crack_type_side1 != "None":
@@ -518,6 +522,7 @@ def calc_heating_welder(friction_coefficient,
                             static_load,
                             crack_model_normal_name,
                             crack_model_shear_name,
+                            Symmetric_COD,
                             crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
         pass
     
@@ -546,6 +551,7 @@ def calc_heating_welder(friction_coefficient,
                             static_load,
                             crack_model_normal_name,
                             crack_model_shear_name,
+                            Symmetric_COD,
                             crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
         
         pass
@@ -851,6 +857,7 @@ def calc_heating_singlefrequency(friction_coefficient,
                                  thickness,
                                  crack_model_normal_name,
                                  crack_model_shear_name,
+                                 Symmetric_COD,
                                  crack_shearstress_axis,
                                  crack_model_shear_factor,
                                  excitation_frequency,
@@ -896,8 +903,8 @@ def calc_heating_singlefrequency(friction_coefficient,
     else:
         raise ValueError("Invalid crack_shearstress_axis: %s" % (crack_shearstress_axis))
         
-    crack_model_normal = crack_model_normal_by_name(crack_model_normal_name,YoungsModulus,PoissonsRatio)
-    crack_model_shear = crack_model_shear_by_name(crack_model_shear_name,YoungsModulus,PoissonsRatio)
+    crack_model_normal = crack_model_normal_by_name(crack_model_normal_name,YoungsModulus,PoissonsRatio,Symmetric_COD=Symmetric_COD)
+    crack_model_shear = crack_model_shear_by_name(crack_model_shear_name,YoungsModulus,PoissonsRatio,Symmetric_CSD=Symmetric_COD)
 
     
     # Now calculate crack heating under the given conditions

@@ -24,7 +24,7 @@
     <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack... Should really run static analysis step and calculate from staticload_mount -->
     <dc:xducerforce dcv:units="Newtons">0</dc:xducerforce>
     <dc:exclength dcv:units="seconds">1.0</dc:exclength>
-    <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
+    <dc:tortuosity dcv:units="degrees">30.5</dc:tortuosity> <!-- 30.5 was the average from our training specimens -->
     <dc:numdraws>100</dc:numdraws>
     <dc:spcmaterial>Ti 6-4</dc:spcmaterial>
     <dc:YoungsModulus dcv:units="Pascals">117.9e9</dc:YoungsModulus>

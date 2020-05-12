@@ -21,7 +21,7 @@
     <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack... Should really run static analysis step and calculate from staticload_mount -->
     <dc:xducerforce dcv:units="Newtons">0</dc:xducerforce>
     <dc:exclength dcv:units="seconds">1.0</dc:exclength>
-    <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
+    <dc:tortuosity dcv:units="degrees">30.5</dc:tortuosity> <!-- 30.5 was the average from our training specimens -->
     <dc:numdraws>100</dc:numdraws>
     <dc:spcmaterial>Ti 6-4</dc:spcmaterial>
     <dc:YoungsModulus dcv:units="Pascals">117.9e9</dc:YoungsModulus>
@@ -43,6 +43,7 @@
 	 crack model_normal -->
     <dc:crack_model_normal>ModeI_throughcrack_CODformula</dc:crack_model_normal>
     <dc:crack_model_shear>ModeII_throughcrack_CSDformula</dc:crack_model_shear>
+    <dc:symmetric_cod>false</dc:symmetric_cod> <!-- use asymmetric formulas for the throughcrack because it is an edge crack -->
     <!--
     <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
     <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
@@ -74,7 +75,7 @@
     
     <dc:sweep_start_frequency dcv:units="Hz">39400.0</dc:sweep_start_frequency>
     <dc:sweep_step_frequency  dcv:units="Hz">10.0   </dc:sweep_step_frequency>
-l   <dc:sweep_end_frequency   dcv:units="Hz">39500.0</dc:sweep_end_frequency>
+    <dc:sweep_end_frequency   dcv:units="Hz">39500.0</dc:sweep_end_frequency>
     <dc:excitation_frequency  dcv:units="Hz">39449.0</dc:excitation_frequency>
   </dc:measurement>
 </dc:experiment>  

@@ -8,11 +8,11 @@
        ... using numbers for In718 -->
   <dc:friction_coefficient>.146</dc:friction_coefficient>
   <dc:msqrtR dcv:units="m^-1.5">6.77e6</dc:msqrtR>
-  <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
+  <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factor for shear vs. normal heating -->
   <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack -->
   <dc:xducerforce dcv:units="Newtons">100</dc:xducerforce>
   <dc:exclength dcv:units="seconds">1.0</dc:exclength>
-  <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
+  <dc:tortuosity dcv:units="degrees">30.5</dc:tortuosity> <!-- 30.5 was the average from our training specimens -->
   <dc:numdraws>100</dc:numdraws>
   <dc:spcmaterial>Aluminum</dc:spcmaterial>
   <dc:YoungsModulus dcv:units="Pascals">69e9</dc:YoungsModulus>
@@ -28,7 +28,7 @@
   
   <dc:mass_of_welder_and_slider dcv:units="kg">2.0</dc:mass_of_welder_and_slider>
   <dc:pneumatic_force dcv:units="N">100</dc:pneumatic_force>
-  <dc:welder_elec_ampl>1e8</dc:welder_elec_ampl>
+  <dc:welder_elec_ampl>30e8</dc:welder_elec_ampl>
   <dc:welder_spring_constant dcv:units="N/m">5000</dc:welder_spring_constant>
   <dc:R_contact dcv:units="m">25.4e-3</dc:R_contact>
   <!-- <dc:welder_elec_freq dcv:units="Hz">19890</dc:welder_elec_freq> (more robust to just use the built-in default until we have auto-tune ready -->

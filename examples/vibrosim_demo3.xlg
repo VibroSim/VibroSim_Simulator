@@ -21,7 +21,7 @@
     <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack... Should really run static analysis step and calculate from staticload_mount -->
     <dc:xducerforce dcv:units="Newtons">0</dc:xducerforce>
     <dc:exclength dcv:units="seconds">1.0</dc:exclength> <!-- Should eliminate this parameter... just use dc:exc_tx, below -->
-    <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
+    <dc:tortuosity dcv:units="degrees">30.5</dc:tortuosity><!-- 30.5 was the average from our training specimens -->
     <dc:numdraws>100</dc:numdraws>
     <dc:spcmaterial>Ti 6-4</dc:spcmaterial>
     <dc:YoungsModulus dcv:units="Pascals">117.9e9</dc:YoungsModulus>
@@ -31,7 +31,7 @@
     <dc:spcThermalConductivity dcv:units="W/m/K">6.7</dc:spcThermalConductivity>
     <dc:spcSpecificHeatCapacity dcv:units="J/kg/K">526.3</dc:spcSpecificHeatCapacity>
 
-    <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise -- noise equivalent temperature difference (NETD) -->
+    <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise: noise equivalent temperature difference (NETD) -->
     
     <dc:spcrayleighdamping_alpha dcv:units="s^-1">2</dc:spcrayleighdamping_alpha>
     <dc:spcrayleighdamping_beta dcv:units="s">5e-9</dc:spcrayleighdamping_beta>

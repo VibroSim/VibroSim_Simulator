@@ -8,28 +8,31 @@
        ... using numbers for In718 -->
   <dc:friction_coefficient>.146</dc:friction_coefficient>
   <dc:msqrtR dcv:units="m^-1.5">6.77e6</dc:msqrtR>
-  <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
+  <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factor for shear vs. normal heating -->
 
   <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack -->
   <dc:xducerforce dcv:units="Newtons">100</dc:xducerforce>
   <dc:exclength dcv:units="seconds">1.0</dc:exclength>
-  <dc:tortuosity dcv:units="degrees">28.0</dc:tortuosity>
+  <dc:tortuosity dcv:units="degrees">30.5</dc:tortuosity> <!-- 30.5 was the average from our training specimens -->
   <dc:numdraws>100</dc:numdraws>
   <dc:spcmaterial>Aluminum</dc:spcmaterial>
   <dc:YoungsModulus dcv:units="Pascals">69e9</dc:YoungsModulus>
   <dc:YieldStrength dcv:units="Pascals">276e6</dc:YieldStrength>
   <dc:PoissonsRatio>0.32</dc:PoissonsRatio>
   <dc:Density dcv:units="kg/m^3">2697</dc:Density>
+  <dc:spcThermalConductivity dcv:units="W/m/K">167</dc:spcThermalConductivity>
+  <dc:spcSpecificHeatCapacity dcv:units="J/kg/K">896</dc:spcSpecificHeatCapacity>
+  <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise noise equivalent temperature difference (NETD) -->
   <dc:spcviscousdamping dcv:units='N*s'>2e3</dc:spcviscousdamping>
   <dc:mountdamping_scalefactor>2.5e-1</dc:mountdamping_scalefactor>
   <dc:mountstiffness_scalefactor>2.5e-1</dc:mountstiffness_scalefactor>
   <dc:baseline_mountstiffness dcv:units='N/m^3'>2.5e11</dc:baseline_mountstiffness>
-  <dc:limiting_mountdamping dcv:units='N*s/m^3'>3e8<dc:limiting_mountdamping>
+  <dc:limiting_mountdamping dcv:units='N*s/m^3'>3e8</dc:limiting_mountdamping>
 
   
   <dc:mass_of_welder_and_slider dcv:units="kg">2.0</dc:mass_of_welder_and_slider>
   <dc:pneumatic_force dcv:units="N">100</dc:pneumatic_force>
-  <dc:welder_elec_ampl>1e8</dc:welder_elec_ampl>
+  <dc:welder_elec_ampl>30e8</dc:welder_elec_ampl>
   <dc:welder_spring_constant dcv:units="N/m">5000</dc:welder_spring_constant>
   <dc:R_contact dcv:units="m">25.4e-3</dc:R_contact>
   <!-- <dc:welder_elec_freq dcv:units="Hz">19890</dc:welder_elec_freq> (more robust to just use the built-in default until we have auto-tune ready -->
@@ -47,6 +50,12 @@
   crack model_normal -->
   <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
   <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
+  <dc:crack_shearstress_axis>major</dc:crack_shearstress_axis> <!-- Select crack heating calculation for shear along the "major" or "minor" crack axis, as defined by the call to CreateCrack() when the geometry is created in the _comsol.m script --> 
+
+  <dc:crack_type_side1>quarterpenny</dc:crack_type_side1>
+  <dc:crack_type_side2>quarterpenny</dc:crack_type_side2>
+  <!-- dc:thickness is used only for crack_type == halfthrough -->
+  <!-- <dc:thickness dcv:units="meters">1e-3</dc:thickness> -->
 
   <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
   <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
@@ -59,12 +68,8 @@
   <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1> <!-- Full ampltude time -->
   <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2> <!-- Amplitude decay start -->
   <dc:exc_t3 dcv:units="s">0.98</dc:exc_t3> <!-- Turn off time -->
-  <!-- <dc:exc_t4 dcv:units="s">1.02</dc:exc_t4> --> <!-- Assumed end of vibration-->
-  <dc:exc_t4 dcv:units="s">0.03</dc:exc_t4>
-
-    <prx:param name="dc_max_t" dcv:units="s">0.04</prx:param>
-
-
+  <dc:exc_t4 dcv:units="s">1.02</dc:exc_t4> <!-- Assumed end of vibration-->
+  <!-- <dc:exc_t4 dcv:units="s">0.03</dc:exc_t4> --> <!-- switching exc_t4 to this very small value will make the welder simulation run much faster -->
   
   <!-- Each dc:measurement element corresponds to a simulation run -->
   <!-- Parameters from above can be moved inside and varied between 
