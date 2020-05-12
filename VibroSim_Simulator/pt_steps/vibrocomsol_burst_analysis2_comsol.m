@@ -12,9 +12,9 @@ ModelUtil.showPlots(true);
 % Run the harmonic burst study
 model.study('solidmech_harmonicburst_study').run;
 
-stress_point= [dc_stress_point_x,
-               dc_stress_point_y,
-               dc_stress_point_z]
+stress_point= [dc_stress_point_x_float,
+               dc_stress_point_y_float,
+               dc_stress_point_z_float]
 
 [normalstress,shearstressmajor,shearstressminor]=CrackStress_point(model,'Geom','crack','solidmech_harmonicburst',1,stress_point);
 
