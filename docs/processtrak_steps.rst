@@ -4,9 +4,9 @@ ProcessTrak Steps
 .. py:function:: vibrosim_synthetic_spectrum
 
     This processtrak step will take the output of the modal analysis and create
-    spectrum. Each mode in the modal analysis is a peak in the spectrum, and the
-    size of the imaginary part of the complex output determines the bandwidth of
-    the peak. 
+    a spectrum. Each mode in the modal analysis is a peak in the spectrum, and
+    the size of the imaginary part of the complex output determines the
+    bandwidth of the peak. 
 
     :param dc\:modalfreqs: |modalfreqs|
     :return dc\:modal_synthetic_spectrum: Synthetic spectrum figure.
@@ -71,7 +71,8 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_sweep_analysis_comsol
 
-    This processtrak step will open COMSOL, run the sweep analysis study, and save the results.
+    This processtrak step will open COMSOL, run the sweep analysis study, and
+    save the results.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
