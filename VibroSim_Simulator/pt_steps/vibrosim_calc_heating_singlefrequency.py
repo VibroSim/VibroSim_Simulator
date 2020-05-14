@@ -94,7 +94,7 @@ def run(_xmldoc,_element,
     dc_heatingdata_href = hrefv(quote(dc_measident_str+"_heatingdata.txt"),dc_dest_href)
 
 
-    if dc_crack_type_side1_str != "None":
+    if dc_crack_type_side1_str.lower() != "none":
         (xrange_side1,
          x_bnd_side1,
          dx_side1,
@@ -108,7 +108,7 @@ def run(_xmldoc,_element,
         pass
     
 
-    if dc_crack_type_side2_str != "None":
+    if dc_crack_type_side2_str.lower() != "none":
         (xrange_side2,
          x_bnd_side2,
          dx_side2,
@@ -138,26 +138,26 @@ def run(_xmldoc,_element,
 
 
     xrange_lens = []
-    if dc_crack_type_side1_str != "None":
+    if dc_crack_type_side1_str.lower() != "none":
         xrange_lens.append(xrange_side1.shape[0])
         pass
     
-    if dc_crack_type_side2_str != "None":
+    if dc_crack_type_side2_str.lower() != "none":
         xrange_lens.append(xrange_side2.shape[0])
         pass
     
     shorter_xrange_len = np.min(xrange_lens)
 
-    if dc_crack_type_side1_str != "None" and dc_crack_type_side2_str != "None" and np.any(xrange_side1[:shorter_xrange_len] != xrange_side2[:shorter_xrange_len]):
+    if dc_crack_type_side1_str.lower() != "none" and dc_crack_type_side2_str.lower() != "none" and np.any(xrange_side1[:shorter_xrange_len] != xrange_side2[:shorter_xrange_len]):
         raise ValueError("Crack radius positions from %s and %s do not match!" % (dc_closurestate_side1_href.humanurl(),dc_closurestate_side2_href.humanurl()))
 
     # xrange should be the longer of the two possibilities
-    if dc_crack_type_side1_str == "None":
-        assert(dc_crack_type_side2_str != "None")
+    if dc_crack_type_side1_str.lower() == "none":
+        assert(dc_crack_type_side2_str.lower() != "none")
         xrange = xrange_side2
         x_bnd = x_bnd_side2
         pass
-    elif dc_crack_type_side2_str == "None":
+    elif dc_crack_type_side2_str.lower() == "none":
         xrange = xrange_side1
         x_bnd = x_bnd_side1
         pass
@@ -174,7 +174,7 @@ def run(_xmldoc,_element,
     xstep = xrange[1]-xrange[0]
 
     # Extend fields out appropriately for our xrange
-    if dc_crack_type_side1_str != "None":
+    if dc_crack_type_side1_str.lower() != "none":
         closure_stress_side1_ext = np.concatenate((closure_stress_side1,np.ones(xrange.shape[0]-closure_stress_side1.shape[0],dtype='d')*closure_stress_side1[-1]))
         crack_opening_side1_ext = np.concatenate((crack_opening_side1,np.zeros(xrange.shape[0]-closure_stress_side1.shape[0],dtype='d')))
         pass
@@ -183,7 +183,7 @@ def run(_xmldoc,_element,
         crack_opening_side1_ext=None
         pass
     
-    if dc_crack_type_side2_str != "None":
+    if dc_crack_type_side2_str.lower() != "none":
         closure_stress_side2_ext = np.concatenate((closure_stress_side2,np.ones(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')*closure_stress_side2[-1]))
         crack_opening_side2_ext = np.concatenate((crack_opening_side2,np.zeros(xrange.shape[0]-closure_stress_side2.shape[0],dtype='d')))
         pass
