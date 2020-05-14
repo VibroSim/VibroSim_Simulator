@@ -441,7 +441,7 @@ def calc_heating_welder(friction_coefficient,
 
     # !!!*** Need to consider uncertainty due to uncertainty in mu, msqrtR, plus response variability in here!!!***
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         (
             normalheating_power_per_m2_hertz_side1_surr_tck,
             normalheating_power_per_m2_hertz_stddev_side1_surr_tck
@@ -470,7 +470,7 @@ def calc_heating_welder(friction_coefficient,
         
         pass
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         (
             normalheating_power_per_m2_hertz_side2_surr_tck,
             normalheating_power_per_m2_hertz_stddev_side2_surr_tck
@@ -498,7 +498,7 @@ def calc_heating_welder(friction_coefficient,
                             crack_model_shear_factor) # shear sensitivity factor (nominally 1.0)
         
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         (
             shearheating_power_per_m2_hertz_side1_surr_tck,
             shearheating_power_per_m2_hertz_stddev_side1_surr_tck
@@ -527,7 +527,7 @@ def calc_heating_welder(friction_coefficient,
         pass
     
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         (
             shearheating_power_per_m2_hertz_side2_surr_tck,
             shearheating_power_per_m2_hertz_stddev_side2_surr_tck
@@ -562,7 +562,7 @@ def calc_heating_welder(friction_coefficient,
     # Now calculate heating for each normalstrain_segment (via
     # normalstrain_segment_start_strain and normalstrain_segment_end_strain), iterating over x position.
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         (
             normalheating_segment_power_per_m2_side1,
             normalheating_segment_power_per_m2_stddev_side1
@@ -574,7 +574,7 @@ def calc_heating_welder(friction_coefficient,
                                                normal_segment_frequency)
         pass
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         (
             normalheating_segment_power_per_m2_side2,
             normalheating_segment_power_per_m2_stddev_side2
@@ -587,7 +587,7 @@ def calc_heating_welder(friction_coefficient,
         pass
     
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         (
             shearheating_segment_power_per_m2_side1,
             shearheating_segment_power_per_m2_stddev_side1
@@ -599,7 +599,7 @@ def calc_heating_welder(friction_coefficient,
                                                shear_segment_frequency)
         pass
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         (
             shearheating_segment_power_per_m2_side2,
             shearheating_segment_power_per_m2_stddev_side2
@@ -612,7 +612,7 @@ def calc_heating_welder(friction_coefficient,
         pass
     
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         normalheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
                                                                                            normal_segment_start_indices,
                                                                                            normal_segment_end_indices,
@@ -623,7 +623,7 @@ def calc_heating_welder(friction_coefficient,
                                                                                                   normalheating_segment_power_per_m2_stddev_side1)
         pass
     
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         normalheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
                                                                                            normal_segment_start_indices,
                                                                                            normal_segment_end_indices,
@@ -636,7 +636,7 @@ def calc_heating_welder(friction_coefficient,
         
         pass
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         shearheatingtable_power_per_m2_fine_side1 = heatingpower_timeseries_from_segments(trange,xrange,
                                                                                           shear_segment_start_indices,
                                                                                           shear_segment_end_indices,
@@ -650,7 +650,7 @@ def calc_heating_welder(friction_coefficient,
         
         pass
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         shearheatingtable_power_per_m2_fine_side2 = heatingpower_timeseries_from_segments(trange,xrange,
                                                                                           shear_segment_start_indices,
                                                                                           shear_segment_end_indices,
@@ -665,7 +665,7 @@ def calc_heating_welder(friction_coefficient,
     
     
     # Need to filter down the fine time data to coarser time grid
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         normalheatingtable_power_per_m2_side1 = filterfine(normalheatingtable_power_per_m2_fine_side1,trange,t)
         shearheatingtable_power_per_m2_side1 = filterfine(shearheatingtable_power_per_m2_fine_side1,trange,t)
         pass
@@ -675,7 +675,7 @@ def calc_heating_welder(friction_coefficient,
         pass
     
     
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         normalheatingtable_power_per_m2_side2 = filterfine(normalheatingtable_power_per_m2_fine_side2,trange,t)
 
         shearheatingtable_power_per_m2_side2 = filterfine(shearheatingtable_power_per_m2_fine_side2,trange,t)
@@ -689,7 +689,7 @@ def calc_heating_welder(friction_coefficient,
 
 
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         normal_heatgram_side1_fig=pl.figure()
         pl.clf()
         pl.imshow(normalheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
@@ -703,7 +703,7 @@ def calc_heating_welder(friction_coefficient,
         normal_heatgram_side1_fig = None
         pass
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         normal_heatgram_side2_fig=pl.figure()
         pl.clf()
         pl.imshow(normalheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
@@ -718,7 +718,7 @@ def calc_heating_welder(friction_coefficient,
         pass
 
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         shear_heatgram_side1_fig=pl.figure()
         pl.clf()
         pl.imshow(shearheatingtable_power_per_m2_side1,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
@@ -733,7 +733,7 @@ def calc_heating_welder(friction_coefficient,
         pass
     
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         shear_heatgram_side2_fig=pl.figure()
         pl.clf()
         pl.imshow(shearheatingtable_power_per_m2_side2,aspect='auto',origin='lower',extent=((xrange[0]-xstep/2.0)*1e3,(xrange[-1]+xstep/2.0)*1e3,t[0]-t_step/2.0,t[-1]+t_step/2.0))
@@ -750,7 +750,7 @@ def calc_heating_welder(friction_coefficient,
 
     totalpower = 0.0
     
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         meanpower_per_m2_side1 = np.mean(normalheatingtable_power_per_m2_side1,axis=0) + np.mean(shearheatingtable_power_per_m2_side1,axis=0) # average over time...
         totalpower_side1 = integrate_power(xrange,crack_type_side1,thickness,meanpower_per_m2_side1)
         totalpower += totalpower_side1
@@ -759,7 +759,7 @@ def calc_heating_welder(friction_coefficient,
         meanpower_per_m2_side1 = None
         pass
     
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         meanpower_per_m2_side2 = np.mean(normalheatingtable_power_per_m2_side2,axis=0) + np.mean(shearheatingtable_power_per_m2_side2,axis=0) # average over time...     
         totalpower_side2 = integrate_power(xrange,crack_type_side2,thickness,meanpower_per_m2_side2)
         totalpower += totalpower_side2
@@ -773,10 +773,10 @@ def calc_heating_welder(friction_coefficient,
     heatpower_fig=pl.figure()
     pl.clf()
     heatpower_fig_plotargs=[]
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         heatpower_fig_plotargs.extend([-xrange*1e3,meanpower_per_m2_side1/1.e3,'-',])
         pass
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         heatpower_fig_plotargs.extend([xrange*1e3,meanpower_per_m2_side2/1.e3,'-'])
         pass
     pl.plot(*heatpower_fig_plotargs)
@@ -787,13 +787,13 @@ def calc_heating_welder(friction_coefficient,
 
 
     heatingfh = open(heatingdata_path,"w")
-    if crack_type_side1 != "None" and crack_type_side2 != "None":
+    if crack_type_side1.lower() != "none" and crack_type_side2.lower() != "none":
         heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2) \t side2_heating(W/m^2)\n")
         pass
-    elif crack_type_side1 != "None":
+    elif crack_type_side1.lower() != "none":
         heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2)\n")
         pass
-    elif crack_type_side2 != "None":
+    elif crack_type_side2.lower() != "none":
         heatingfh.write("% t(s) \t r(m) \t side2_heating(W/m^2)\n")
         pass
     else:
@@ -801,13 +801,13 @@ def calc_heating_welder(friction_coefficient,
         
     for tidx in range(t.shape[0]):
         for xidx in range(xrange.shape[0]):
-            if crack_type_side1 != "None" and crack_type_side2 != "None":
+            if crack_type_side1.lower() != "none" and crack_type_side2.lower() != "none":
                 heatingfh.write("%.8e\t%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
                 pass
-            elif crack_type_side1 != "None":
+            elif crack_type_side1.lower() != "none":
                 heatingfh.write("%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx]))
                 pass
-            elif crack_type_side2 != "None":
+            elif crack_type_side2.lower() != "none":
                 heatingfh.write("%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
                 pass
             else:
@@ -908,7 +908,7 @@ def calc_heating_singlefrequency(friction_coefficient,
 
     
     # Now calculate crack heating under the given conditions
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         (power_per_m2_side1,
          power_per_m2_stddev_side1,
          vibration_ampl_side1,
@@ -942,7 +942,7 @@ def calc_heating_singlefrequency(friction_coefficient,
         power_per_m2_side1 = np.zeros(xrange.shape[0])# None
         pass
     
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         (power_per_m2_side2,
          power_per_m2_stddev_side2,
          vibration_ampl_side2,
@@ -983,11 +983,11 @@ def calc_heating_singlefrequency(friction_coefficient,
 
     totalpower = 0.0
 
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         totalpower += totalpower_side1
         pass
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         totalpower += totalpower_side2
         pass
 
@@ -996,11 +996,11 @@ def calc_heating_singlefrequency(friction_coefficient,
     pl.clf()
     heatpower_fig_args = []
     
-    if crack_type_side1 != "None":
+    if crack_type_side1.lower() != "none":
         heatpower_fig_args.extend([-xrange*1e3,power_per_m2_side1/1.e3,'-'])
         pass
 
-    if crack_type_side2 != "None":
+    if crack_type_side2.lower() != "none":
         heatpower_fig_args.extend([xrange*1e3,power_per_m2_side2/1.e3,'-'])
     pl.plot(*heatpower_fig_args)
     pl.grid()
