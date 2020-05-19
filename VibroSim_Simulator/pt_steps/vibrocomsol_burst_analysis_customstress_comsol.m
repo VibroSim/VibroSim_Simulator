@@ -1,4 +1,4 @@
-% function [ ret ] = burst_analysis(dc_dest_href,dc_measident_str,dc_model_comsol_withburstfrequency_href,dc_stress_point_x_float,dc_stress_point_y_float,dc_stress_point_z_float)
+% function [ ret ] = burst_analysis_customstress(dc_dest_href,dc_measident_str,dc_model_comsol_withburstfrequency_href,dc_stress_point_x_float,dc_stress_point_y_float,dc_stress_point_z_float)
 
 import com.comsol.model.util.*
 
