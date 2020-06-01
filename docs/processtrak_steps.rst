@@ -5,8 +5,8 @@ ProcessTrak Steps
 
     This processtrak step will take the output of the modal analysis and
     calculate a spectrum. Each mode in the modal analysis is a peak in the
-    spectrum, with the ambplitude and bandwidth determinted by the complex
-    values eigenfrequency.
+    spectrum, with the amplitude and bandwidth determinted by the complex
+    valued eigenfrequency.
 
     This processtrak step is included in the ``VibroSim_Simulator`` software package.
 
@@ -24,8 +24,8 @@ ProcessTrak Steps
     :param dc\:measident: |measident|
     :param dc\:model_comsol: |model_comsol|
 
-    :param dc\:modalcalc_comsol: |modalcalc_comsol|
-    :param dc\:modalfreqs: |modalfreqs|
+    :return dc\:modalcalc_comsol: |modalcalc_comsol|
+    :return dc\:modalfreqs: |modalfreqs|
 
 
 .. py:function:: vibrocomsol_createdummyoutput
@@ -98,7 +98,7 @@ ProcessTrak Steps
     sweep analysis, and then set the single frequency to be run by a later
     processtrak step (:py:func:`vibrocomsol_burst_analysis_comsol`). If the
     returns of this processtrak step are already defined in the experiment log
-    (.xlp) then those predefined values are given as defaults for the user to
+    (.xlp) then those values are given as defaults for the user to
     accept. This would occur if this step has been run previously or if they
     are defined in the initial experiment log (.xlg).
     
@@ -365,7 +365,7 @@ ProcessTrak Steps
     :param dc\:seg4_crackcenterstress: |segX_crackcenterstress|
     :param dc\:endcrop: |endcrop|
                                                  
-    :return dc\:dynamicmodel: not_implemented
+    :return dc\:dynamicmodel: |dynamicmodel|
 
 .. py:function:: vibrocomsol_multisweep_seg_analysis_comsol
 
@@ -434,10 +434,11 @@ ProcessTrak Steps
 
 .. |modalfreqs| replace:: Frequencies of the eigenmodes.
 .. |modalcalc_comsol| replace:: Save file for the COMSOL model with modal results.
-.. |dest| replace:: Designated results output folder.
+.. |dest| replace:: Results output folder.
 .. |measident| replace:: Measurement identifier.
 .. |model_comsol| replace:: Save file for the COMSOL model.
-.. |dummy_heatingdata| replace:: Output file for heating data.
+.. |dummy_heatingdata| replace:: Output file for heating data. Heating data is
+   the heat power of the crack as a function of time and position on crack.
 
 .. |sweep_start_frequency| replace:: Starting frequency for a sweep analysis.
 .. |sweep_step_frequency| replace:: Frequency step for a sweep analysis.
@@ -447,19 +448,19 @@ ProcessTrak Steps
 .. |sweep_spectrum| replace:: Sweep spectrum image.
 
 .. |excitation_frequency| replace:: Burst frequency.
-.. |model_comsol_withburstfrequency| replace:: Save file for the COMSOL model with burst study results.
+.. |model_comsol_withburstfrequency| replace:: Save file for the COMSOL model with burst study parameters.
 
 .. |burstcalc_comsol| replace:: Save file for the COMSOL model with burst study results.
 .. |harmonicburst_normalstress| replace:: Stress in the model at the crack center, normal to the crack face. (Mode I)
-.. |harmonicburst_shearstressmajor| replace:: Stress in the model at the crack center, in the crack semi-major direction. (Mode II)
-.. |harmonicburst_shearstressminor| replace:: Stress in the model at the crack center, in the crack semi-minor direction. (Mode III)
+.. |harmonicburst_shearstressmajor| replace:: Shear stress in the model at the crack center, in the crack semi-major direction. (Mode II)
+.. |harmonicburst_shearstressminor| replace:: Shear stress in the model at the crack center, in the crack semi-minor direction. (Mode III)
 
 .. |friction_coefficient| replace:: Friction coefficient of the crack surface.
 .. |msqrtR| replace:: Crack asperity density.
 .. |staticload| replace:: Static bending opening load on crack.
 .. |exclength| replace:: Excitation length.
 .. |tortuosity| replace:: Crack tortuosity, standard deviation of the crack trajectory.
-.. |numdraws| replace:: not_implemented
+.. |numdraws| replace:: temporarily not documented
 .. |YoungsModulus| replace:: Youngs modulus of the material.
 .. |PoissonsRatio| replace:: Poissons Ratio of the material. 
 .. |YieldStrength| replace:: Yield strength of the material. 
@@ -482,10 +483,11 @@ ProcessTrak Steps
 .. |a_side2| replace:: Semimajor axis length of side 2.
 
 .. |heatpower| replace:: Heat power vs crack location figure.
-.. |heatingdata| replace:: Heating data, replaces the dummy heating data.
+.. |heatingdata| replace:: Output file for heating data. Heating data is
+   the heat power of the crack as a function of time and position on crack.
 .. |heatingtotalpower| replace:: Total heating power of the crack.
 
-.. |motion| replace:: not_implemented
+.. |motion| replace:: temporarily not documented
 .. |vibro_heating_image| replace:: Image of temperature data as if from IR camera.
 .. |heatflow_comsol| replace:: Save file for the COMSOL model with heatflow study results.
 
@@ -496,30 +498,30 @@ ProcessTrak Steps
 .. |closureplot_side1| replace:: Plot of the closure state, side 1.
 .. |closureplot_side2| replace:: Plot of the closure state, side 2.
 
-.. |dynamicmodel| replace:: not_implemented
-.. |mass_of_welder_and_slider| replace:: not_implemented
-.. |pneumatic_force| replace:: not_implemented
-.. |welder_elec_ampl| replace:: not_implemented
-.. |welder_spring_constant| replace:: not_implemented
-.. |R_contact| replace:: not_implemented
-.. |welder_elec_freq| replace:: not_implemented
-.. |contact_model_timestep| replace:: not_implemented
-.. |gpu_device_priority_list| replace:: not_implemented
-.. |gpu_precision| replace:: not_implemented
+.. |dynamicmodel| replace:: temporarily not documented
+.. |mass_of_welder_and_slider| replace:: temporarily not documented
+.. |pneumatic_force| replace:: temporarily not documented
+.. |welder_elec_ampl| replace:: temporarily not documented
+.. |welder_spring_constant| replace:: temporarily not documented
+.. |R_contact| replace:: temporarily not documented
+.. |welder_elec_freq| replace:: temporarily not documented
+.. |contact_model_timestep| replace:: temporarily not documented
+.. |gpu_device_priority_list| replace:: temporarily not documented
+.. |gpu_precision| replace:: temporarily not documented
 
 .. |segX_xducercontactprobe_displ| replace:: Transducer contact probe displacement.
 .. |segX_xducercontactprobe_vel| replace:: Transducer contact probe velocity.
 .. |segX_laser_displ| replace:: Displacement at laser vibrometer spot. 
 .. |segX_laser_vel| replace:: Velocity at laser vibrometer spot.
 .. |segX_crackcenterstress| replace:: Crack center stress.
-.. |endcrop| replace:: not_implemented
+.. |endcrop| replace:: temporarily not documented
 
-.. |segnum_int| replace:: not_implemented
+.. |segnum_int| replace:: temporarily not documented
 
 .. |freqband_segX_start| replace:: Starting frequency of a frequency band.
 .. |freqband_segX_step| replace:: Step frequency of a frequency band.
 .. |freqband_segX_end| replace:: End frequency of a frequency band.
 .. |model_comsol_withsegboundaries| replace:: Save file for the COMSOL model with segment boundaries.
 
-.. |temporal_decay_divisor| replace:: not_implemented
-.. |spectral_decay_divisor| replace:: not_implemented
+.. |temporal_decay_divisor| replace:: temporarily not documented
+.. |spectral_decay_divisor| replace:: temporarily not documented
