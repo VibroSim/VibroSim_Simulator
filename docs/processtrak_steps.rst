@@ -414,6 +414,20 @@ ProcessTrak Steps
     frequency domain calculation that will be invertable 
     to a time-domain response. 
 
+The whole purpose is to construct a time domain response without having to run the time domain response analysis. 
+
+Do a frequency domain calculation to determ
+
+Looks at the modes, comes up with a set of frequency bands that are spaced such as to avoid aliasing.
+
+Aliasing is when the result past the finish time overlaps the intial signal.
+
+As you do the frequency domain analysis, the closer you put the frequency steps together the longer
+
+Saying the mode amplitude needs to decay fast enough that the mode is 1/1000 of original before looping back.
+
+
+
     :param dc\:modalfreqs: |modalfreqs|
     :param dc\:temporal_decay_divisor: |temporal_decay_divisor|
     :param dc\:spectral_decay_divisor: |spectral_decay_divisor|
@@ -460,13 +474,13 @@ ProcessTrak Steps
 .. |staticload| replace:: Static bending opening load on crack.
 .. |exclength| replace:: Excitation length.
 .. |tortuosity| replace:: Crack tortuosity, standard deviation of the crack trajectory.
-.. |numdraws| replace:: temporarily not documented
+.. |numdraws| replace:: Crack tortuosity is a statistical distribution, this parameter defines how many draws to take at each position along the crack for calculating the crack heating.
 .. |YoungsModulus| replace:: Youngs modulus of the material.
 .. |PoissonsRatio| replace:: Poissons Ratio of the material. 
 .. |YieldStrength| replace:: Yield strength of the material. 
 .. |Density| replace:: Density of the material.
-.. |crack_model_normal| replace:: Model used for calculating crack displacement normal to crack surface.
-.. |crack_model_shear| replace:: Model used for calculating crack dispalcement in shear. 
+.. |crack_model_normal| replace:: Which crack closure model to use for normal loading. Look at examples to put in the options. ModeI or Tada
+.. |crack_model_shear| replace:: Which stick/slip model to use for shear loading. Look at examples to put in the options. ModeII ModeIII or Fabrikant
 .. |crack_model_shear_factor| replace:: Sensitivity factor for shear vs normal heating.
 .. |exc_t0| replace:: Start of excitation envelope ramp-up.
 .. |exc_t1| replace:: End of excitation envelope ramp-up.
@@ -487,8 +501,8 @@ ProcessTrak Steps
    the heat power of the crack as a function of time and position on crack.
 .. |heatingtotalpower| replace:: Total heating power of the crack.
 
-.. |motion| replace:: temporarily not documented
-.. |vibro_heating_image| replace:: Image of temperature data as if from IR camera.
+.. |motion| replace:: Table of motion of the tip position, contact force, crack stress, laser sense point, etc., resulting from the welder tip and specimen interaction. Multicolumn csv.
+.. |vibro_heating_image| replace:: Snapshot of the heating specimen. 
 .. |heatflow_comsol| replace:: Save file for the COMSOL model with heatflow study results.
 
 .. |reff_side1| replace:: Effective tip radius array of crack side 1.
@@ -498,30 +512,33 @@ ProcessTrak Steps
 .. |closureplot_side1| replace:: Plot of the closure state, side 1.
 .. |closureplot_side2| replace:: Plot of the closure state, side 2.
 
-.. |dynamicmodel| replace:: temporarily not documented
-.. |mass_of_welder_and_slider| replace:: temporarily not documented
-.. |pneumatic_force| replace:: temporarily not documented
-.. |welder_elec_ampl| replace:: temporarily not documented
-.. |welder_spring_constant| replace:: temporarily not documented
-.. |R_contact| replace:: temporarily not documented
-.. |welder_elec_freq| replace:: temporarily not documented
-.. |contact_model_timestep| replace:: temporarily not documented
-.. |gpu_device_priority_list| replace:: temporarily not documented
-.. |gpu_precision| replace:: temporarily not documented
+.. |dynamicmodel| replace:: Time-domain specimen stress and motion at transducer contact, laser, and crack locations 
+.. |mass_of_welder_and_slider| replace:: Assumed mass of welder assembly.
+.. |pneumatic_force| replace:: Pneumatic force behind the welder.
+.. |welder_elec_ampl| replace:: Electrical excitation amplitude going into the welder. Not a calibrated value.
+.. |welder_spring_constant| replace:: The springiness of the welder mounts.
+.. |R_contact| replace:: Welder tip assumed Hertzian contact radius.
+.. |welder_elec_freq| replace:: Frequency of the electrical welder excitation.
+.. |contact_model_timestep| replace:: Timestep used in the contact model.
+.. |gpu_device_priority_list| replace:: Prioritized list of gpus to use in place of cpu.
+        # Example that uses the gpu should be somewhere in the documentation
+        # Get this info from
+            # System gpu device browser
+            # CLINFO command
+.. |gpu_precision| replace:: `single` or `double`. 
 
 .. |segX_xducercontactprobe_displ| replace:: Transducer contact probe displacement.
 .. |segX_xducercontactprobe_vel| replace:: Transducer contact probe velocity.
 .. |segX_laser_displ| replace:: Displacement at laser vibrometer spot. 
 .. |segX_laser_vel| replace:: Velocity at laser vibrometer spot.
 .. |segX_crackcenterstress| replace:: Crack center stress.
-.. |endcrop| replace:: temporarily not documented
-
-.. |segnum_int| replace:: temporarily not documented
+.. |endcrop| replace:: The amount of time in seconds to crop off the generated time domain waveforms to remove the anticausal portion of the signal.
+.. |segnum_int| replace:: Segment number.
 
 .. |freqband_segX_start| replace:: Starting frequency of a frequency band.
 .. |freqband_segX_step| replace:: Step frequency of a frequency band.
 .. |freqband_segX_end| replace:: End frequency of a frequency band.
 .. |model_comsol_withsegboundaries| replace:: Save file for the COMSOL model with segment boundaries.
 
-.. |temporal_decay_divisor| replace:: temporarily not documented
-.. |spectral_decay_divisor| replace:: temporarily not documented
+.. |temporal_decay_divisor| replace:: The factor by which the time domain impulse response should decay within the calculation period. Residual magnitudes past the calculation period implicitly wrap back and overlap with the impulse response, acting as interference.
+.. |spectral_decay_divisor| replace:: The factor by which resonances outside a segment under construction must decay to by a segment boundary in order to be ignored when constructing the segment.
