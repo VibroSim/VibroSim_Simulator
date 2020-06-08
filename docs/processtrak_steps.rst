@@ -1,14 +1,29 @@
 ProcessTrak Steps
 ==================
 
+ProcessTrak is a step oriented processing framework that tracks provenance to
+ensure data integrity. It works on xml based processing scripts. A ``.prx``
+file is a checklist that defines the steps that are to be followed in
+processing. The steps that are part of VibroSim Simulator are below. A ``.xlg``
+file is an unprocessed experiment log. It holds all parameters that are needed
+at the instantiation of a processing checklist. At the start of the checklist
+the ``.xlg`` is processed and an ``.xlp`` file, is created. This is a processed
+experiment log. All ProcessTrak steps will act on the data in the processed
+experiment log.
+
+Each of the following ProcessTrak steps with parameters will look for those
+parameters in the ``.xlp`` file, where each parameter name is a tag on an xml
+element in the ``.xlp`` file. Each return will be a piece of information
+that is added to the ``.xlp`` file.
+
 .. py:function:: vibrosim_synthetic_spectrum
 
-    This processtrak step will take the output of the modal analysis and
+    This ProcessTrak step will take the output of the modal analysis and
     calculate a spectrum. Each mode in the modal analysis is a peak in the
     spectrum, with the amplitude and bandwidth determined by the complex
     valued eigenfrequency.
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:modalfreqs: |modalfreqs|
     :return dc\:modal_synthetic_spectrum: Synthetic spectrum figure.
@@ -16,9 +31,9 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_runmodal_comsol
 
-    This processtrak step will open COMSOL, run the modal analysis study, and save the results.
+    This ProcessTrak step will open COMSOL, run the modal analysis study, and save the results.
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -30,14 +45,14 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_createdummyoutput
 
-    This processtrak step will create a dummy heating data file. This needs to
-    exist to create the COMSOL model. The processtrak step
+    This ProcessTrak step will create a dummy heating data file. This needs to
+    exist to create the COMSOL model. The ProcessTrak step
     :py:func:`vibrocomsol_calc_heating_welder` will populate this file with
-    crack heating data. The processtrak step
+    crack heating data. The ProcessTrak step
     :py:func:`vibrocomsol_heatflow_analysis_comsol` will use the data to analyze
     heat flows.
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -46,15 +61,15 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_entersweepfreqs
 
-    This processtrak step will show the results of the modal analysis and ask
+    This ProcessTrak step will show the results of the modal analysis and ask
     the user to specify the range of frequencies to be run by a later
-    processtrak step (:py:func:`vibrocomsol_sweep_analysis_comsol`). If the
-    returns of this processtrak step are already defined in the experiment log
+    ProcessTrak step (:py:func:`vibrocomsol_sweep_analysis_comsol`). If the
+    returns of this ProcessTrak step are already defined in the experiment log
     (.xlp) then those predefined values are given as defaults for the user to
     accept. This would occur if this step has been run previously or if they
     are defined in the initial experiment log (.xlg).
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:modalfreqs: |modalfreqs|
     :param dc\:modalcalc_comsol: |modalcalc_comsol|
@@ -65,10 +80,10 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_setsweepfrequencies_comsol
 
-    This processtrak step will open COMSOL and set the parameters needed for
+    This ProcessTrak step will open COMSOL and set the parameters needed for
     the sweep analysis.
     
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -81,10 +96,10 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_sweep_analysis_comsol
 
-    This processtrak step will open COMSOL, run the sweep analysis study, and
+    This ProcessTrak step will open COMSOL, run the sweep analysis study, and
     save the results.
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -94,16 +109,16 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_enterburstfreq 
 
-    This processtrak step will show the results of the modal analysis and the
+    This ProcessTrak step will show the results of the modal analysis and the
     sweep analysis, and then ask the user to specify the single frequency to be
-    run by a later processtrak step
+    run by a later ProcessTrak step
     (:py:func:`vibrocomsol_burst_analysis_comsol`). If the returns of this
-    processtrak step are already defined in the experiment log (.xlp) then
+    ProcessTrak step are already defined in the experiment log (.xlp) then
     those values are given as defaults for the user to accept. This would occur
     if this step has been run previously or if they are defined in the initial
     experiment log (.xlg).
     
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:modalfreqs: |modalfreqs|
     :param dc\:modalcalc_comsol: |modalcalc_comsol|
@@ -113,10 +128,10 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_setburstfrequency_comsol
 
-    This processtrak step will open COMSOL and set the parameters needed for
+    This ProcessTrak step will open COMSOL and set the parameters needed for
     the burst analysis.
     
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -128,11 +143,11 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_burst_analysis_comsol
 
-    This processtrak step will open COMSOL, run the burst analysis study, and
+    This ProcessTrak step will open COMSOL, run the burst analysis study, and
     save the results. It will calculate the stress at the crack face, a
     critical component of the heating calculation.
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -145,14 +160,14 @@ ProcessTrak Steps
 
 .. py:function:: vibrosim_calc_heating_singlefrequency
 
-    This processtrak step will calculate the heat generated by the crack when
+    This ProcessTrak step will calculate the heat generated by the crack when
     the sample is subjected to the burst excitation.
     
 
 
     # TOO SIMPLISTIC?
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -193,9 +208,9 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_heatflow_analysis_comsol
 
-    This processtrak step will open COMSOL, run the heatflow analysis study, and save the results.
+    This ProcessTrak step will open COMSOL, run the heatflow analysis study, and save the results.
 
-    This processtrak step is included in the ``VibroSim_Simulator`` software package.
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -209,7 +224,7 @@ ProcessTrak Steps
 
 .. py:function:: vibrosim_calc_heating_welder
 
-    This processtrak step will calculate the heat generated by the crack when
+    This ProcessTrak step will calculate the heat generated by the crack when
     the sample is subjected to the welder excitation.
 
     :param dc\:dest: |dest|
@@ -243,7 +258,7 @@ ProcessTrak Steps
 
 .. py:function:: vibrosim_eval_closure_state_from_tip_positions
     
-    This processtrak step is used in vibrosim to evaluate crack closure state
+    This ProcessTrak step is used in vibrosim to evaluate crack closure state
     from crack tip positions given in an XML element. It is provided by the
     ``crackclosuresim2`` package.
     
@@ -305,7 +320,7 @@ ProcessTrak Steps
 
 .. py:function:: vibrosim_plot_welder_motion
     
-    This processtrak step will plot the welder motion.
+    This ProcessTrak step will plot the welder motion.
 
     Provided by the ``VibroSim_WelderModel`` package.
     
@@ -395,7 +410,7 @@ ProcessTrak Steps
 
 .. py:function:: vibrocomsol_set_freqbands_comsol
 
-    This processtrak step opens a COMSOL file and sets the frequency bands for the multisweep study.
+    This ProcessTrak step opens a COMSOL file and sets the frequency bands for the multisweep study.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -417,7 +432,7 @@ ProcessTrak Steps
 
 .. py:function:: vibrosim_optimize_freqbands
 
-    This processtrak step optimizes the frequency bands for the processtrak
+    This ProcessTrak step optimizes the frequency bands for the ProcessTrak
     step :py:func:`vibrocomsol_multisweep_seg_analysis_comsol`. 
 
     Run this on output of modal analysis to interpret 
