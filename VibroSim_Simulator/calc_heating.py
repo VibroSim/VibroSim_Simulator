@@ -787,17 +787,17 @@ def calc_heating_welder(friction_coefficient,
 
 
     heatingfh = open(heatingdata_path,"w")
-    if crack_type_side1.lower() != "none" and crack_type_side2.lower() != "none":
-        heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2) \t side2_heating(W/m^2)\n")
-        pass
-    elif crack_type_side1.lower() != "none":
-        heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2)\n")
-        pass
-    elif crack_type_side2.lower() != "none":
-        heatingfh.write("% t(s) \t r(m) \t side2_heating(W/m^2)\n")
-        pass
-    else:
-        raise ValueError("Crack must have at least one side!")
+    #if crack_type_side1.lower() != "none" and crack_type_side2.lower() != "none":
+    heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2) \t side2_heating(W/m^2)\n")
+    #    pass
+    #elif crack_type_side1.lower() != "none":
+    #    heatingfh.write("% t(s) \t r(m) \t side1_heating(W/m^2)\n")
+    #    pass
+    #elif crack_type_side2.lower() != "none":
+    #    heatingfh.write("% t(s) \t r(m) \t side2_heating(W/m^2)\n")
+    #    pass
+    #else:
+    #    raise ValueError("Crack must have at least one side!")
         
     for tidx in range(t.shape[0]):
         for xidx in range(xrange.shape[0]):
@@ -805,10 +805,10 @@ def calc_heating_welder(friction_coefficient,
                 heatingfh.write("%.8e\t%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
                 pass
             elif crack_type_side1.lower() != "none":
-                heatingfh.write("%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx]))
+                heatingfh.write("%.8e\t%.8e\t%.8e\t0.0\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side1[tidx,xidx] + shearheatingtable_power_per_m2_side1[tidx,xidx]))
                 pass
             elif crack_type_side2.lower() != "none":
-                heatingfh.write("%.8e\t%.8e\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
+                heatingfh.write("%.8e\t%.8e\t0.0\t%.8e\n" % (t[tidx],xrange[xidx],normalheatingtable_power_per_m2_side2[tidx,xidx] + shearheatingtable_power_per_m2_side2[tidx,xidx]))
                 pass
             else:
                 raise ValueError("Crack must have at least one side!")
@@ -939,7 +939,7 @@ def calc_heating_singlefrequency(friction_coefficient,
         (totalpower_side1, totalpower_stddev_side1) = integrate_power(xrange,crack_type_side1,thickness,power_per_m2_side1,power_per_m2_stddev_side1)
         pass
     else:
-        power_per_m2_side1 = np.zeros(xrange.shape[0])# None
+        power_per_m2_side1 = np.zeros(xrange.shape[0],dtype='d') # None
         pass
     
     if crack_type_side2.lower() != "none":
@@ -973,7 +973,7 @@ def calc_heating_singlefrequency(friction_coefficient,
         (totalpower_side2, totalpower_stddev_side2) = integrate_power(xrange,crack_type_side2,thickness,power_per_m2_side2,power_per_m2_stddev_side2)
         pass
     else:
-        power_per_m2_side2 = np.zeros(xrange.shape[0])# None
+        power_per_m2_side2 = np.zeros(xrange.shape[0],dtype='d') # None
         pass
     
 
