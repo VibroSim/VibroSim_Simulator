@@ -1,5 +1,5 @@
 VibroSim Simulator
-------------------
+==================
 
 VibroSim Simulator is a set of tools to organize and facilitate
 simulating Vibrothermography testing using VibroSim.
@@ -61,12 +61,9 @@ were installed to the following directory:
 
 	 ``C:\Program Files\COMSOL\COMSOL54\Multiphysics\bin\win64``
 
-This directory needs to be added to the end of ``path`` 
+This directory needs to be added to the end of the ``path`` 
 environment variable. Searching "environment variables" in the
 start menu is a good way to find where to make this edit.
-
-The folder containg the matlab files in VibroSim_COMSOL need to be added to an
-environment variable called ``MATLABPATH``.
 
 VibroSim Simulator Workflow
 ---------------------------
@@ -92,7 +89,7 @@ ProcessTrak
 ProcessTrak is a commandline tool from the Limatix package that is
 used to keep track of what has been performed in a multistep
 process. It is executed by typing ``processtrak`` at the command line.
-ProcessTrak is configured by an XML listing of input files steps in a
+ProcessTrak is configured by an XML listing of input file steps in a
 ``.prx`` file.  Usually ProcessTrak is run referencing that ``.prx`` file
 followed by additional instructions for what is desired. For example
 
@@ -155,7 +152,7 @@ to verify only processed output has been staged, and ``git commit`` to
 perform the commit.
 
 
-COMSOL-based VibroSim workflow
+COMSOL-based VibroSim Workflow
 ------------------------------
 
 The COMSOL-based VibroSim workflow follows roughly the conceptual
@@ -180,3 +177,29 @@ The steps involved in a COMSOL-based VibroSim simulation are:
   4. Prediction of heating power from response at the crack.
   5. Modeling of the heat from the crack conducting through the
      material to the surface. 
+
+Building the Docs
+------------------------------
+
+This documentation was built using `Sphinx
+<https://www.sphinx-doc.org/en/master/>`_. Documentation source code can be
+found in the ``docs`` folder. If you are using Fedora, Sphinx can be installed
+using the following command:
+
+``dnf install python-sphinx``
+
+Or similarly for Ubuntu:
+
+``apt-get install python3-sphinx``
+
+Once Sphinx is installed an html version of the documentation can be built
+using the makefile in the ``docs`` folder.
+
+``make html``
+
+On Windows Sphinx can be installed using ``pip``.
+
+``pip install sphinx``
+
+Sphinx can also be used to create ``.tex`` source files, which can be converted
+to pdf using Latex.

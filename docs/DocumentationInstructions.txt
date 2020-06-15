@@ -1,0 +1,37 @@
+Documentation guidelines:
+
+VibroSim is documented using the Sphinx documentation framework. Sphinx is
+capable of syntax analyis and automatic documentation generation, but due to
+the way ProcessTrak steps are written this method of documetation is not used.
+Every ProcessTrak step that is used in VibroSim Simulator is included in
+``processtrak_steps.rst``.
+
+The following is an example of how to document a processtrak step using the ReStructuredText system from Sphinx.
+
+``
+.. py:function:: vibrosim_synthetic_spectrum
+
+    This ProcessTrak step will take the output of the modal analysis and
+    calculate a spectrum. Each mode in the modal analysis is a peak in the
+    spectrum, with the amplitude and bandwidth determined by the complex
+    valued eigenfrequency.
+
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
+
+    :param dc\:modalfreqs: |modalfreqs|
+    :return dc\:modal_synthetic_spectrum: Synthetic spectrum figure.
+``
+
+Parameters for a function have this syntax:
+
+``:param name_of_parameter: Description of parameter.``
+
+Likewise, returns have this syntax:
+
+``:return name_of_return: Description of return.``
+
+In the example the description section has a simple ``|modalfreqs|`` tag. Syntax at the end of the ``.rst`` file is used to replace this flag with a description of the parameter. For example, the following code will replace every ``|modalfreqs|`` flag in the file with a string, in this case its description.
+
+``
+.. |modalfreqs| replace:: Frequencies of the eigenmodes.
+``
