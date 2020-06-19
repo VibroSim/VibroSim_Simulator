@@ -7,7 +7,11 @@ Welcome to VibroSim Simulator's documentation!
 
    README
 
+   tutorial
+
    processtrak_steps
+
+   dc_parameters
 
 
 Indices and tables

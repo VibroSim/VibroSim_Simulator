@@ -22,9 +22,19 @@ return from one of these steps.
 
 .. py:function:: vibrocomsol_runmodal_comsol
 
-    This ProcessTrak step will open COMSOL, run the modal analysis study, and save the results.
+    This ProcessTrak step will open COMSOL, run the modal analysis study, and
+    save the results.
 
-    This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
+    The purpose of the modal analysis is to identify candidate resonant modes
+    of the specimen. In vibrothermography testing you want to excite enough
+    resonant modes that you will be pretty much guaranteed that any point in
+    the specimen will have large strains in at least one of the modes. The
+    modal analysis can be used to find these resonances. In experiments, this
+    would be performed using a broadband frequency sweep across the entire
+    range of possible excitation frequencies. 
+
+    This ProcessTrak step is included in the ``VibroSim_Simulator`` software
+    package.
 
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
@@ -90,6 +100,16 @@ return from one of these steps.
     This ProcessTrak step will open COMSOL, run the sweep analysis study, and
     save the results.
 
+    The purpose of the frequency sweep is to do a more precise analysis than
+    the modal analysis of specific candidate excitations over a range of
+    frequencies. This is analogous to the narrowband sweeps that are performed
+    in the vibrothermography process to identify the exact optimal excitation
+    frequency for a particular resonant mode. 
+
+    Identify the dominant frequency from the crack strain magnitude and
+    vibrometer plots, and make note of this frequency for use in the tone-burst
+    analysis. 
+
     This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
     :param dc\:dest: |dest|
@@ -119,8 +139,8 @@ return from one of these steps.
 
 .. py:function:: vibrocomsol_setburstfrequency_comsol
 
-    This ProcessTrak step will open COMSOL and set the parameters needed for
-    the burst analysis.
+    This ProcessTrak step will open COMSOL and set the burst frequency to be
+    used in the :py:func:`vibrocomsol_burst_analysis_comsol` step.
     
     This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
@@ -136,7 +156,10 @@ return from one of these steps.
 
     This ProcessTrak step will open COMSOL, run the burst analysis study, and
     save the results. It will calculate the stress at the crack face, a
-    critical component of the heating calculation.
+    critical component of the heating calculation. The burst frequency must be
+    chosen from the results of the sweep analyis and injected into the model
+    using the :py:func:`vibrocomsol_enterburstfreq` and
+    :py:func:`vibrocomsol_setburstfrequency_comsol` processtrak steps.
 
     This ProcessTrak step is included in the ``VibroSim_Simulator`` software package.
 
@@ -326,7 +349,9 @@ return from one of these steps.
 
 .. py:function:: vibrosim_simulate_welder
 
-    The processtrak step takes the desired weld profile and the pneumatic force and dynamic behavior of the welder and specimen and generates a motion table that includes  
+    The processtrak step takes the desired weld profile and the pneumatic force
+    and dynamic behavior of the welder and specimen and generates a motion
+    table that includes  
     Does a time based integration to simulate the repeated impacts of the welder.
 
     # Example that uses the gpu should be somewhere in the documentation
