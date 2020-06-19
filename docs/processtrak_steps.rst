@@ -184,7 +184,6 @@ return from one of these steps.
     :param dc\:friction_coefficient: |friction_coefficient|
     :param dc\:msqrtR: |msqrtR|
     :param dc\:staticload: |staticload|
-    :param dc\:exclength: |exclength|
     :param dc\:tortuosity: |tortuosity|
     :param dc\:numdraws: |numdraws|
     :param dc\:YoungsModulus: |YoungsModulus|
@@ -516,9 +515,10 @@ return from one of these steps.
 .. |friction_coefficient| replace:: Friction coefficient of the crack surface.
 .. |msqrtR| replace:: Crack asperity density.
 .. |staticload| replace:: Static bending opening load on crack.
-.. |exclength| replace:: Excitation length.
 .. |tortuosity| replace:: Crack tortuosity, standard deviation of the crack trajectory.
-.. |numdraws| replace:: Crack tortuosity is a statistical distribution, this parameter defines how many draws to take at each position along the crack for calculating the crack heating.
+.. |numdraws| replace:: Crack tortuosity is a statistical distribution, this
+   parameter defines how many draws to take at each position along the crack
+   for calculating the crack heating.
 .. |YoungsModulus| replace:: Youngs modulus of the material.
 .. |PoissonsRatio| replace:: Poissons Ratio of the material. 
 .. |YieldStrength| replace:: Yield strength of the material. 
