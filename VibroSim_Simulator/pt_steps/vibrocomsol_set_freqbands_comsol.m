@@ -17,6 +17,10 @@ model.param.set('seg3_freqstart',[ to_string(dc_freqband_seg3_start_float) '[Hz]
 model.param.set('seg3_freqstep',[ to_string(dc_freqband_seg3_step_float) '[Hz]']);
 model.param.set('seg3_freqend',[ to_string(dc_freqband_seg3_end_float) '[Hz]']);
 
+model.param.set('seg4_freqstart',[ to_string(dc_freqband_seg4_start_float) '[Hz]']);
+model.param.set('seg4_freqstep',[ to_string(dc_freqband_seg4_step_float) '[Hz]']);
+model.param.set('seg4_freqend',[ to_string(dc_freqband_seg4_end_float) '[Hz]']);
+
 
 %[modelpath,modelname,modelext] = fileparts(modelfile);
 

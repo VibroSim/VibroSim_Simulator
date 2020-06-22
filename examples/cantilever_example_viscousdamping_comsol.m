@@ -1,4 +1,4 @@
-% function ret = cantilever_example_viscousdamping_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float,dc_spcSpecificHeatCapacity_float,dc_spcviscousdamping_float,dc_mountdamping_scalefactor_float,dc_mountstiffness_scalefactor_float,dc_baseline_mountstiffness_float,dc_limiting_mountdamping_float,dc_simulationcameranetd_float,dc_couplantx_float, dc_couplanty_float, dc_couplantz_float, dc_couplantangle_float, dc_exc_t0_float, dc_exc_t4_float)
+% function ret = cantilever_example_viscousdamping_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float,dc_spcSpecificHeatCapacity_float,dc_spcviscousdamping_float,dc_mountdamping_scalefactor_float,dc_mountstiffness_scalefactor_float,dc_baseline_mountstiffness_float,dc_limiting_mountdamping_float,dc_simulationcameranetd_float,dc_couplantx_float, dc_couplanty_float, dc_couplantz_float, dc_couplantangle_float, dc_exc_t0_float, dc_exc_t4_float,dc_cracksemimajoraxislen_float,dc_cracksemiminoraxislen_float,dc_crack_type_side1_str,dc_crack_type_side2_str)
 %> @brief Here is a variant on the cantilever example using viscous
 %> material damping and a model of radiative damping at the cantilever mount
 %>
@@ -6,25 +6,26 @@
 %> modal analysis may not capture it properly except right near the 
 %> linearization point of the modal solver (settable with 
 %> simulationeigsaround parameter. As a result the synthetic spectrum
-%> may not be much good and manual tweaking of the freqbands may 
+%> may not be an accurate representation of what you would get with a 
+%> harmonic analysis and manual tweaking of the freqbands may 
 %> be required. This would usually be done by running the multisweep
 %> analysis with much larger step sizes, so as to use the mode widths
 %> to determine q-factors and resonant decay times. 
 %>
-%> for this cantilever_example_viscousdamping one set of verified 
-%> segment parameters are believed to be (CHECK .mph file from run!): 
+%> for this cantilever_example_viscousdamping one set of reasonable 
+%> segment parameters are: 
 %>seg1 start 0.000
 %>seg1 step 0.476837158203125
-%>seg1 end 74.3865966796875
-%>seg2 start 73.909759521484375
-%>seg2 step 7.62939453125 
-%>seg2 end 2660.27450561523438
-%>seg3 start 2662.65869140625
-%>seg3 step 61.03515625
-%>seg3 end 23231.50634765625
-%>seg4 start 23236.7515563964844
+%>seg1 end 59.604644775390625
+%>seg2 start 59.604644775390625
+%>seg2 step 3.814697265625
+%>seg2 end 765.3236389160156
+%>seg3 start 768.1846618652344
+%>seg3 step 30.517578125
+%>seg3 end 34184.932708740234
+%>seg4 start 34180.1643371582
 %>seg4 step 488.28125
-%>seg4 end 999999.523162841797
+%>seg4 end 999999.5231628418
 
 % NOTE: The first line (commented out function definition)
 %       is important because it tells processtrak which parameters
@@ -50,34 +51,35 @@
 % returns the wrapped model variable (M) and the unwrapped node (model). 
 [M,model]=InitializeVibroSimScript();
 
+% Call a function that sets various parameters to be used by the model. 
+cantilever_modeling_params(M);
+
+
+
+
+
 % Add additional parameters...
 
 % spcviscousdamping is used by cantilever_example_viscousdamping_comsol.. but not 
-% cantilever_example_comsol.m because only the former sets spcmaterialdampingtype to ViscousSamping
+% cantilever_example_comsol.m because only the former sets spcmaterialdampingtype to ViscousDamping
 
 %AddParamToParamdb(M,'spcviscousdamping',2e3,'N*s'); % Value used after 11/06/19
 AddParamToParamdb(M,'spcviscousdamping',dc_spcviscousdamping_float,'N*s'); 
 
-AddParamToParamdb(M,'mountdamping_scalefactor',dc_mountdamping_scalefactor_float); % Factor by which the mount damping is larger than calculated from theory ... 2.5e-5 for 11/7/19
-AddParamToParamdb(M,'mountstiffness_scalefactor',dc_mountstiffness_scalefactor_float); % Factor by which the mount stiffness is larger than calculated from theory... 2.5e-5 for 11/7/19
 
 % Baseline mountstiffness and limiting_mountdamping are to help make the frequency-dependent mount stiffness and mount 
 % damping closer to linear to help with the eigenvalue (modal) analysis. 
 % Generally select them by adding frequency domain 1D plots of the cantilever_mount_dampingperarea and cantilever_mount_stiffnessperarea
 % and making them low and high enough respectively not to mess too much with the lowest order resonance of interest. 
-AddParamToParamdb(M,'baseline_mountstiffness',dc_baseline_mountstiffness_float,'N/m^3');
-AddParamToParamdb(M,'limiting_mountdamping',dc_limiting_mountdamping_float,'N*s/m^3');
+baseline_mountstiffness=sprintf('%.8g[N/m^3]',dc_baseline_mountstiffness_float);
+limiting_mountdamping=sprintf('%.8g[N*s/m^3]',dc_limiting_mountdamping_float);
 
 
 
  
-% Call a function that sets various parameters to be used by the model. 
-cantilever_modeling_params(M);
 
 
 % Set COMSOL parameters from experiment log, passed as parameters
-AddParamToParamdb(M,'xducerforce',dc_xducerforce_float,'N');
-AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
 AddParamToParamdb(M,'spcYoungsModulus',dc_YoungsModulus_float,'Pa');
 AddParamToParamdb(M,'spcPoissonsRatio',dc_PoissonsRatio_float,'');
 AddParamToParamdb(M,'spcDensity',dc_Density_float,'kg/m^3');
@@ -89,12 +91,35 @@ AddParamToParamdb(M,'simulationtimestart',dc_exc_t0_float,'s');
 AddParamToParamdb(M,'simulationtimestep',0.02,'s');
 AddParamToParamdb(M,'simulationtimeend',dc_exc_t4_float+0.8,'s'); % .8 seconds after assumed end of vibration
 
-AddParamToParamdb(M,'spcmaterialdampingtype','RayleighDamping');
-AddParamToParamdb(M,'spcrayleighdamping_alpha',0.0,'s^-1');  % Would otherwise be dc_spcrayleighdamping_alpha_float
-AddParamToParamdb(M,'spcrayleighdamping_beta',0.0,'s'); % Would otherwise be dc_spcrayleighdamping_beta_float
+
+AddParamToParamdb(M,'spcmaterialdampingtype','ViscousDamping');
+
+% Crack position
+crackx = '0.2[m]';
+cracky = '0.0127[m]';
+crackz = '0[m]';
+
+% Laser (displacement or velocity detection) coordinates
+AddParamToParamdb(M,'laserx',.07,'m');
+AddParamToParamdb(M,'lasery',.0254/4.0,'m');
+AddParamToParamdb(M,'laserz',0.0,'m');
+
+% Laser (displacement or velocity detection) direction vector
+AddParamToParamdb(M,'laserdx',0);
+AddParamToParamdb(M,'laserdy',0);
+AddParamToParamdb(M,'laserdz',1);
 
 % Camera noise parameter
 CreateCameraNoise(M,'cameranoise',dc_simulationcameranetd_float);
+
+
+% Crack type --> 'penny' or 'through'
+cracktype = 'penny';
+assert(contains(dc_crack_type_side1_str,cracktype) | strcmpi(dc_crack_type_side1_str,'none')) % crack side types must be consistent with geometry being built 
+assert(contains(dc_crack_type_side2_str,cracktype) | strcmpi(dc_crack_type_side2_str,'none')) % crack side types must be consistent with geometry being built 
+
+
+
 
 %                 x          y         z      angle
 %couplant_coord=[ .245,       .025,        0,      NaN    ];
@@ -106,6 +131,12 @@ isolator_coords=[];
 
 % Extract needed parameters...
 
+
+% staticload_mount and xducerforce are not really needed because we're not doing the static analysis. 
+% Nevertheless, the static analysis is configured so we still have to set them
+AddParamToParamdb(M,'staticload_mount',0.0,'N');
+AddParamToParamdb(M,'xducerforce',0.0,'N');
+ObtainDCParameter(M,'staticload_mount','N');
 ObtainDCParameter(M,'xducerforce','N');
 
 
@@ -147,15 +178,12 @@ ObtainDCParameter(M,'xducerforce','N');
 
 % plot(a,real(-i*besselh(1,2,a)./besselh(0,2,a)))
 
-% ***!!!NOTE: Needed to adjust modal solver to get resonances beyond 20 kHz!!!***
 
 % Frequency-dependent parameterized calculation of footing model from above
-spclength = ObtainDCParameter(M,'spclength','m');
-spcwidth = ObtainDCParameter(M,'spcwidth','m');  % 50.8 mm for cantilever
-spcthickness = ObtainDCParameter(M,'spcthickness','m');  % 6.35 mm for cantilever
+spclength = '.2538[m]';
+spcwidth = '50.9e-3[m]';
+spcthickness = '6.45e-3[m]';
 
-mountdamping_scalefactor = ObtainDCParameter(M,'mountdamping_scalefactor');
-mountstiffness_scalefactor = ObtainDCParameter(M,'mountstiffness_scalefactor');
 
 % The frequency-dependent damping defined here is highly nonlinear near the origin (zero frequency)
 % The eigenvalue solver used for modal analysis cannot handle nonlinear frequency dependence  -- it linearizes. 
@@ -163,8 +191,6 @@ mountstiffness_scalefactor = ObtainDCParameter(M,'mountstiffness_scalefactor');
 %   1. The mount stiffness approaches zero as freq->0, We add in a baseline stiffness to prevent it from getting too small. 
 %   2. The mount damping gets large as freq->0. We parallel in a limiting damping coefficient to prevent it from getting too large. 
 %   3. We ask the eigenvalue solver to do its linearization about a relevant frequency (i.e. not zero).  CreateVibroModal() uses the 'simulationeigsaround' parameter for this. 
-baseline_mountstiffness = ObtainDCParameter(M,'baseline_mountstiffness');
-limiting_mountdamping = ObtainDCParameter(M,'limiting_mountdamping');
 
 %substrate_V = 5790; % Pressure velocity for steel substrate, m/s
 substrate_Vs=3100;  % Shear velocity for steel substrate, m/s
@@ -190,7 +216,7 @@ ch = [ 'abs(2.0*(' spcthickness ')*2.0*(' spcthickness ')*' num2str(substrate_rh
 a = ['(2*pi*(abs(real(freq))+.001[Hz])*((' spcthickness ')/2)/' num2str(substrate_Vs) '[m/s]' ')'];
 c_eq16 = [ 'abs(' num2str(substrate_rho) '[kg/m^3]' '*' num2str(substrate_Vs) '[m/s]' '*(' spcthickness ')*(' spcwidth ')*real(-i*(' HankelSecondKind('1',a) ')/(' HankelSecondKind('0',a) ')))' ];
 
-ctotal_perarea = ['((((' c_eq16 ') + (' ch '))*(' mountdamping_scalefactor '))/((' spcthickness ')*(' spcwidth ')))']; % kg/(m^2*s)  ... equiv to N*s/m^3 = (kg*m/s^2)*s/m^3 = kg/(s*m^2)  CHECK 
+ctotal_perarea = ['((((' c_eq16 ') + (' ch '))*(' num2str(dc_mountdamping_scalefactor_float) '))/((' spcthickness ')*(' spcwidth ')))']; % kg/(m^2*s)  ... equiv to N*s/m^3 = (kg*m/s^2)*s/m^3 = kg/(s*m^2)  CHECK 
 
 % implement limiting_mountdamping (see above): parallel combination of ctotal_perarea with limiting_mountdamping constant
 climited = ['(1/(' '1/(' ctotal_perarea ')' '+' '1/(' limiting_mountdamping ')'  '))'];
@@ -210,7 +236,7 @@ kh = [ 'abs((-2*pi*real(freq))*(2.0*(' spcthickness ')*2.0*(' spcthickness ')*' 
 
 k_eq16 = [ 'abs(' '-2*pi*real(freq)*' num2str(substrate_rho) '[kg/m^3]' '*' num2str(substrate_Vs) '[m/s]' '*(' spcthickness ')*(' spcwidth ')*imag(-i*(' HankelSecondKind('1',a) ')/(' HankelSecondKind('0',a) ')))' ];
 
-ktotal_perarea = ['((' baseline_mountstiffness ') + (((' k_eq16 ') + (' kh '))*(' mountstiffness_scalefactor '))/((' spcthickness ')*(' spcwidth ')))']; 
+ktotal_perarea = ['((' baseline_mountstiffness ') + (((' k_eq16 ') + (' kh '))*(' num2str(dc_mountstiffness_scalefactor_float) '))/((' spcthickness ')*(' spcwidth ')))']; 
 
 CreateVariable(M,'cantilever_mount_stiffnessperarea',ktotal_perarea);
 
@@ -257,7 +283,7 @@ FixedEnd_k_A_combined = { ['(' FixedEnd_k_A{1} ') + (i*2*pi*freq*cantilever_moun
 
 % Define a procedure for building the geometry. Steps can be sequenced by using
 % the pipe (vertical bar | ) character. 
-bldgeom = @(M,geom) CreateRectangularBarSpecimen(M,geom,'specimen') | ...
+bldgeom = @(M,geom) CreateRectangularBarSpecimen(M,geom,'specimen', spclength, spcwidth, spcthickness, dc_spcmaterial_str) | ... % length, width, thickness, material
 	  @(specimen) AttachThinCouplantIsolators(M,geom,specimen, ...
 						  couplant_coord, ...
 						  isolator_coords) | ...
@@ -293,22 +319,30 @@ bldgeom = @(M,geom) CreateRectangularBarSpecimen(M,geom,'specimen') | ...
 					   @(M,physics,bcobj) ...
 					    BuildFaceTotalForceBC(M,geom,physics,specimen.couplant,bcobj, ...
 								  specimen.couplant.getfreefaceselection, ...
-								  GetOutwardNormal(M,geom,specimen.couplant.pos,specimen.couplant.centerpos)));
+								  GetOutwardNormal(M,geom,specimen.couplant.pos,specimen.couplant.centerpos))) | ...
+	  @(specimen) AddView(M,specimen,11.54, ... % zoom angle
+			      { '-.32[m]','-.5[m]','-.39[m]' }, ... % camera position
+			      { crackx, ...  % camera target
+				cracky, ...
+				crackz }, ...
+			      { '.3087','.4116','-.857' }, ... % up direction
+			      { crackx, ... % camera rotation point
+				cracky, ...
+				crackz });
 
 
 
 % Define a procedure for building the crack. Steps can be sequenced by using
 % the pipe (vertical bar | ) character. 
-cracktype = 'penny';
 bldcrack = @(M,geom,specimen) CreateCrack(M,geom,'crack',specimen, ...
-					  { ObtainDCParameter(M,'simulationcrackx','m'), ...
-					    ObtainDCParameter(M,'simulationcracky','m'), ...
-					    ObtainDCParameter(M,'simulationcrackz','m') }, ...
-					  ObtainDCParameter(M,'cracksemimajoraxislen'), ...
-					  ObtainDCParameter(M,'cracksemiminoraxislen'), ...
-					  [0,1,0], ...
-					  [0,0,-1], ...
-					  [ .001, .002, .003 ], ...
+					  { crackx, ...
+					    cracky, ...
+					    crackz, }, ...
+					  dc_cracksemimajoraxislen_float, ...
+					  dc_cracksemiminoraxislen_float, ...
+					  [0,1,0], ... % Axis major direction (surface growth)
+					  [0,0,-1], ... % Axis minor direction (depth growth for a surface crack)
+					  [ .001, .002, .003 ], ... % Subradii
                                           {'solidmech_multisweep'}, ...
 					  dc_dummy_heatingdata_href{1},... % Text file to hold crack heating energies. 
                       cracktype);

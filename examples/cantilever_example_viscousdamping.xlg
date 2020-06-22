@@ -4,24 +4,22 @@
   here -->
   <dc:dest xlink:type="simple" xlink:href="cantilever_example_viscousdamping_output/"/>  <!-- Location for writing output files -->
 
-  <!-- we don't have friction_coefficient and msqrtR for aluminum, 
-       ... using numbers for In718 -->
+  <!-- friction_coefficient and msqrtR for, Inconel 718 -->
   <dc:friction_coefficient>.146</dc:friction_coefficient>
   <dc:msqrtR dcv:units="m^-1.5">6.77e6</dc:msqrtR>
   <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factor for shear vs. normal heating -->
 
   <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack -->
   <dc:xducerforce dcv:units="Newtons">100</dc:xducerforce>
-  <dc:exclength dcv:units="seconds">1.0</dc:exclength>
   <dc:tortuosity dcv:units="degrees">30.5</dc:tortuosity> <!-- 30.5 was the average from our training specimens -->
   <dc:numdraws>100</dc:numdraws>
-  <dc:spcmaterial>Aluminum</dc:spcmaterial>
-  <dc:YoungsModulus dcv:units="Pascals">69e9</dc:YoungsModulus>
-  <dc:YieldStrength dcv:units="Pascals">276e6</dc:YieldStrength>
-  <dc:PoissonsRatio>0.32</dc:PoissonsRatio>
-  <dc:Density dcv:units="kg/m^3">2697</dc:Density>
-  <dc:spcThermalConductivity dcv:units="W/m/K">167</dc:spcThermalConductivity>
-  <dc:spcSpecificHeatCapacity dcv:units="J/kg/K">896</dc:spcSpecificHeatCapacity>
+  <dc:spcmaterial>Inconel 718</dc:spcmaterial>
+  <dc:YoungsModulus dcv:units="Pascals">200e9</dc:YoungsModulus>
+  <dc:YieldStrength dcv:units="Pascals">1100e6</dc:YieldStrength>
+  <dc:PoissonsRatio>0.29</dc:PoissonsRatio>
+  <dc:Density dcv:units="kg/m^3">8190</dc:Density>
+  <dc:spcThermalConductivity dcv:units="W/m/K">11.4</dc:spcThermalConductivity>
+  <dc:spcSpecificHeatCapacity dcv:units="J/kg/K">435</dc:spcSpecificHeatCapacity>
   <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise noise equivalent temperature difference (NETD) -->
   <dc:spcviscousdamping dcv:units='N*s'>2e3</dc:spcviscousdamping>
   <dc:mountdamping_scalefactor>2.5e-1</dc:mountdamping_scalefactor>
@@ -32,7 +30,7 @@
   
   <dc:mass_of_welder_and_slider dcv:units="kg">2.0</dc:mass_of_welder_and_slider>
   <dc:pneumatic_force dcv:units="N">100</dc:pneumatic_force>
-  <dc:welder_elec_ampl>30e8</dc:welder_elec_ampl>
+  <dc:welder_elec_ampl>100e8</dc:welder_elec_ampl> <!-- NOTE: This elec ampl is crazy high -->
   <dc:welder_spring_constant dcv:units="N/m">5000</dc:welder_spring_constant>
   <dc:R_contact dcv:units="m">25.4e-3</dc:R_contact>
   <!-- <dc:welder_elec_freq dcv:units="Hz">19890</dc:welder_elec_freq> (more robust to just use the built-in default until we have auto-tune ready -->
@@ -56,6 +54,26 @@
   <dc:crack_type_side2>quarterpenny</dc:crack_type_side2>
   <!-- dc:thickness is used only for crack_type == halfthrough -->
   <!-- <dc:thickness dcv:units="meters">1e-3</dc:thickness> -->
+
+  <!-- How the different crack sizes are used: 
+       * cracksemimajoraxislen is the (half) surface length. 
+         it determines the size COMSOL uses to draw the crack cut in the specimen.
+       * cracksemiminoraxislen is the (half) depth length. 
+         it determines the size COMSOL uses to draw the crack cut in the specimen.
+       * The ratio cracksemimajoraxislen/cracksemiminoraxislen determines the 
+         shape of the heating isolines at "constant radius": they are distorted 
+          according to the crack aspect ratio 
+       * Crack heating will only occur up to the crack tip as defined in the closure
+         state. If closure state is given as reff/seff as below, then the
+	 heating along the major axis will not occur past the last value of reff_side1, 
+	 which is returned by the vibrosim_eval_closure_state_from_tip_positions
+         as new elements dc:a_side1 and/or dc:a_side2
+       * If the size as seen by COMSOL is greater than the closure state size, no harm
+         is done but the COMSOL aspect ratio will still control the isotherms. 
+       * If the size as seen by COMSOL is less than the closure state size, then
+         no heating will be generated in the heatflow simulation past the COMSOL tips. -->
+  <dc:cracksemimajoraxislen dcv:units="m">1.66e-3</dc:cracksemimajoraxislen>
+  <dc:cracksemiminoraxislen dcv:units="m">1.66e-3</dc:cracksemiminoraxislen>
 
   <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
   <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>

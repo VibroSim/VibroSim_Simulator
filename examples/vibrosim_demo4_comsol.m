@@ -1,4 +1,4 @@
-% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_amplitude_float,dc_staticload_mount_float,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float, dc_spcSpecificHeatCapacity_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float, dc_simulationcameranetd_float)
+% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_amplitude_float,dc_staticload_mount_float,dc_xducerforce_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float, dc_spcSpecificHeatCapacity_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float, dc_simulationcameranetd_float,dc_cracksemimajoraxislen_float,dc_cracksemiminoraxislen_float,dc_crack_type_side1_str,dc_crack_type_side2_str)
 %> @brief Here is a third example of how to use BuildVibroModel
 %> The commented function declaration is used by processtrak to
 %> figure out the parameters to pass.
@@ -19,9 +19,9 @@
 
 %                 x          y         z      angle
 couplant_coord=[ .14-0.035,   .01,     .002,      NaN    ];
-isolator_coords=[.13,     .0254/2,     0,   0.0,  % top-left
-		 .01,     .0254/2,        0,      0.0,  % top-right
-         .12,     .0254/2,     .002,      0.0,  % bottom-left
+isolator_coords=[.13,     .0254/2,       0,   0.0,  % top-left
+		 .01,     .0254/2,       0,      0.0,  % top-right
+		 .12,     .0254/2,     .002,      0.0,  % bottom-left
 		 .02,     .0254/2,     .002,      0.0]; % bottom-right
 
 % ( NaN for angle causes it to create a circular isolator)
@@ -43,13 +43,7 @@ isolator_coords=[.13,     .0254/2,     0,   0.0,  % top-left
 VibroSim_default_params(M);
 
 
-AddParamToParamdb(M,'spcthickness',.002,'m');
-
 % Set COMSOL parameters from experiment log, passed as parameters
-AddParamToParamdb(M,'amplitude',dc_amplitude_float,'V');
-AddParamToParamdb(M,'staticload_mount',dc_staticload_mount_float,'N');
-AddParamToParamdb(M,'xducerforce_mount',dc_xducerforce_float,'N');
-AddParamToParamdb(M,'spcmaterial',dc_spcmaterial_str);
 AddParamToParamdb(M,'spcYoungsModulus',dc_YoungsModulus_float,'Pa');
 AddParamToParamdb(M,'spcPoissonsRatio',dc_PoissonsRatio_float,'');
 AddParamToParamdb(M,'spcDensity',dc_Density_float,'kg/m^3');
@@ -65,37 +59,42 @@ AddParamToParamdb(M,'spcmaterialdampingtype','RayleighDamping');
 AddParamToParamdb(M,'spcrayleighdamping_alpha',dc_spcrayleighdamping_alpha_float,'s^-1');
 AddParamToParamdb(M,'spcrayleighdamping_beta',dc_spcrayleighdamping_beta_float,'s');
 
+% Crack position
+crackx = '.035[m]';
+cracky = '0.0[m]';
+crackz = '0.001[m]';
   
+% Laser (displacement or velocity detection) coordinates
+AddParamToParamdb(M,'laserx',.07,'m');
+AddParamToParamdb(M,'lasery',.0254/4.0,'m');
+AddParamToParamdb(M,'laserz',0.0,'m');
+
+AddParamToParamdb(M,'laserdx',0);
+AddParamToParamdb(M,'laserdy',0);
+AddParamToParamdb(M,'laserdz',1);
 
 % Because we are modeling linear single-frequency excitation, we need to 
 % select a transducer calibration file. 
-
-AddParamToParamdb(M,'xducercalib',fullfile(fileparts(which('BuildVibroModel')),'..','transducer_data','constant_10micronpervolt_displacementampl.dat'));
-%AddParamToParamdb(M,'xducercalib',fullfile(fileparts(which('BuildVibroModel')),'..','transducer_data','constant_10micronpervolt_displacementampl.dat'));
-
-% Load in xducercalib file to xducercalib function, set up xducerdisplacement as variable (WARNING: This step can be slow!)
-CreateTransducerDisplacementVariable(M);
+CreateTransducerDisplacementVariable(M,fullfile(fileparts(which('BuildVibroModel')),'..','transducer_data','constant_10micronpervolt_displacementampl.dat'),dc_amplitude_float);
 
 % Camera noise parameter
 CreateCameraNoise(M,'cameranoise',dc_simulationcameranetd_float);
 
-% Extract parameters that will be needed below
+% Crack type --> 'penny' or 'through'
+cracktype = 'through';
+assert(contains(dc_crack_type_side1_str,cracktype) | strcmpi(dc_crack_type_side1_str,'none')) % crack side types must be consistent with geometry being built 
+assert(contains(dc_crack_type_side2_str,cracktype) | strcmpi(dc_crack_type_side2_str,'none')) % crack side types must be consistent with geometry being built 
+
+% staticload_mount and xducerforce are not really needed because we're not doing the static analysis. 
+% Nevertheless, the static analysis is configured so we still have to set them
+AddParamToParamdb(M,'staticload_mount',0.0,'N');
+AddParamToParamdb(M,'xducerforce',0.0,'N');
 ObtainDCParameter(M,'staticload_mount','N');
 ObtainDCParameter(M,'xducerforce','N');
 
-% Crack position
-AddParamToParamdb(M,'simulationcrackx',.035,'m');
-AddParamToParamdb(M,'simulationcracky',0.0005,'m');
-% AddParamToParamdb(M,'simulationcracky',0.0254/2,'m');
-AddParamToParamdb(M,'simulationcrackz',0.0005,'m');
-% Crack size
-AddParamToParamdb(M,'cracksemimajoraxislen',3e-3,'m');
-AddParamToParamdb(M,'cracksemiminoraxislen',25.4e-3,'m');
-% Crack type --> 'penny' or 'through'
-cracktype = 'through';
-
-% Cantilever example
-bldgeom = @(M,geom) CreateRectangularBarSpecimen(M,geom,'specimen') | ...
+% Define a procedure for building the geometry. Steps can be sequenced by using
+% the pipe (vertical bar | ) character. 
+bldgeom = @(M,geom) CreateRectangularBarSpecimen(M,geom,'specimen', '.14[m]','.0254[m]','.002[m]',dc_spcmaterial_str) | ... % length, width, thickness, material
 	  @(specimen) AttachThinCouplantIsolators(M,geom,specimen, ...
 						    couplant_coord, ...
 						    isolator_coords) | ...
@@ -131,7 +130,17 @@ bldgeom = @(M,geom) CreateRectangularBarSpecimen(M,geom,'specimen') | ...
 					   @(M,physics,bcobj) ...
 					    BuildFaceTotalForceBC(M,geom,physics,specimen.couplant,bcobj, ...
 								  specimen.couplant.getfreefaceselection, ...
-								  GetOutwardNormal(M,geom,specimen.couplant.pos,specimen.couplant.centerpos)));
+								  GetOutwardNormal(M,geom,specimen.couplant.pos,specimen.couplant.centerpos))) |...
+	  @(specimen) AddView(M,specimen,11.54, ... % zoom angle
+			      { '-.32[m]','-.5[m]','-.39[m]' }, ... % camera position
+			      { crackx, ...  % camera target
+				cracky, ...
+				crackz }, ...
+			      { '.3087','.4116','-.857' }, ... % up direction
+			      { crackx, ... % camera rotation point
+				cracky, ...
+				crackz });
+
 
 % Define a procedure for building the geometry. Steps can be sequenced by using
 % the pipe (vertical bar | ) character. 
@@ -188,14 +197,14 @@ bldgeom = @(M,geom) CreateRectangularBarSpecimen(M,geom,'specimen') | ...
 % Define a procedure for building the crack. Steps can be sequenced by using
 % the pipe (vertical bar | ) character. 
 bldcrack = @(M,geom,specimen) CreateCrack(M,geom,'crack',specimen, ...
-					  { ObtainDCParameter(M,'simulationcrackx','m'), ...
-					    ObtainDCParameter(M,'simulationcracky','m'), ...
-					    ObtainDCParameter(M,'simulationcrackz','m') }, ...
-					  ObtainDCParameter(M,'cracksemimajoraxislen'), ...
-					  ObtainDCParameter(M,'cracksemiminoraxislen'), ...
-					  [0,1,0], ...
-					  [0,0,-1], ...
-					  [ .001, .002, .003 ], ...
+					  { crackx, ...
+					    cracky, ...
+					    crackz }, ...
+					  dc_cracksemimajoraxislen_float, ...% crack semimajor axis length
+					  dc_cracksemiminoraxislen_float, ...
+					  [0,1,0], ... % Axis major direction (direction of crack growth) 
+					  [0,0,-1], ... % Axis minor direction
+					  [ .001, .002, .003 ], ... % Subradii -- distances from center along axis major direction for segments of crack surface
                                           {'solidmech_harmonicsweep','solidmech_harmonicburst'}, ...
 					  dc_dummy_heatingdata_href{1}, ... % Text file to hold crack heating energies. 
                       cracktype); 
