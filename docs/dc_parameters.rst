@@ -20,8 +20,10 @@ redefined in submeasurements if they are being used.::
 
 amplitude
 ---------
-COULDN'T FIND IN USE, NOT IN THE \*_comsol.m file and not in the m_files directory.
-text.::
+``amplitude`` defines the displacement amplitude of the transducer. A
+calibration must be done to relate the voltage in the electronics to the
+displacement of the transducer as a function of frequency. A constant 10
+micron/Volt calibration file is included in VibroSim COMSOL.::
 
     <dc:amplitude dcv:units="Volts">3</dc:amplitude>
 
@@ -48,7 +50,7 @@ Sensitivity factor for shear vs normal heating. This was included in the model j
 
 staticload_mount
 ----------------
-text. ::
+Combined static load on both mounts. ::
 
     <dc:staticload_mount dcv:units="N">0</dc:staticload_mount> 
 
@@ -158,7 +160,7 @@ will increase the damping in the high frequencies. ::
 
 spcviscousdamping
 -----------------
-text. ::
+Velocity dependent damping of the motion in the specimen. ::
 
     <dc:spcviscousdamping dcv:units="N*s"> xxxx </dc:spcviscousdamping>
     
@@ -194,37 +196,51 @@ Crack type of crack side number one. This can be either ``halfthrough``, represe
 
 crack_type_side2
 ----------------
-text. ::
+Crack type of crack side number two. This can be either ``halfthrough``, representing a through thickness crack, or ``quarterpenny``, representing a crack that is elliptical in shape going into the surface of the specimen. ::
 
     <dc:crack_type_side2>quarterpenny</dc:crack_type_side2>
 
 thickness
 ---------
-dc:thickness is used only for crack_type == halfthrough ::
+Thickness of the material at the through crack. The geometry in COMSOL is not
+so well integrated that this will not be populated automatically. This should
+be an average thickness if thickness is not constant across the crack. ::
 
     <dc:thickness dcv:units="meters">1e-3</dc:thickness>
 
 reff_side1
 ----------
-text. ::
+``reff_side1``, ``seff_side1``, ``reff_side2``, ``seff_side2`` are how the
+closure state of the crack is specified: by radius of closure point at
+different external stress levels.  These are interpreted in the context of the
+selected  crack model_normal. ::
 
     <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
 
 seff_side1
 ----------
-text. ::
+``reff_side1``, ``seff_side1``, ``reff_side2``, ``seff_side2`` are how the
+closure state of the crack is specified: by radius of closure point at
+different external stress levels.  These are interpreted in the context of the
+selected  crack model_normal. ::
 
     <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
 
 reff_side2
 ----------
-text. ::
+``reff_side1``, ``seff_side1``, ``reff_side2``, ``seff_side2`` are how the
+closure state of the crack is specified: by radius of closure point at
+different external stress levels.  These are interpreted in the context of the
+selected  crack model_normal. ::
 
     <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
 
 seff_side2
 ----------
-text. ::
+``reff_side1``, ``seff_side1``, ``reff_side2``, ``seff_side2`` are how the
+closure state of the crack is specified: by radius of closure point at
+different external stress levels.  These are interpreted in the context of the
+selected  crack model_normal. ::
 
     <dc:seff_side2 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> 0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side2>
 
