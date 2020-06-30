@@ -350,14 +350,13 @@ return from one of these steps.
 
     The processtrak step takes the desired weld profile and the pneumatic force
     and dynamic behavior of the welder and specimen and generates a motion
-    table that includes  
-    Does a time based integration to simulate the repeated impacts of the welder.
-
-    # Example that uses the gpu should be somewhere in the documentation
-    # Get this info from
-    # System gpu device browser
-    # CLINFO command
+    table. It generates this table through a time based integration simulation
+    of the repeated impacts of the welder.
     
+    This step can be accelerated through the use of OpenCL. To use the GPU the
+    device information needs to be passed to the processtrak step in the
+    ``.prx`` file. Look in the ``cantilever_example.prx`` file for an example.
+
     Provided by the ``VibroSim_WelderModel`` package.
 
     :param dc\:dest: |dest|
@@ -385,6 +384,9 @@ return from one of these steps.
 
 .. py:function:: vibrosim_process_multisweep
 
+    Process the freqband_analysis output to create a time-domain waveform. This
+    time domain waveform, generated from the multiple sweeps of relevant
+    frequencies to the system, represents the impulse response of the system. 
     
     Provided by the ``VibroSim_WelderModel`` package.
 
@@ -436,6 +438,8 @@ return from one of these steps.
 
     This ProcessTrak step opens a COMSOL file and sets the frequency bands for the multisweep study.
 
+    Provided by the ``VibroSim_Simulator`` package.
+
     :param dc\:dest: |dest|
     :param dc\:measident: |measident|
     :param dc\:model_comsol: |model_comsol|
@@ -459,10 +463,9 @@ return from one of these steps.
     This ProcessTrak step optimizes the frequency bands for the ProcessTrak
     step :py:func:`vibrocomsol_multisweep_seg_analysis_comsol`. 
 
-    Run this on output of modal analysis to interpret 
-    the modal decay coefficients and plan a three or four segment
-    frequency domain calculation that will be invertable 
-    to a time-domain response. 
+    Run this on output of modal analysis to interpret the modal decay
+    coefficients and plan a three or four segment frequency domain calculation
+    that will be invertable to a time-domain response. 
 
     This step prepares the model for a frequency sweep taken in multiple parts
     with varying time steps. The frequency bands are chosen to include the
