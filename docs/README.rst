@@ -183,23 +183,13 @@ Building the Docs
 
 This documentation was built using `Sphinx
 <https://www.sphinx-doc.org/en/master/>`_. Documentation source code can be
-found in the ``docs`` folder. If you are using Fedora, Sphinx can be installed
-using the following command:
-
-``dnf install python-sphinx``
-
-Or similarly for Ubuntu:
-
-``apt-get install python3-sphinx``
-
-Once Sphinx is installed an html version of the documentation can be built
-using the makefile in the ``docs`` folder.
+found in the ``docs`` folder. Instructions for how to install Sphinx can be
+found at their website.  Once Sphinx is installed an html version of the
+documentation can be built using the makefile in the ``docs`` folder.
 
 ``make html``
 
-On Windows Sphinx can be installed using ``pip``.
-
-``pip install sphinx``
-
 Sphinx can also be used to create ``.tex`` source files, which can be converted
 to pdf using Latex.
+
+``make latex``

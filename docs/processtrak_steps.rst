@@ -157,7 +157,7 @@ return from one of these steps.
     This ProcessTrak step will open COMSOL, run the burst analysis study, and
     save the results. It will calculate the stress at the crack face, a
     critical component of the heating calculation. The burst frequency must be
-    chosen from the results of the sweep analyis and injected into the model
+    chosen from the results of the sweep analysis and injected into the model
     using the :py:func:`vibrocomsol_enterburstfreq` and
     :py:func:`vibrocomsol_setburstfrequency_comsol` processtrak steps.
 
@@ -384,10 +384,11 @@ return from one of these steps.
 
 .. py:function:: vibrosim_process_multisweep
 
-    Process the freqband_analysis output to create a time-domain waveform. This
-    time domain waveform, generated from the multiple sweeps of relevant
-    frequencies to the system, represents the impulse response of the system. 
-    
+    This processtrak step will process the freq_band_analysis output to create
+    a time-domain waveform. This time domain waveform, generated from the
+    multiple sweeps of relevant frequencies to the system, represents the
+    impulse response of the system. 
+
     Provided by the ``VibroSim_WelderModel`` package.
 
     :param dc\:dest: |dest|

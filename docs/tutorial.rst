@@ -2,19 +2,20 @@ Tutorial
 ==================
 
 Lets look in depth at ``vibrosim_demo3`` in the examples folder. This example
-has three files associated with it, ``vibrosim_demo3.prx``,
-``vibrosim_demo3.xlg``, and ``vibrosim_demo3_comsol.m``. The COMSOL file is a
-matlab script to set up a COMSOL model for use in Vibrothermographic testing.
-Many ``processtrak`` steps in VibroSim Simulator will interact with such a
-model, however VibroSim Simulator itself is platform agnostic. The description
-of the script itself will be left for the sister package ``VibroSim COMSOL``.
+has three files associated with it, ``vibrosim_demo3.prx`` (processing steps),
+``vibrosim_demo3.xlg`` (parameter storage), and ``vibrosim_demo3_comsol.m``
+(matlab file for creating the COMSOL model).  Many ``processtrak`` steps in
+VibroSim Simulator will interact with the COMSOL model, however VibroSim
+Simulator itself is platform agnostic. 
 
 ``vibrosim_demo3.prx``
 ---------------------
 
-The ``.prx`` file contains the processing steps to be performed with the model. It is managed by the software tool called ``processtrak``, a part of ``Limatix``.
+The ``.prx`` file contains the processing steps to be performed with the model.
+It is managed by the software tool called ``processtrak``, a part of
+``Limatix``.
 
-Use the tool in the following way. 
+Use the tool in the following way:
 
 ``processtrak <args> vibrosim_demo3.prx``
 
@@ -50,7 +51,8 @@ produces the following output::
     calc_heating_singlefrequency NOT_EXECUTED NEEDED
        heatflow_analysis NOT_EXECUTED NEEDED
 
-None of the steps have been run yet, so they all have the same ``NOT_EXECUTED`` and ``NEEDED`` tags. 
+None of the steps have been run yet, so they all have the same ``NOT_EXECUTED``
+and ``NEEDED`` tags. 
 
 Now we can run the first step with the following command:
 
@@ -121,48 +123,34 @@ primarily a tool for processing data collected in an experiment, after all. It
 contains all the parameters necessary to start the simulation. The first step
 in a simulation is to copy the ``.xlg`` into a processed experiment log
 ``.xlp`` file. This new ``.xlp`` file contains all the parameters in the
-``.xlg`` and can be added to with ``processtrak`` steps. 
+``.xlg``, all parameters and results of ``processtrak`` steps, and tracking
+information about when each step was run and if it completed properly.
 
 ``.xlg`` files are ``xml`` based, meaning they are hierarchical in nature. It
-is an single ``experiment`` tag with multiple ``measurement`` tags. Typically
-there is a single ``measurement``, and simulations with different parameters
-should be split into different ``.prx`` and ``.xlg`` files.
-
-``submeas`` tags can be used to run multiple simulations at the same time with
-mostly the same parameters save a few that are included in the ``submeas`` tag.
-For example::
+is a single ``experiment`` tag with multiple ``measurement`` tags. Parameters
+that are consistent for a number of simulations can be stored under the
+``experiment`` tag, thus making them global. These parameters can be
+overwritten  in the ``measurement`` tags, allowing the user to run multiple
+simulations with slightly varying input parameters. For example::
 
     <dc:experiment xmlns:dc="http://limatix.org/datacollect" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
+        <dc:measident>meas1</dc:measident> <!-- measident is used as a filename prefix for the various output files generated -->
         <dc:measurement>
-            <dc:measident>meas1</dc:measident> <!-- measident is used as a filename prefix for the various output files generated -->
+            <dc:measident>meas1_direct_singlefreq</dc:measident>
+            <dc:heatcalctype>singlefrequency</dc:heatcalctype>
             ...
-            <dc:submeas>
-              <dc:measident>meas1_direct_singlefreq</dc:measident>
-              <dc:heatcalctype>singlefrequency</dc:heatcalctype>
-            </dc:submeas>
-            <dc:submeas>
-              <dc:measident>meas1_via_weldercalc</dc:measident>
-              <dc:heatcalctype>welder</dc:heatcalctype>
-            </dc:submeas>
+        </dc:measurement>
+        <dc:measurement>
+            <dc:measident>meas1_via_weldercalc</dc:measident>
+            <dc:heatcalctype>welder</dc:heatcalctype>
+            ...
         </dc:measurement>
     </dc:experiment>  
 
-In this example ``dc:measident`` is defined in both the ``measurement`` and the
-``submeas`` levels. ``processtrak`` steps that are instructed to look for
-submeasurements will pay attention to these changes.
+``vibrosim_demo3_comsol.m``
+---------------------------
 
-This ``processtrak`` step from ``vibrosim_demo3_crosscheck.prx`` will only act on
-submeasurements where the ``dc:heatcalctype`` is equal to
-``'singlefrequency'``.::
-
-  <prx:step name="calc_heating_singlefrequency">
-    <prx:elementmatch>dc:measurement/dc:submeas[dc:heatcalctype='singlefrequency']</prx:elementmatch>
-    <prx:script name="vibrosim_calc_heating_singlefrequency.py"/>
-  </prx:step>
-
-Alternatively, this ``processtrak`` step will act on all submeasurements.::
-    
-    <prx:step name="heatflow_analysis">
-      <prx:elementmatch>dc:measurement/dc:submeas</prx:elementmatch>
-      <prx:script name="vibrocomsol_heatflow_analysis_comsol.m"/>
-    </prx:step>
+This file contains all instructions necessary to build the COMSOL model for use
+in VibroSim_Simulator. There are examples of this in the examples folder. In
+depth information about how these files work can be found in the documentation
+of the sister software package ``VibroSim_COMSOL``.
