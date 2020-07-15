@@ -61,11 +61,10 @@ AddParamToParamdb(M,'simulationfreqend',dc_sweep_end_frequency_float,'Hz');
 AddParamToParamdb(M,'simulationburstfreq',dc_excitation_frequency_float,'Hz');
 % ==================================================================================
 
-% NOTE: isolatornlayers removed -- assume something else 
-% is doing the multiplication to determine total isolatorthickness
 AddParamToParamdb(M,'isolatorthickness',.003,'m');
+% Circular isolator, radius of the isolator is the width described here
 AddParamToParamdb(M,'isolatorlength',.010,'m');
-AddParamToParamdb(M,'isolatorwidth',.0254,'m');
+AddParamToParamdb(M,'isolatorwidth',.010,'m');
 
 %AddParamToParamdb(M,'isolatormeshtype','TETRAHEDRAL');
 AddParamToParamdb(M,'isolatormeshtype','HEXAHEDRAL');
@@ -74,6 +73,7 @@ AddParamToParamdb(M,'isolatormeshsize',.004,'m');
 AddParamToParamdb(M,'isolatorsweepelements',6,'');
 AddParamToParamdb(M,'isolatorThermalConductivity',.05,'W/m/K');  % this number may not be very meaningful
 AddParamToParamdb(M,'isolatorSpecificHeatCapacity',2500,'J/kg/K');  % this number may not be very meaningful
+AddParamToParamdb(M,'isolatordashpotcoeff',11e3,'Pa*s/m');
 
 % WARNING: These values do not correspond to any particular material
 AddParamToParamdb(M,'isolatormaterial','isocardstock');
@@ -119,7 +119,7 @@ AddParamToParamdb(M,'spcrayleighdamping_alpha',dc_spcrayleighdamping_alpha_float
 AddParamToParamdb(M,'spcrayleighdamping_beta',dc_spcrayleighdamping_beta_float,'s');
 
 % Transducer
-couplant_trace_x = 1.25*25.4e-3 ; 
+couplant_trace_x = 1.*25.4e-3 ; 
 couplant_trace_y = (1.5+0.88)*25.4e-3 ;
 couplantx = couplant_trace_x * cos(toRadians('degrees',0));
 couplanty = couplant_trace_x * sin(toRadians('degrees',0));
@@ -132,7 +132,10 @@ couplantz = couplant_trace_y;
 % couplanty = couplant_trace_x * sin(toRadians('degrees',10*7.2+90));
 % couplantz = couplant_trace_y;
 
-isolator_coords=[];
+radius = -0.75*25.4e-3
+isolator_coords= [ -0.75 , 0 , 0];
+isolator_coords=[radius*cos(pi/4), radius*sin(pi/4),                0,      NaN,  % bottom isolator 
+                 radius*cos(pi/4), radius*sin(pi/4), couplant_trace_y,      NaN];  % top isolator
 couplant_coord = [ couplantx couplanty couplantz NaN]; 
 
 % crack_coord=[36.621e-3  109.835e-3  -.0078091]; 
@@ -164,7 +167,7 @@ crack_closure=[ (crack_closure_step:crack_closure_step:crack_semimajor_len).' ];
 % Crack type --> 'penny' or 'through'
 cracktype = 'penny';
 
-gear_cross_section_file = fullfile(pwd,'vibrosim_demo5_geometry','gear_cross_section.dxf');
+gear_cross_section_file = fullfile(pwd,'complex_model_demo_geometry','gear_cross_section.dxf');
 bldgeom = @(M,geom) gear_geometry(M,geom,'specimen',gear_cross_section_file,meshsizemin,meshsize)  | ...
         @(specimen) AttachThinCouplantIsolators(M,geom,specimen, ...
 					couplant_coord, ...

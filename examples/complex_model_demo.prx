@@ -7,7 +7,7 @@
   <prx:inputfiles>
     <!-- The <inputfile> tag is where you refer to the "experiment log"
     with one or more sets of simulation parameters -->
-    <prx:inputfile xlink:href="vibrosim_demo5.xlg"/>
+    <prx:inputfile xlink:href="complex_model_demo.xlg"/>
   </prx:inputfiles>
 
   <prx:elementmatch>dc:measurement</prx:elementmatch>
@@ -18,7 +18,7 @@
 
   <!-- Build the COMSOL model -->
   <prx:step name="buildmodel" descr="Construct COMSOL model">
-    <prx:script xlink:href="./vibrosim_demo5_geometry/gear_comsol.m"/>
+    <prx:script xlink:href="./complex_model_demo_geometry/gear_comsol.m"/>
   </prx:step>
 
   <!-- The rest of this analysis is hasn't been worked through yet, this

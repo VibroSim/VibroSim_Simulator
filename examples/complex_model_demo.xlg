@@ -8,7 +8,7 @@
        Then do the burst at 33608 Hz 
 -->
   <dc:measurement>
-    <dc:dest xlink:type="simple" xlink:href="vibrosim_demo5_output/"/> <!-- specify where to save the generated output -->
+    <dc:dest xlink:type="simple" xlink:href="complex_model_demo_output/"/> <!-- specify where to save the generated output -->
     <!-- dc:heatingdata specifies where the heating data will be stored. 
     Initially this will be filled with dummy (zero) output. The later steps will replace it 
     with meaningful values -->

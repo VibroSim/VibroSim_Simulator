@@ -37,7 +37,7 @@ specimen.teeth.node.set('createselection','on');
 % CreateWrappedProperty(M,specimen,'holeplane',[tag '_holeplane'],geom.node,'WorkPlane');
 
 % Create import node
-gear_tooth_file = fullfile(pwd,'vibrosim_demo5_geometry','gear_tooth.dxf');
+gear_tooth_file = fullfile(pwd,'complex_model_demo_geometry','gear_tooth.dxf');
 CreateWrappedProperty(M,specimen,'teeth_import',[tag '_teeth_import'],specimen.teeth.node.geom,'Import');
 specimen.teeth_import.node.set('type','dxf');
 specimen.teeth_import.node.set('filename',gear_tooth_file);
