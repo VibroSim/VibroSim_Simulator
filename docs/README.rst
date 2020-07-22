@@ -47,7 +47,7 @@ Installation
 Make sure you have the commercial prerequisites (MATLAB; COMSOL with 
 Structural Mechanics Module and LiveLink for MATLAB) installed
 and a scientific Python distribution (usually `Anaconda
-https://www.anaconda.com <https://www.anaconda.com>`) installed. See also the Windows Installation
+https://www.anaconda.com <https://www.anaconda.com>`_) installed. See also the Windows Installation
 notes, below, if applicable. 
 
 Like most the other VibroSim components, VibroSim_Simulator is 
@@ -70,11 +70,11 @@ installed. Typically this is GCC on Linux (installed via your OS),
 XCode on Macintosh, and Visual C++ on Windows. 
 
 The exact compiler versions on Windows are listed at 
-`https://wiki.python.org/moin/WindowsCompilers <https://wiki.python.org/moin/WindowsCompilers>`
+`https://wiki.python.org/moin/WindowsCompilers <https://wiki.python.org/moin/WindowsCompilers>`_
 The correct Windows compiler for Python 3.5-3.8 is Visual C++ 14.X
 and can be freely downloaded as "Build Tools for Visual Studio 2019"
 from 
-`https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019 <https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019>`
+`https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019 <https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019>`_
 When running the installer, be sure to install "C++ build tools" and 
 ensure the latest versions of "MSVCv142 - VS 2019 C++ x64/x86 build tools"
 and "Windows 10 SDK" are checked. 
