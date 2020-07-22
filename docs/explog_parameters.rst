@@ -181,12 +181,14 @@ welder_elec_ampl
 Electrical amplitude driving the ultrasonic welder, arbitrary units.
 Please note that the driving characteristics of the ultrasonic welder
 model are expected to change in a future version of VibroSim. ::
+
   <dc:welder_elec_ampl>1e8</dc:welder_elec_ampl>
 
 welder_spring_constant
 ----------------------
 The welder spring constant represents the springiness of the welder mounts, 
 usually coming from the rubber pneumatic seals. ::
+
   <dc:welder_spring_constant dcv:units="N/m">5000</dc:welder_spring_constant>
 
 R_contact
@@ -198,23 +200,27 @@ couplantx
 ---------
 This parameter to some _comsol.m build scripts provides the x coordinate of 
 the welder or transducer contact. ::
+
   <dc:couplantx dcv:units="m">.245</dc:couplantx>
 
 couplanty
 ---------
 This parameter to some _comsol.m build scripts provides the y coordinate of 
 the welder or transducer contact. ::
+
   <dc:couplanty dcv:units="m">.025</dc:couplanty>
 
 couplantz
 ---------
 This parameter to some _comsol.m build scripts provides the z coordinate of 
 the welder or transducer contact. ::
+
   <dc:couplantz dcv:units="m">0</dc:couplantz>
 
 couplantangle
 -------------
 This parameter to some _comsol.m build scripts provides the orientation coordinate of the transducer contact if the transducer has a square tip. Otherwise (and for ultrasonic welder contact in general) it should be specified as NaN. ::
+
   <dc:couplantangle dcv:units="degrees">NaN</dc:couplantangle> <!-- NaN means use round couplant (i.e. excitation zone) -->
     
 crack_model_normal

@@ -95,7 +95,7 @@ The ``name=`` attribute means to search for this script in the processtrak
 search path (if you wanted to provide an explicit path you would use
 ``xlink:href=`` instead). This particular script is installed by the
 ``VibroSim_Simulator`` package and its source is in the ``VibroSim_Simulator/pt_steps`` subdirectory. As documented below, it takes two parameters from the experiment log: ``dc:dest`` -- the results output location -- and ``dc:measident`` the identifier of the particular simulation run. It then returns (adds to the processed experiment log) ``dc:dummy_heatingdata``, which is a hyperlink 
-(following the `XLink standard<https://www.w3.org/TR/xlink11/>`_) to the 
+(following the `XLink standard <https://www.w3.org/TR/xlink11/>`_) to the 
 generated dummy heating input file for COMSOL. If you view the ``.xlp`` file
 in a text or XML editor after running this step you should be able to find the new
 ``dc:dummy_heatingdata`` element. The ``dc:dummy_heatingdata`` element will be used as a parameter by the ``buildmodel`` step indicating where the initial heating data is stored.
@@ -105,7 +105,8 @@ Steps can be written in Python ``.py``, MATLAB ``.m``, or MATLAB/COMSOL ``_comso
 NOTE: When running a COMSOL step for the first time it is common for it to ask for a username and password. These are just for communication between the COMSOL server and client on your own computer and they are remembered automatically so they do not really matter, but they might be worth writing down. Do not re-use an important password for the COMSOL server. 
 
 Parameters expected by a MATLAB or MATLAB/COMSOL step are listed in the commented first line of the file, similar to how they would be defined for a MATLAB function. For example::
-% function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_amplitude_float,dc_staticload_mount_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float, dc_spcSpecificHeatCapacity_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float, dc_simulationcameranetd_float,dc_cracksemimajoraxislen_float,dc_cracksemiminoraxislen_float,dc_crack_type_side1_str,dc_crack_type_side2_str)
+
+  % function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_amplitude_float,dc_staticload_mount_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float, dc_spcSpecificHeatCapacity_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float, dc_simulationcameranetd_float,dc_cracksemimajoraxislen_float,dc_cracksemiminoraxislen_float,dc_crack_type_side1_str,dc_crack_type_side2_str)
 
 The third parameter ``dc_dummy_heatingdata_href`` instructs ProcessTrak to find a entry ``dc:dummy_heatingdata`` in the processed experiment log (``.xlp``), to interpret it as a hypertext reference (``xlink:href``) and store the value in the MATLAB variable ``dc_dummy_heatingdata_href``. Parameters to Python steps work similarly and are defined by the parameters to the ``run()`` function within the step. 
 

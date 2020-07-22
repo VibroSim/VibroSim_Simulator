@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'VibroSim Simulator'
-copyright = '2020, Steve Holland'
-author = 'Steve Holland'
+project = 'VibroSim'
+copyright = '2020, Iowa State University'
+author = 'Stephen D. Holland'
 
 # The full version, including alpha/beta/rc tags
 release = '1.0'

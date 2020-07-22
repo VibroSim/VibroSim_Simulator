@@ -1,11 +1,12 @@
 ProcessTrak Steps
 ==================
 
-The following are ProcessTrak steps that come with various software packages
-used with VibroSim Simulator.  All parameters listed in these steps must be
-found in the processed experiment log (``.xlp``) file. They must be either
-instantiated in the unprocessed experiment log (``.xlg``), or placed there as a
-return from one of these steps.
+The following are ProcessTrak steps that come with various components
+of VibroSim.  All parameters listed in these steps must be
+explicitly passed from the ``.prx`` file or found in the processed experiment 
+log (``.xlp``) file. Parameters in the ``.xlp`` file can either 
+come from the unprocessed experiment log (``.xlg``), or have been placed 
+in the ``.xlp`` file as a return from one of the prior steps.
 
 .. py:function:: vibrosim_synthetic_spectrum
 
