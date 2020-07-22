@@ -10,7 +10,14 @@ def read_spectrum(filename):
         # .txt extension... assume COMSOL
         from VibroSim_Simulator import read_comsol_probe_txt
         (metadata,fieldheaderdata,fieldrowdata) = read_comsol_probe_txt.read(filename)
-        complex_freqs_raw=fieldrowdata[0]['freq (1/s)'][1]
+        if "freq (1/s)" in fieldrowdata[0]:
+            complex_freqs_raw=fieldrowdata[0]['freq (1/s)'][1]
+            pass
+        elif "freq (Hz)" in fieldrowdata[0]: # COMSOL 5.5 gives freq in Hz instead of 1/s as column label
+            complex_freqs_raw=fieldrowdata[0]['freq (Hz)'][1]
+            pass
+        else: 
+            raise ValueError("Did not find field row data for frequencies (candidates=%s)" % (str(list(fieldrowdata[0].keys()))))
         pass
     elif filename.lower().endswith(".xls") or filename.lower().endswith(".xlsx"):
         # Excel... assume ANSYS

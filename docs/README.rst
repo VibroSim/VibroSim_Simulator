@@ -232,6 +232,9 @@ The steps involved in a COMSOL-based VibroSim simulation are:
 
 Troubleshooting
 ---------------
+ProcessTrak error: FileNotFoundError in procstepmatlab_execfunc: 
+   * The comsol binaries are not in the system path. Please add them to 
+     the command path.
 Error from Matlab: Undefined function or variable 'InitializeVibroSimScript'.
    * This means VibroSim_COMSOL is not accessible from MATLAB. One way to 
      make it accessible is to install the VibroSim_COMSOL.mltbx as a MATLAB
