@@ -11,6 +11,8 @@ Welcome to VibroSim Simulator's documentation!
 
    processtrak_steps
 
+   dc_parameters
+
 Indices and tables
 ==================
 

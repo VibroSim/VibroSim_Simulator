@@ -22,6 +22,7 @@ VibroSim Simulator relies directly on the following packages:
 As such, it requires MATLAB, COMSOL, and Python. The COMSOL
 Structural Mechanics Module and COMSOL LiveLink for MATLAB
 are also necessary. The Python version must be at least 2.7 
+(preferably 3.6 or newer) 
 and should include the full IPython, Matplotlib, Numpy, Scipy 
 stack as well as Pandas v0.17.1 or later. To build 
 crackclosuresim2 you will also need the platform compiler 
@@ -29,23 +30,69 @@ for your Python version (see the crackclosuresim2 documentation
 for more information).
 
 The Git version control system and the GitPython bindings
-are strongly recommended.
+are strongly recommended as the best way to manage or contribute
+updates.
 
 While the current implementation uses COMSOL for vibration
 calculation and for heat flow evaluation, because of the
 modular nature of VibroSim it would be reasonably
 straightforward to re-implement those steps using other
-tools.
+tools. The crack_heatflow package will perform COMSOL-free
+heat flow evaluation. 
 
 
 Installation
 ------------
 
-Like most the other VibroSim components, VibroSim simulator is 
-a Python package. Use the usual
+Make sure you have the commercial prerequisites (MATLAB; COMSOL with 
+Structural Mechanics Module and LiveLink for MATLAB) installed
+and a scientific Python distribution (usually Anaconda
+https://www.anaconda.com) installed. See also the Windows Installation
+notes, below, if applicable. 
+
+Like most the other VibroSim components, VibroSim_Simulator is 
+a Python package. Use the usual Python process 
      python setup.py build
      python setup.py install
-commands to install it. Then look in the examples/ folder.
+commands to install it. (If running Anaconda on Windows all these
+commands are from an Anaconda prompt)
+
+After installing VibroSim_Simulator using the above process, 
+repeat the same process on the angled_friction_model,
+limatix, and VibroSim_WelderModel packages. 
+
+Prior to installing the final package (crackclosuresim2) 
+you need to make sure you have your "platform compiler" 
+installed. Typically this is GCC on Linux (installed via your OS),
+XCode on Macintosh, and Visual C++ on Windows. 
+
+The exact compiler versions on Windows are listed at 
+https://wiki.python.org/moin/WindowsCompilers
+The correct Windows compiler for Python 3.5-3.8 is Visual C++ 14.X
+and can be freely downloaded as "Build Tools for Visual Studio 2019"
+from 
+https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2019
+When running the installer, be sure to install "C++ build tools" and 
+ensure the latest versions of "MSVCv142 - VS 2019 C++ x64/x86 build tools"
+and "Windows 10 SDK" are checked. 
+
+Once you have your platform compiler installed you can perform 
+the usual "setup.py" steps on the crackclosuresim2 package. 
+
+The final installation step is to make the MATLAB scripts in the 
+VibroSim_COMSOL package accessible. If a VibroSim_COMSOL .mtlbx 
+was included in your archive you can install it using MATLAB's
+package manager. Otherwise you can set the MATLABPATH environment
+variable to point at the VibroSim_COMSOL/m_files subdirectory of 
+the VibroSim_COMSOL archive. 
+
+Once all the installation steps are complete, you can test VibroSim
+by running one of the examples. For example, in a terminal or 
+Anaconda prompt from the examples/ folder of VibroSim_Simulator
+you could run the vibrosim_demo3 example by typing: 
+   processtrak vibrosim_demo3.prx -a 
+
+See the documentation below for more information on processtrak. 
 
 Windows Installation
 --------------------
@@ -54,16 +101,14 @@ Additional steps must be followed for this package to work on
 Windows.
 If COMSOL is to be used, the command line executables for COMSOL 
 need to be added to the path. For COMSOL 5.4 these executables 
-were installed to the following directory:
+were likely installed to the following directory:
 	 C:\Program Files\COMSOL\COMSOL54\Multiphysics\bin\win64
 
 This directory needs to be added to the end of `path` 
 environment variable. Searching "environment variables" in the
 start menu is a good way to find where to make this edit.
+Path entries on Windows are usually separated with semicolons (;)
 
-The matlab files in VibroSim_COMSOL need to be added to an 
-environment variable called:
-	 MATLABPATH
 
 VibroSim Simulator Workflow
 ---------------------------
@@ -92,7 +137,7 @@ process. It is executed by typing "processtrak" at the command line.
 ProcessTrak is configured by an XML listing of input files steps in a
 ".prx" file.  Usually ProcessTrak is run referencing that ".prx" file
 followed by additional instructions for what is desired. For example
-     processtrak cantilever.prx --status
+     processtrak vibrosim_demo3.prx --status
 will list out the status of each step in the process for each input
 file.
 
@@ -104,9 +149,9 @@ which copies the input ".xlg" to an output "processed experiment log"
 (".xlp") file.  The processed experiment log is annotated with
 Provenance information, log output from the various processing steps,
 and the result data from each processing step. For example,
-     processtrak cantilever.prx -s copyinput
+     processtrak vibrosim_demo3.prx -s copyinput
 will run the implicit "copyinput" step on the input files listed in
-"cantilever.prx", generating an output ".xlp" file (the input ".xlg"
+"vibrosim_demo3.prx", generating an output ".xlp" file (the input ".xlg"
 is never touched).
 
 
@@ -118,7 +163,10 @@ executed the code you intended and confidence that you have a
 repeatable process. We recommend the use of Git and Limatix-Git
 to perform version management both on the scripts and parameters
 of the simulation and on the generated output from the simulation.
-Specifically, entering
+This process will require having Git and GitPython installed. 
+Limatix-Git is included in the Limatix installation. 
+
+To start using the Limatix-Git process, entering
      git init
 in your simulation directory will create a new Git repository there. 
 
@@ -177,3 +225,19 @@ Error from Matlab: Undefined function or variable 'InitializeVibroSimScript'.
      make it accessible is to install the VibroSim_COMSOL.mtlbx as a MATLAB
      add-on. Another way is to set the MATLABPATH environment variable to 
      the VibroSim_COMSOL m_files subfolder. 
+
+
+Building the VibroSim_Simulator Documentation
+----------------------------------------------
+
+A rendered form of the VibroSim documentation is usually included 
+in distributed VibroSim release archives. It can also be built using Sphinx
+ https://www.sphinx-doc.org/en/master/> . Documentation source code can be
+found in the ``docs`` folder. Instructions for how to install Sphinx can be
+found at their website.  Once Sphinx is installed an html version of the
+documentation can be built using the makefile in the ``docs`` folder:
+  make html
+
+Sphinx can also be used to create .pdf documentation using Latex:
+  make latexpdf
+

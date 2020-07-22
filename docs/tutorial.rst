@@ -9,7 +9,7 @@ VibroSim Simulator will interact with the COMSOL model, however VibroSim
 Simulator itself is platform agnostic. 
 
 ``vibrosim_demo3.prx``
----------------------
+----------------------
 
 The ``.prx`` file contains the processing steps to be performed with the model.
 It is managed by the software tool called ``processtrak``, a part of
@@ -116,7 +116,7 @@ All steps with the ``NEEDED`` flag will be run with the following command:
 
 
 ``vibrosim_demo3.xlg``
----------------------
+----------------------
 
 A ``.xlg`` contains the unprocessed experiment log. ``processtrak`` is
 primarily a tool for processing data collected in an experiment, after all. It
