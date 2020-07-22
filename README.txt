@@ -80,7 +80,7 @@ Once you have your platform compiler installed you can perform
 the usual "setup.py" steps on the crackclosuresim2 package. 
 
 The final installation step is to make the MATLAB scripts in the 
-VibroSim_COMSOL package accessible. If a VibroSim_COMSOL .mtlbx 
+VibroSim_COMSOL package accessible. If a VibroSim_COMSOL .mltbx 
 was included in your archive you can install it using MATLAB's
 package manager. Otherwise you can set the MATLABPATH environment
 variable to point at the VibroSim_COMSOL/m_files subdirectory of 
@@ -222,7 +222,7 @@ Troubleshooting
 ---------------
 Error from Matlab: Undefined function or variable 'InitializeVibroSimScript'.
    * This means VibroSim_COMSOL is not accessible from MATLAB. One way to 
-     make it accessible is to install the VibroSim_COMSOL.mtlbx as a MATLAB
+     make it accessible is to install the VibroSim_COMSOL.mltbx as a MATLAB
      add-on. Another way is to set the MATLABPATH environment variable to 
      the VibroSim_COMSOL m_files subfolder. 
 
