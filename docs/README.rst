@@ -113,6 +113,8 @@ This directory needs to be added to the end of the ``path``
 environment variable. Searching "environment variables" in the
 start menu is a good way to find where to make this edit. Path
 entries on Windows are usually separated with semicolons (;)
+but Windows 10 now has a convenient editor you can use to add
+additional entries without having to worry about separators.
 
 VibroSim Simulator Workflow
 ---------------------------
@@ -235,6 +237,8 @@ Troubleshooting
 ProcessTrak error: FileNotFoundError in procstepmatlab_execfunc: 
    * The comsol binaries are not in the system path. Please add them to 
      the command path.
+Warning from MATLAB about dataguzzler-lib/matlab or dc_unitsparam:
+   * These are expected and nothing to worry about
 Error from Matlab: Undefined function or variable 'InitializeVibroSimScript'.
    * This means VibroSim_COMSOL is not accessible from MATLAB. One way to 
      make it accessible is to install the VibroSim_COMSOL.mltbx as a MATLAB

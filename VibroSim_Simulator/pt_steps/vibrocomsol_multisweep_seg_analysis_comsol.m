@@ -14,6 +14,12 @@ ModelUtil.showPlots(true);
 %[modelpath,modelname,modelext] = fileparts(modelfile);
 %spectrum_image_name=fullfile(modelpath,[ modelname '_sweep_spectrum.png' ]);
 
+% Check for necessary probes  PRIOR to running time-consuming calculations below
+if (~string_in_cellstr_array('solidmech_multisweep_laser',cell(model.probe.tags)) | ~string_in_cellstr_array('vibrodynamic_multisweep_xducercontactprobe',cell(model.probe.tags))  | ~string_in_cellstr_array('crack_centerstress',to_cellstr_array(model.variable.tags)))
+  error('Did not find all necessary COMSOL objects for multisweep for laser, xducercontactprobe and crack_centerstress. Is multisweep physics enabled for the crack?');
+
+
+end
 
 % Run the seg harmonic study
 model.study(sprintf('solidmech_multisweep_seg%d_study',segnum_int)).run;
