@@ -4,12 +4,7 @@ Tutorial
 Lets look in depth at ``vibrosim_demo3`` in the examples folder. This example
 has three files associated with it, ``vibrosim_demo3.prx`` (processing steps),
 ``vibrosim_demo3.xlg`` (parameter storage), and ``vibrosim_demo3_comsol.m``
-(matlab file for creating the COMSOL model).  Many ``processtrak`` steps in
-VibroSim Simulator will interact with the COMSOL model, however VibroSim
-Simulator itself is platform agnostic. 
-
-``vibrosim_demo3.prx``
----------------------
+(matlab file for creating the COMSOL model).  
 
 The ``.prx`` file contains the processing steps to be performed with the model.
 It is managed by the software tool called ``processtrak``, a part of
@@ -83,7 +78,51 @@ Now that the ``copyinput`` step has been executed, it is no longer ``needed``
 and the timestamp of the step has been recorded. This data is kept in the
 ``.xlp`` file.
 
-Steps can be run out of order, as long as the ``.xlp`` has everything that is needed for the step.
+The ``copyinput`` step is always present and represents a near verbatim copy of
+the unprocessed ``.xlg`` experiment log to a "processed" ``.xlp`` experiment log. The only initial difference is the addition of provenance (step execution) information to the ``.xlp``.  Subsequent steps will operate on the ``.xlp`` adding processed results and hyperlinks to generated output files. If you make minor changes to the ``.xlg`` and want to merge those changes into the ``.xlp`` without wiping all of the generated output you can run the ``mergeinput`` step instead of ``copyinput``. 
+
+The steps (except for ``copyinput`` / ``mergeinput``) are specified in the ``.prx`` file. When you run a step, it uses parameters explicitly specified in the ``.prx`` step definition as well as implicitly identifying the remaining paramters from the ``.xlp`` experiment log. The step then returns values which are added to the experiment log. The parameters and returns are documented in the "ProcessTrak Steps" chapter below. 
+
+The next step is the ``dummyoutput`` step. The heat flow portion of the COMSOL model requires a heat distribution input in order to successfully build the model. The ``dummyoutput`` step creates a heat distribution that is zero to satisfy COMSOL. You can run this step with: 
+
+``processtrak vibrosim_demo3.prx -s dummyoutput``
+
+The ``dummyoutput`` step in the ``.prx`` file is specifed as: 
+
+``<prx:script name="vibrocomsol_createdummyoutput.py"/>``
+
+The ``name=`` attribute means to search for this script in the processtrak
+search path (if you wanted to provide an explicit path you would use
+``xlink:href=`` instead). This particular script is installed by the
+``VibroSim_Simulator`` package and its source is in the ``VibroSim_Simulator/pt_steps`` subdirectory. As documented below, it takes two parameters from the experiment log: ``dc:dest`` -- the results output location -- and ``dc:measident`` the identifier of the particular simulation run. It then returns (adds to the processed experiment log) ``dc:dummy_heatingdata``, which is a hyperlink 
+(following the `XLink standard <https://www.w3.org/TR/xlink11/>`_) to the 
+generated dummy heating input file for COMSOL. If you view the ``.xlp`` file
+in a text or XML editor after running this step you should be able to find the new
+``dc:dummy_heatingdata`` element. The ``dc:dummy_heatingdata`` element will be used as a parameter by the ``buildmodel`` step indicating where the initial heating data is stored.
+
+Steps can be written in Python ``.py``, MATLAB ``.m``, or MATLAB/COMSOL ``_comsol.m``. The next step is ``buildmodel``, which is a custom MATLAB/COMSOL script (referenced explicitly by ``xlink:href=`` instead of being found in the search path). The ``_comsol`` portion of the filename is important because it tells ProcessTrak to run the MATLAB script in the COMSOL environment. 
+
+NOTE: When running a COMSOL step for the first time it is common for it to ask for a username and password. These are just for communication between the COMSOL server and client on your own computer and they are remembered automatically so they do not really matter, but they might be worth writing down. Do not re-use an important password for the COMSOL server. 
+
+Parameters expected by a MATLAB or MATLAB/COMSOL step are listed in the commented first line of the file, similar to how they would be defined for a MATLAB function. For example::
+
+  % function ret = vibrosim_demo3_comsol(dc_dest_href,dc_measident_str,dc_dummy_heatingdata_href,dc_amplitude_float,dc_staticload_mount_float,dc_spcmaterial_str,dc_YoungsModulus_float, dc_YieldStrength_float, dc_PoissonsRatio_float, dc_Density_float,dc_spcThermalConductivity_float, dc_spcSpecificHeatCapacity_float,dc_spcrayleighdamping_alpha_float,dc_spcrayleighdamping_beta_float, dc_exc_t0_float, dc_exc_t4_float, dc_simulationcameranetd_float,dc_cracksemimajoraxislen_float,dc_cracksemiminoraxislen_float,dc_crack_type_side1_str,dc_crack_type_side2_str)
+
+The third parameter ``dc_dummy_heatingdata_href`` instructs ProcessTrak to find a entry ``dc:dummy_heatingdata`` in the processed experiment log (``.xlp``), to interpret it as a hypertext reference (``xlink:href``) and store the value in the MATLAB variable ``dc_dummy_heatingdata_href``. Parameters to Python steps work similarly and are defined by the parameters to the ``run()`` function within the step. 
+
+Steps can be run in interactive mode with the ``-i`` option to ``processtrak``. 
+``processtrak vibrosim_demo3.prx -s buildmodel -i``
+
+This will cause the step to execute up to any errors or completion 
+and leave an interactive environment. You can then evaluate 
+variables, copy/paste code, etc. In MATLAB you can rerun the script 
+just by typing its name. For COMSOL/MATLAB steps you can also externally 
+run ``comsol mphclient`` and use the "Connect to Server" option to interact
+graphically with the COMSOL model. When you are done, type ``eval(retcommand)`` (MATLAB) or press Ctrl-D (Python) to store the step output and move on. 
+
+The generated output from a COMSOL/MATLAB step will usually be saved in the ``_output`` subdirectory. You can load generated ``.mph`` files directly into the COMSOL GUI. In some cases temporary output ``.mph`` files are left under the system temporary directory (usually ``/tmp`` or ``c:\temp``) with only reprocessed output stored in the ``_output`` subdirectory. 
+
+Steps can be run out of order, as long as the ``.xlp`` has everything that is needed for the step. If needed inputs are not present, the step will fail. Obviously running steps out of order can cause inconsistencies in the final results if you are not careful. 
 
 ``processtrak vibrosim_demo3.prx -s entersweepfreqs``
 
@@ -114,9 +153,16 @@ All steps with the ``NEEDED`` flag will be run with the following command:
 
 ``processtrak vibrosim_demo3.prx -a --needed``
 
+Summary of vibrosim_demo3 files
+===============================
+
+``vibrosim_demo3.prx``
+----------------------
+Lists the set of steps to be run and lists the experiment logs (``.xlg``) on
+which those steps should be run. 
 
 ``vibrosim_demo3.xlg``
----------------------
+----------------------
 
 A ``.xlg`` contains the unprocessed experiment log. ``processtrak`` is
 primarily a tool for processing data collected in an experiment, after all. It
