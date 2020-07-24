@@ -21,9 +21,6 @@
     <prx:script xlink:href="./complex_model_demo_geometry/gear_comsol.m"/>
   </prx:step>
 
-  <!-- The rest of this analysis is hasn't been worked through yet, this
-       example is just about how to make a more complicated model. The rest of
-       the model can be run but doesn't have any meaning. -->
 
   <!-- Run the modal analysis -->
   <prx:step name="runmodal">
@@ -44,48 +41,79 @@
        system. Increasing dc:spcrayleighdamping_alpha will increase
        damping at low frequencies. Increasing dc:spcrayleighdamping_beta
        will increase damping at high frequencies -->
+
+  <prx:step name="optimize_freqbands">
+    <prx:script name="vibrosim_optimize_freqbands.py"/>
+  </prx:step>
+
+  <!-- After running optimize_freqbands, look at the total number of steps. 
+  If this is much beyond 10000, then the multisweep segment analysis may take
+  prohibitively long. You can reduce the number of steps by increasing one or 
+  both of the damping parameters. -->
+
+  <prx:step name="set_freqbands">
+    <prx:script name="vibrocomsol_set_freqbands_comsol.m"/>
+  </prx:step>
+
+  <prx:step name="multisweep_seg1_analysis">
+    <!-- Run the various MultiSweep segments and
+    extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">1</prx:param>
+  </prx:step>
+
+  <prx:step name="multisweep_seg2_analysis">
+    <!-- Run the various MultiSweep segments and
+    extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">2</prx:param>
+  </prx:step>
+
+  <prx:step name="multisweep_seg3_analysis">
+    <!-- Run the various MultiSweep segments and
+    extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">3</prx:param>
+  </prx:step>
+
+  <prx:step name="multisweep_seg4_analysis">
+    <!-- Run the various MultiSweep segments and
+    extract/generate the response output -->
+    <prx:script name="vibrocomsol_multisweep_seg_analysis_comsol.m"/>
+    <prx:param name="segnum">4</prx:param>
+  </prx:step>
   
-  <prx:step name="entersweepfreqs">
-    <prx:script name="vibrocomsol_entersweepfreqs.py"/>
+  <prx:step name="process_multisweep">
+    <!-- process the freqband_analysis output
+    To create a time-domain waveform -->
+    <prx:script name="vibrosim_process_multisweep.py"/>
   </prx:step>
 
-  <!-- Set the COMSOL sweep parameter -->
-  <prx:step name="setsweepfrequencies">
-    <prx:script name="vibrocomsol_setsweepfrequencies_comsol.m"/>
+  <prx:step name="simulate_welder">
+    <!-- To GPU-accelerate the welder model, you need to install pyopencl, 
+	 make sure VibroSim_WelderModel is compiled with OpenCL support
+	 (will require OpenCL development libraries or SDK), and
+	 uncomment the line below, including your GPU platform and device 
+	 as listed by the clinfo command 
+	 in the priority list -->
+    <!-- <prx:param name="dc_gpu_device_priority_list">[('NVIDIA CUDA','Quadro GP100'), ('Intel(R) OpenCL HD Graphics','Intel(R) Gen9 HD Graphics NEO'), ('Portable Computing Language', 'pthread-AMD EPYC 7351P 16-Core Processor')]</prx:param>  -->
+    <prx:script name="vibrosim_simulate_welder.py"/>
+  </prx:step>
+  
+  <prx:step name="plot_welder_motion">
+    <prx:script name="vibrosim_plot_welder_motion.py"/>
   </prx:step>
 
-  <prx:step name="sweep_analysis">
-    <prx:script name="vibrocomsol_sweep_analysis_comsol.m"/>
-  </prx:step>
-
-  <!-- Enter a burst frequency -->
-  <prx:step name="enterburstfreq">
-    <prx:script name="vibrocomsol_enterburstfreq.py"/>
-  </prx:step>
-
-
-  <!-- Fourth step is to set the COMSOL parameter -->
-  <prx:step name="setburstfrequency">
-    <prx:script name="vibrocomsol_setburstfrequency_comsol.m"/>
-  </prx:step>
-
-  <!-- Next step is to run the harmonic burst analysis -->
-  <prx:step name="burst_analysis">
-    <prx:script name="vibrocomsol_burst_analysis_comsol.m"/>
-  </prx:step>
-
-  <!-- Evaluate closure state from the crack tip positions given in the 
-  .xlg file -->
   <prx:step name="eval_closure_state_from_tip_positions">
     <prx:script name="vibrosim_eval_closure_state_from_tip_positions.py"/>
   </prx:step>
 
-  <!-- Calculate the heating for single frequency tuned excitation -->
-  <prx:step name="calc_heating_singlefrequency">
-    <prx:script name="vibrosim_calc_heating_singlefrequency.py"/>
+  <prx:step name="calc_heating">
+    <prx:script name="vibrosim_calc_heating_welder.py"/>
   </prx:step>
+  
 
-  <!-- Finally we run the heatflow analysis. This runs on all sub-measurements -->
+  <!-- Finally we run the heatflow analysis -->
   <prx:step name="heatflow_analysis">
     <prx:script name="vibrocomsol_heatflow_analysis_comsol.m"/>
   </prx:step>

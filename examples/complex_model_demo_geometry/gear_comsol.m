@@ -3,23 +3,32 @@
 
 [M,model]=InitializeVibroSimScript();
 
-% This code will create a VibroSim model for a gear that is available for
-% purchase at McMaster Carr.
+% This code will create a VibroSim model for a theoretcal gear.
 
-% This model is not feature complete.
-
-% PN 5172T45
-% 28 Teeth
 % Pitch Diameter 3.5 in
 % Outer Diameter 3.75 in
-% Face Width 1.5 in
-% Overall Width 2.38 in
-% Hub Diameter 3.06 in
-% Hub Width 0.88 in
+% Width 10 mm
 % Number of teeth 28
 
-meshsizemin = 0.1e-3 ;
-meshsize = 3e-3 ; 
+% Dummy segment boundaries -- generally set by vibrocomsol_set_freqbands_comsol
+AddParamToParamdb(M,'seg1_freqstart',0.000,'Hz');
+AddParamToParamdb(M,'seg1_freqstep',1.0,'Hz');
+AddParamToParamdb(M,'seg1_freqend',0.0,'Hz');
+
+AddParamToParamdb(M,'seg2_freqstart',0.0,'Hz');
+AddParamToParamdb(M,'seg2_freqstep',1.0,'Hz');
+AddParamToParamdb(M,'seg2_freqend',0.0,'Hz');
+
+AddParamToParamdb(M,'seg3_freqstart',0.0,'Hz');
+AddParamToParamdb(M,'seg3_freqstep',1.0,'Hz');
+AddParamToParamdb(M,'seg3_freqend',0.0,'Hz');
+
+AddParamToParamdb(M,'seg4_freqstart',0.0,'Hz');
+AddParamToParamdb(M,'seg4_freqstep',1.0,'Hz');
+AddParamToParamdb(M,'seg4_freqend',0.0,'Hz');
+
+meshsizemin = 1e-3 ;
+meshsize = 4e-3 ; 
 
 AddParamToParamdb(M,'meshsizemin',meshsizemin,'m') ;
 AddParamToParamdb(M,'meshsize',meshsize,'m') ;
@@ -81,7 +90,7 @@ AddParamToParamdb(M,'isolatorYoungsModulus',20,'GPa');
 AddParamToParamdb(M,'isolatorDensity',800,'kg/m^3');
 AddParamToParamdb(M,'isolatorPoissonsRatio',0.3,'');
 
-AddParamToParamdb(M,'couplantthickness',.001,'m');
+AddParamToParamdb(M,'couplantthickness',.00025,'m');
 AddParamToParamdb(M,'couplantlength',.010,'m');
 AddParamToParamdb(M,'couplantwidth',.010,'m');
 
@@ -98,7 +107,7 @@ AddParamToParamdb(M,'couplantPoissonsRatio',0.3,'');
 AddParamToParamdb(M,'couplantEta',.05,'');
 AddParamToParamdb(M,'couplantThermalConductivity',.05,'W/m/K');  % this number may not be very meaningful
 AddParamToParamdb(M,'couplantSpecificHeatCapacity',2500,'J/kg/K');  % this number may not be very meaningful
-AddParamToParamdb(M,'couplantdashpotcoeff',100e3,'Pa*s/m');
+AddParamToParamdb(M,'couplantdashpotcoeff',0,'Pa*s/m');
 
 AddParamToParamdb(M,'amplitude',dc_amplitude_float,'V');
 
@@ -120,7 +129,7 @@ AddParamToParamdb(M,'spcrayleighdamping_beta',dc_spcrayleighdamping_beta_float,'
 
 % Transducer
 couplant_trace_x = 1.*25.4e-3 ; 
-couplant_trace_y = (1.5+0.88)*25.4e-3 ;
+couplant_trace_y = 10e-3;
 couplantx = couplant_trace_x * cos(toRadians('degrees',0));
 couplanty = couplant_trace_x * sin(toRadians('degrees',0));
 couplantz = couplant_trace_y;
@@ -140,7 +149,7 @@ couplant_coord = [ couplantx couplanty couplantz NaN];
 
 % crack_coord=[36.621e-3  109.835e-3  -.0078091]; 
 Hyp = 1.605*25.4e-3; % This is the X location of the vibrometer point on the cross section
-Z = 1.5*25.4e-3; % This is the Y location of the vibrometer point on the cross section
+Z = 10e-3; % This is the Y location of the vibrometer point on the cross section
 crackx = Hyp - 0.1e-3
 cracky = 0
 crackz = Z - 0.1e-3
@@ -183,7 +192,14 @@ bldgeom = @(M,geom) gear_geometry(M,geom,'specimen',gear_cross_section_file,mesh
                                         ... % on the couplant, which is equivalent to        the
                                         ... % inward normal on the specimen
                             MultiplyScalarStrByNumericVec('xducerforce', ...
-                                          GetOutwardNormal(M,geom,specimen.couplant.pos,specimen.couplant.centerpos))));
+                                          GetOutwardNormal(M,geom,specimen.couplant.pos,specimen.couplant.centerpos)))) | ...
+      	   @(specimen) AddBoundaryCondition(M,specimen,specimen.couplant,[specimen.couplant.tag '_harmonicforceexc'], ...
+		   	     'solidmech_harmonic', ...
+		   	     'impulseforceexcitation', ...
+		   	     @(M,physics,bcobj) ...
+		   	     BuildFaceTotalForceBC(M,geom,physics,specimen.couplant,bcobj, ...
+		   	        specimen.couplant.getfreefaceselection, ...
+			        GetOutwardNormal(M,geom,specimen.couplant.pos,specimen.couplant.centerpos))) ;... | ...
          
 
 % bldcrack = [];
@@ -194,11 +210,11 @@ bldcrack = @(M,geom,specimen) CreateCrack(M,geom,'crack',specimen, ...
                     crack_major_axis, ...
                     crack_minor_axis, ...
                     crack_closure, ...
-                    {'solidmech_harmonicsweep', 'solidmech_harmonicburst'},...
+                                          {'solidmech_multisweep'}, ...
 					dc_dummy_heatingdata_href{1}, ...; % Text file to hold crack heating energies. 
                     cracktype); 
 
-bldphysics = @(M,geom,specimen,flaw) VibroPhysics(M,geom,specimen,flaw,'broadbandprocess');
+bldphysics = @(M,geom,specimen,flaw) VibroPhysics(M,geom,specimen,flaw,'welderprocess')| @(M) AddXducerContactProbe(M,geom,specimen,couplant_coord(1:3));
 % bldphysics = [] ;
 
 genresults = @(M) VibroResults(M);
