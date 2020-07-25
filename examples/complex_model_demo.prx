@@ -18,7 +18,7 @@
 
   <!-- Build the COMSOL model -->
   <prx:step name="buildmodel" descr="Construct COMSOL model">
-    <prx:script xlink:href="./complex_model_demo_geometry/gear_comsol.m"/>
+    <prx:script xlink:href="./complex_model_demo_geometry/complex_model_demo_comsol.m"/>
   </prx:step>
 
 
