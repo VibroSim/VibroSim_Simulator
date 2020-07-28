@@ -153,6 +153,24 @@ All steps with the ``NEEDED`` flag will be run with the following command:
 
 ``processtrak vibrosim_demo3.prx -a --needed``
 
+Once all of the steps have been run, you can see the final output 
+(hyperlinked in vibrosim_demo3.xlp) by loading the heatflow 
+COMSOL model ``vibrosim_demo3_output/meas1_heating.mph``, opening
+the ``Results`` tree and looking at the ``vibro_heating_plot``. You 
+can drag the model around, select different times to view the heating, 
+etc. There is also a snapshot of this plot that should be saved 
+in ``vibrosim_demo3_output/meas1_heating.png``. 
+
+In general VibroSim saves output after each step. In many cases these
+are plots, .csv's, etc.  All output is written in standard or text
+based formats where possible (sometimes compressed by default
+e.g. with bzip2) In addition, temporary COMSOL models are sometimes
+written to the system temporary directory (profile/AppData/Local/Temp
+on Windows) -- these can occasionally be useful when troubleshooting.
+See the reference manual for more detailed information on individual 
+step outputs. 
+
+
 Summary of vibrosim_demo3 files
 ===============================
 
@@ -200,3 +218,39 @@ This file contains all instructions necessary to build the COMSOL model for use
 in VibroSim_Simulator. There are examples of this in the examples folder. In
 depth information about how these files work can be found in the documentation
 of the sister software package ``VibroSim_COMSOL``.
+
+
+Listing of Examples
+===================
+
+vibrosim_demo3.prx
+------------------
+This basic demonstration uses as an example a simple surface crack in a 
+bar-shaped test specimen. It is programmed for broadband (sweep and tuned 
+toneburst) excitation.
+
+vibrosim_demo3_crosscheck.prx
+-----------------------------
+This example, otherwise similar to ``vibrosim_demo3.prx``, demonstrates cross checking the ``calc_heating_singlefrequency`` step against the combined ``calc_singlefrequency_motion`` and ``calc_heating_welder`` steps that together have the same effect. To perform the cross-checking, it demonstrates the use of sub-measurements and multiple ``<prx:elementmatch>`` criteria to operate different steps on different sub-measurements. 
+
+
+vibrosim_demo4.prx
+------------------
+This basic demonstration illustrates testing a simple edge crack in a bar. It is programmed
+for broadband (sweep and toneburst) excitation.
+
+cantilever_example.prx
+----------------------
+This basic demonstration tests a cantilever with one fixed end and a surface crack, excited with
+an ultrasonic welder. 
+
+cantilever_example_viscousdamping.prx
+-------------------------------------
+This example extends ``cantilever_example.prx`` with a more physically meaningful but more complicated damping model, including
+prediction of radiative vibration losses into the cantilever mount. 
+
+complex_model_demo.prx
+----------------------
+This example demonstrates simulating a cracked gear. It demonstrates the use of the COMSOL CAD import module to load in a CAD 
+cross-section profile to COMSOL that is revolved, mirrored, etc. and then meshed. The example uses ultrasonic welder excitation.
+

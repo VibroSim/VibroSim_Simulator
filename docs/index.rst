@@ -13,9 +13,11 @@ Welcome to VibroSim Simulator's documentation!
 
    explog_parameters
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. only:: html
+    
+    Indices and tables
+    ==================
+    
+    * :ref:`genindex`
+    * :ref:`modindex`
+    * :ref:`search`

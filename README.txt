@@ -235,6 +235,11 @@ Error from Matlab: Undefined function or variable 'InitializeVibroSimScript'.
      add-on. Another way is to set the MATLABPATH environment variable to 
      the VibroSim_COMSOL m_files subfolder. 
 
+Error from processtrak: pkg_resources.DistributionNotFound
+   * This usually means that the processtrak script was installed by a 
+     different version of Python than the version of Python that is
+     executing. Reinstall Limatix using your desired Python version.
+
 Building the VibroSim_Simulator Documentation
 ----------------------------------------------
 
