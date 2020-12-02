@@ -81,6 +81,10 @@
     <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
     <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
     <dc:seff_side2 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> 0.0 25e5 50e5 75e5 100e5 125e5 150e5 175e5 200e5</dcv:arraydata></dc:seff_side2>
+    <dc:use_inverse_closure2>True</dc:use_inverse_closure2>
+
+
+    
     <dc:exc_t0 dcv:units="s">0.0</dc:exc_t0>  <!-- start of envelope ramp-up -->
     <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1> <!-- end of enelope ramp-up -->
     <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2> <!-- start of envelope ramp-down-->
