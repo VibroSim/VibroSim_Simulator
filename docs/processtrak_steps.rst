@@ -323,9 +323,13 @@ in the ``.xlp`` file as a return from one of the prior steps.
     :param dc\:seff_side1: |seff_side1|
     :param dc\:reff_side2: |reff_side2|
     :param dc\:seff_side2: |seff_side2|
+    :param dc\:symmetric_cod: |Use the symmetric form for crack opening displacement|
+    :param dc\:approximate_xstep: |Spatial step size to use|	       
     :param dc\:crack_model_normal: |crack_model_normal|
     :param dc\:crack_model_shear: |crack_model_shear|
-
+    :param dc\:use_inverse_closure2: |Use the updated inverse_closure2() closure inversion (True/False); Should generally be True (default False)|
+    :param dc\:interpolate_closure_state: |Should the given closure state be interpolated? (True/False). Set to False if you are providing a fine-grained closure state and the step is excessively slow.|
+	       
     :return dc\:closureplot_side1: |closureplot_side1| 
     :return dc\:closureplot_side2: |closureplot_side2| 
     :return dc\:closurestate_side1: |closurestate_side1| 
