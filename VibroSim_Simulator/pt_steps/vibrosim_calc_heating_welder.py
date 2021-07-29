@@ -70,7 +70,8 @@ def run(_xmldoc,_element,
         dc_closurestate_side1_href=None,
         dc_closurestate_side2_href=None,
         dc_a_side1_numericunits=numericunitsv(0.0,"m"),
-        dc_a_side2_numericunits=numericunitsv(0.0,"m")):
+        dc_a_side2_numericunits=numericunitsv(0.0,"m"),
+        dc_closurestate_is_length_independent_bool=False):
 
     if dc_crack_model_normal_str=="ModeI_throughcrack_CODformula" and dc_symmetric_cod_bool is None:
         raise ValueError("dc:symmetric_cod must be set to 'true' or 'false' when using ModeI_throughcrack_CODformula crack model")
@@ -94,13 +95,25 @@ def run(_xmldoc,_element,
 
     dc_heatingdata_href = hrefv(quote(dc_measident_str+"_heatingdata.txt"),dc_dest_href)
 
+    if dc_closurestate_is_length_independent_bool:
+        # length-independent: provide length-parameter to
+        # load_closurestress()
+        load_closurestress_a_side1 = dc_a_side1_numericunits.value("m")
+        load_closurestress_a_side2 = dc_a_side2_numericunits.value("m")
+        pass
+    else:
+        load_closurestress_a_side1=None
+        load_closurestress_a_side2=None
+        pass
+
+
     if dc_crack_type_side1_str.lower() != "none":
         (xrange_side1,
          x_bnd_side1,
          dx_side1,
          a_side1_verify,
          closure_stress_side1,
-         crack_opening_side1) = load_closurestress(dc_closurestate_side1_href.getpath())
+         crack_opening_side1) = load_closurestress(dc_closurestate_side1_href.getpath(),a=load_closurestress_a_side1)
         
         if a_side1_verify is not None: # crack lengths should match
             assert((a_side1_verify-dc_a_side1_numericunits.value("m"))/dc_a_side1_numericunits.value("m") < 1e-2)
@@ -114,7 +127,7 @@ def run(_xmldoc,_element,
          dx_side2,
          a_side2_verify,
          closure_stress_side2,
-         crack_opening_side2) = load_closurestress(dc_closurestate_side2_href.getpath())
+         crack_opening_side2) = load_closurestress(dc_closurestate_side2_href.getpath(),a=load_closurestress_a_side1)
         
         if a_side2_verify is not None: # crack lengths should match
             assert((a_side2_verify-dc_a_side2_numericunits.value("m"))/dc_a_side2_numericunits.value("m") < 1e-2)
