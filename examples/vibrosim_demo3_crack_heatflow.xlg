@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dc:experiment xmlns:dc="http://limatix.org/datacollect" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
+  <!-- This example illustrates the use of single frequency excitation.
+       and interactive querying of the user to select sweep and burst 
+       parameters.
+
+       Suggest sweep from 33550-33650 Hz with a 10 Hz step 
+       Then do the burst at 33608 Hz 
+-->
+  <dc:measurement>
+    <dc:dest xlink:type="simple" xlink:href="vibrosim_demo3_crack_heatflow_output/"/> <!-- specify where to save the generated output -->
+    <!-- dc:heatingdata specifies where the heating data will be stored. 
+    Initially this will be filled with dummy (zero) output. The later steps will replace it 
+    with meaningful values -->
+    <dc:measident>meas1</dc:measident> <!-- measident is used as a filename prefix for the various output files generated -->
+    <dc:amplitude dcv:units="Volts">3</dc:amplitude>
+    <dc:friction_coefficient>.0661</dc:friction_coefficient>
+    <dc:msqrtR dcv:units="m^-1.5">3.14e6</dc:msqrtR>
+    <dc:crack_model_shear_factor>1.0</dc:crack_model_shear_factor> <!-- sensitivity factof for shear vs. normal heating -->
+    <dc:staticload_mount dcv:units="N">0</dc:staticload_mount> <!-- combined static load on both mounts -->
+    <dc:staticload dcv:units="Pascals">0</dc:staticload> <!-- static bending opening load on crack... Should really run static analysis step and calculate from staticload_mount -->
+    <dc:tortuosity dcv:units="degrees">30.5</dc:tortuosity><!-- 30.5 was the average from our training specimens -->
+    <dc:numdraws>100</dc:numdraws>
+    <dc:spcmaterial>Ti 6-4</dc:spcmaterial>
+    <dc:YoungsModulus dcv:units="Pascals">117.9e9</dc:YoungsModulus>
+    <dc:YieldStrength dcv:units="Pascals">944.58e6</dc:YieldStrength>
+    <dc:PoissonsRatio>0.342</dc:PoissonsRatio>
+    <dc:Density dcv:units="kg/m^3">4430</dc:Density>
+    <dc:spcThermalConductivity dcv:units="W/m/K">6.7</dc:spcThermalConductivity>
+    <dc:spcSpecificHeatCapacity dcv:units="J/kg/K">526.3</dc:spcSpecificHeatCapacity>
+
+    <dc:simulationcameranetd dcv:units="K">.022</dc:simulationcameranetd> <!-- magnitude of simulated camera noise: noise equivalent temperature difference (NETD) -->
+    
+    <dc:spcrayleighdamping_alpha dcv:units="s^-1">2</dc:spcrayleighdamping_alpha>
+    <dc:spcrayleighdamping_beta dcv:units="s">5e-9</dc:spcrayleighdamping_beta>
+    
+    <!-- reff_side1, seff_side1, reff_side2, seff_side2 are how
+	 the closure state of the crack is specified: by radius of 
+	 closure point at different external stress levels.
+	 These are interpreted in the context of the selected  
+	 crack model_normal -->
+    <dc:crack_model_normal>Tada_ModeI_CircularCrack_along_midline</dc:crack_model_normal>
+    <dc:crack_model_shear>Fabrikant_ModeII_CircularCrack_along_midline</dc:crack_model_shear>
+    <dc:crack_shearstress_axis>major</dc:crack_shearstress_axis> <!-- Select crack heating calculation for shear along the "major" or "minor" crack axis, as defined by the call to CreateCrack() when the geometry is created in the _comsol.m script --> 
+
+    <dc:crack_type_side1>quarterpenny</dc:crack_type_side1>
+    <dc:crack_type_side2>quarterpenny</dc:crack_type_side2>
+    <!-- dc:thickness is used only for crack_type == halfthrough -->
+    <!-- <dc:thickness dcv:units="meters">1e-3</dc:thickness> -->
+
+    <!-- How the different crack sizes are used: 
+        * cracksemimajoraxislen is the (half) surface length. 
+          it determines the size COMSOL uses to draw the crack cut in the specimen.
+        * cracksemiminoraxislen is the (half) depth length. 
+          it determines the size COMSOL uses to draw the crack cut in the specimen.
+        * The ratio cracksemimajoraxislen/cracksemiminoraxislen determines the 
+          shape of the heating isolines at "constant radius": they are distorted 
+          according to the crack aspect ratio 
+        * Crack heating will only occur up to the crack tip as defined in the closure
+          state. If closure state is given as reff/seff as below, then the
+	  heating along the major axis will not occur past the last value of reff_side1, 
+	  which is returned by the vibrosim_eval_closure_state_from_tip_positions
+          as new elements dc:a_side1 and/or dc:a_side2
+        * If the size as seen by COMSOL is greater than the closure state size, no harm
+          is done but the COMSOL aspect ratio will still control the isotherms. 
+        * If the size as seen by COMSOL is less than the closure state size, then
+          no heating will be generated in the heatflow simulation past the COMSOL tips. -->
+    <dc:cracksemimajoraxislen dcv:units="m">1.66e-3</dc:cracksemimajoraxislen>
+    <dc:cracksemiminoraxislen dcv:units="m">1.66e-3</dc:cracksemiminoraxislen>
+    <dc:reff_side1 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>.5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side1>
+    <dc:seff_side1 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata>0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side1>
+    <dc:reff_side2 dcv:units="m" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> .5e-3 .7e-3 .9e-3 1.05e-3 1.2e-3 1.33e-3 1.45e-3 1.56e-3 1.66e-3</dcv:arraydata></dc:reff_side2>
+    <dc:seff_side2 dcv:units="Pa" dcv:arraystorageorder="C"><dcv:arrayshape>9</dcv:arrayshape><dcv:arraydata> 0.0 50e6 100e6 150e6 200e6 250e6 300e6 350e6 400e6</dcv:arraydata></dc:seff_side2>
+    <dc:use_inverse_closure2>True</dc:use_inverse_closure2>
+
+
+
+    <dc:exc_t0 dcv:units="s">0.0</dc:exc_t0>  <!-- start of envelope ramp-up -->
+    <dc:exc_t1 dcv:units="s">0.02</dc:exc_t1> <!-- end of enelope ramp-up -->
+    <dc:exc_t2 dcv:units="s">0.98</dc:exc_t2> <!-- start of envelope ramp-down-->
+    <dc:exc_t3 dcv:units="s">1.00</dc:exc_t3> <!-- end of envelope ramp down -->
+    <dc:exc_t4 dcv:units="s">1.00</dc:exc_t4> <!-- end of vibration calculation -->
+    
+    <!-- Default sweep frequencies -->
+    <dc:sweep_start_frequency dcv:units="Hertz">33550.0</dc:sweep_start_frequency>
+    <dc:sweep_end_frequency dcv:units="Hertz">33650.0</dc:sweep_end_frequency>
+    <dc:sweep_step_frequency dcv:units="Hertz">10.0</dc:sweep_step_frequency>
+
+    <!-- default burst frequency -->
+    <dc:excitation_frequency dcv:units="Hertz">33608.32</dc:excitation_frequency>
+
+
+    <!-- crack_heatflow parameters -->
+    <dc:recon_size_across dcv:units="m">.006</dc:recon_size_across>               
+    <dc:recon_stepsize_across dcv:units="m">.5e-3</dc:recon_stepsize_across>      
+    <dc:recon_stepsize_along dcv:units="m">.25e-3</dc:recon_stepsize_along>        
+    <dc:recon_size_along dcv:units="m">.01</dc:recon_size_along>
+    
+    <dc:heatflow_fd_thick dcv:units="m">5e-3</dc:heatflow_fd_thick>
+    <dc:heatflow_max_timestep dcv:units="s">10e-3</dc:heatflow_max_timestep>
+  </dc:measurement>
+</dc:experiment>  

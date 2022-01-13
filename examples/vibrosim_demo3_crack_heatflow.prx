@@ -1,0 +1,96 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<prx:processinginstructions xmlns="http://limatix.org/processtrak/processinginstructions" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://limatix.org/datacollect"  xmlns:dcv="http://limatix.org/dcvalue" xmlns:prx="http://limatix.org/processtrak/processinginstructions">
+  <!-- This is a modified version of vibrosim_demo3 that uses the crack_heatflow finite difference simulation rather than COMSOL for predicting heatflows -->
+  <prx:inputfiles>
+    <!-- The <inputfile> tag is where you refer to the "experiment log"
+    with one or more sets of simulation parameters -->
+    <prx:inputfile xlink:href="vibrosim_demo3_crack_heatflow.xlg"/>
+  </prx:inputfiles>
+
+  <prx:elementmatch>dc:measurement</prx:elementmatch>
+
+  <prx:step name="dummyoutput" descr="Create dummy heating output needed by COMSOL model">
+    <prx:script name="vibrocomsol_createdummyoutput.py"/>
+  </prx:step>
+
+  <!-- Build the COMSOL model -->
+  <prx:step name="buildmodel" descr="Construct COMSOL model">
+    <prx:script xlink:href="vibrosim_demo3_comsol.m"/>
+  </prx:step>
+
+
+  <!-- Run the modal analysis -->
+  <prx:step name="runmodal">
+    <prx:script name="vibrocomsol_runmodal_comsol.m"/>
+  </prx:step>
+
+  <prx:step name="synthetic_spectrum">
+    <prx:script name="vibrosim_synthetic_spectrum.py"/>
+  </prx:step>
+
+  <!-- Typically you will run the above steps, looking at the output of
+       synthetic_spectrum (either as an image in the output directory or
+       by running the last step with the -i (interactive) option. 
+       Compare the synthetic spectrum to a known impulse response
+       spectrum and adjust the dc:spcrayleighdamping_alpha and 
+       dc:spcrayleighdamping_beta parameters in the experiment log so 
+       that the damping (resonant pulse widths) matches the physical 
+       system. Increasing dc:spcrayleighdamping_alpha will increase
+       damping at low frequencies. Increasing dc:spcrayleighdamping_beta
+       will increase damping at high frequencies -->
+  
+  <prx:step name="entersweepfreqs">
+    <prx:script name="vibrocomsol_entersweepfreqs.py"/>
+  </prx:step>
+
+  <!-- Set the COMSOL sweep parameter -->
+  <prx:step name="setsweepfrequencies">
+    <prx:script name="vibrocomsol_setsweepfrequencies_comsol.m"/>
+  </prx:step>
+
+  <prx:step name="sweep_analysis">
+    <prx:script name="vibrocomsol_sweep_analysis_comsol.m"/>
+  </prx:step>
+
+  <!-- Enter a burst frequency -->
+  <prx:step name="enterburstfreq">
+    <prx:script name="vibrocomsol_enterburstfreq.py"/>
+  </prx:step>
+
+
+  <!-- Fourth step is to set the COMSOL parameter -->
+  <prx:step name="setburstfrequency">
+    <prx:script name="vibrocomsol_setburstfrequency_comsol.m"/>
+  </prx:step>
+
+  <!-- Next step is to run the harmonic burst analysis -->
+  <prx:step name="burst_analysis">
+    <prx:script name="vibrocomsol_burst_analysis_comsol.m"/>
+  </prx:step>
+
+  <!-- Evaluate closure state from the crack tip positions given in the 
+  .xlg file -->
+  <prx:step name="eval_closure_state_from_tip_positions">
+    <prx:script name="vibrosim_eval_closure_state_from_tip_positions.py"/>
+  </prx:step>
+
+  <!-- Calculate the heating for single frequency tuned excitation -->
+  <prx:step name="calc_heating_singlefrequency">
+    <prx:script name="vibrosim_calc_heating_singlefrequency.py"/>
+  </prx:step>
+
+  <!-- Finally we run the heatflow analysis. This runs on all sub-measurements -->
+  <prx:step name="heatflow_analysis_finitedifference">
+    <prx:script name="vibrosim_heatflow_analysis.py"/>
+    <prx:param name="dc_heatflow_method">finitedifference</prx:param>
+  </prx:step>
+
+  <prx:step name="heatflow_analysis_greensintegration">
+    <prx:script name="vibrosim_heatflow_analysis.py"/>
+    <prx:param name="dc_heatflow_method">greensintegration</prx:param>
+    <prx:param name="dc_measident">meas1_greensintegration</prx:param>
+  </prx:step>
+
+
+</prx:processinginstructions>
+
